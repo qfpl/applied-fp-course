@@ -48,9 +48,9 @@ Goals
 ---
 Start up and Servant introduction.
 
-a) Use Scotty/Warp for the "hello, world" application.
-b) Explain that we're using strings for routes and this is bad(TM).
-c) Move to Servant, explain why, show type driven dev to explain routes->function relationship.
+* Use Scotty/Warp for the "hello, world" application.
+* Explain that we're using strings for routes and this is bad(TM).
+* Move to Servant, explain why, show type driven dev to explain routes->function relationship.
 
 2 - Faking Global Vars with Science
 ---
@@ -58,30 +58,30 @@ Show that nothing can be changed in the current app without recompliation.
 Rework the application so we can change the port values and have general app
 config.
 
-a) Read a file in app start up to allow for port config changes.
-b) Explain that this can be cumbersome to explicitly pass the config around, there are better ways(TM).
-c) Add `mtl` dependency.
-d) Natural Transformation required from our new 'ReaderT' to Servant (too much?).
+* Read a file in app start up to allow for port config changes.
+* Explain that this can be cumbersome to explicitly pass the config around, there are better ways(TM).
+* Add `mtl` dependency.
+* Natural Transformation required from our new 'ReaderT' to Servant (too much?).
 
 3 - Would you like to play a game?
 ---
 Introduce handling input/output also preempt the inclusion of persistent storage.
 
-a) Add rock-paper-scissors data type. (Don't create Enc/Dec instances yet)
-b) Add route to accept an RPS move that always plays paper against the user.
-c) Go over what the errors from Servant & GHC are telling us.
-d) Add the required instances.
-e) Change the function up so that it randomly selects a move, evaluates victory/defeat.
+* Add rock-paper-scissors data type. (Don't create Enc/Dec instances yet)
+* Add route to accept an RPS move that always plays paper against the user.
+* Go over what the errors from Servant & GHC are telling us.
+* Add the required instances.
+* Change the function up so that it randomly selects a move, evaluates victory/defeat.
 
 4 - Type safe tantrums
 ---
 Introduce error handling by breaking REST rules by having our application throw
 an error when it loses at Rock-Paper-Scissors.
 
-a) Change RPS function to throw an error on defeat, creating required error data types.
-b) Discuss the errors that appear RE return values and making Servant respond appropriately.
-c) Introduce 'ExceptT', change the 'ReaderT' from earlier to what we want it to be.
-d) Discuss the errors that appear. Work through fixing these with type-holes in the Natural Transform.
+* Change RPS function to throw an error on defeat, creating required error data types.
+* Discuss the errors that appear RE return values and making Servant respond appropriately.
+* Introduce 'ExceptT', change the 'ReaderT' from earlier to what we want it to be.
+* Discuss the errors that appear. Work through fixing these with type-holes in the Natural Transform.
 
 5 - Elephants
 ---
