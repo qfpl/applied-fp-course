@@ -25,6 +25,13 @@ We
 * Will utilise both type & test driven development techniques
 * Will explain architectural and design trade-offs when appropriate
 
+UNSURE:
+===
+
+Use of lenses and classy `mtl` will be left to supplemental material. I would
+like to be able to use it lenses more but the additional explanation required
+might be a bit much and not very predictable ?
+
 Ultimate Goal
 ===============
 
@@ -61,7 +68,7 @@ config.
 * Read a file in app start up to allow for port config changes.
 * Explain that this can be cumbersome to explicitly pass the config around, there are better ways(TM).
 * Add `mtl` dependency.
-* Natural Transformation required from our new 'ReaderT' to Servant (too much?).
+* Natural Transformation required from our new `ReaderT` to Servant (too much?).
 
 3 - Would you like to play a game?
 ---
@@ -80,15 +87,37 @@ an error when it loses at Rock-Paper-Scissors.
 
 * Change RPS function to throw an error on defeat, creating required error data types.
 * Discuss the errors that appear RE return values and making Servant respond appropriately.
-* Introduce 'ExceptT', change the 'ReaderT' from earlier to what we want it to be.
+* Introduce `ExceptT`, change the `ReaderT` from earlier to what we want it to be.
+  * More discussion to be had here regarding the ordering of transformer stacks.
 * Discuss the errors that appear. Work through fixing these with type-holes in the Natural Transform.
 
 5 - Elephants
 ---
 We'd like to be able to store a history of RPS games. 
 
-Stringly queries acceptable for now - postgresql-simple
+* Create a datatype that has some game info, respective moves, outcome, time.
+* Introduce and integrate `postgresql-simple`:
+  * Config for connection
+  * `Connection` on the `ReaderT`
+  * Using `Connection` from `ReaderT` in `query` function(s)
+* Add the required instances so we can read/write our datatype (provide a SQL file to initialise/purify the DB)
+* Add our route to the API.
+* Work through the errors using type-holes to create our function.
+* Stringly queries acceptable for now - postgresql-simple
 
-Thing(s) to unravel first...
+** Prompt discussion about what lurks beneath the surface of the `IO a` query functionality.
 
-Exceptions - catching, throwing, gotchas (throw vs throwError)
+6 - Except when exceptionally excepted
+---
+Handling, catching, and rethrowing exceptions. Motivate errors as values over exceptions.
+
+* Possible ways postgresql-simple can fail on us, note that the types provide no information
+* Introduce exception handling with `catching` and `handling` to our error values.
+* Generalise our current DB querying technique so that we take a query and
+  handle some exceptional cases.
+* Discuss the relevance of handling these errors:
+  * Shouldn't they just come up in testing?
+  * I'm sure there are other points here, some Haskell applications are built
+    not to care about these sorts of errors.
+  
+* Logging ?
