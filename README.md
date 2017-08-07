@@ -101,7 +101,7 @@ We'd like to be able to store a history of RPS games.
   * `Connection` on the `ReaderT`
   * Using `Connection` from `ReaderT` in `query` function(s)
 * Add the required instances so we can read/write our datatype (provide a SQL file to initialise/purify the DB)
-* Add our route to the API.
+* Add our route to the API to request games by id, demonstrate work flow of 'game not found'.
 * Work through the errors using type-holes to create our function.
 * Stringly queries acceptable for now - postgresql-simple
 
@@ -121,3 +121,37 @@ Handling, catching, and rethrowing exceptions. Motivate errors as values over ex
     not to care about these sorts of errors.
   
 * Logging ?
+
+* I'm want to start a fight about "errors as values + classy style = actually composable code"
+
+7 - BOSS FIGHT - A
+---
+Replace the stringly DB layer with something better:
+- [Selda](https://selda.link/)
+- [Tisch](https://github.com/k0001/tisch)
+- [Opaleye](https://hackage.haskell.org/package/opaleye)
+- [Groundhog](https://github.com/lykahb/groundhog)
+
+These packages will force a lot of other things to be picked up at the same
+time, to varying degrees:
+* Selda : Type level lists, type operators, data structures as tuples initially.
+* Tisch : Type level HLists, overloaded labels, type families, familiarity with Opaleye.
+* Opaleye : Arrows, full polymorphic records.
+* Groundhog : Alien data type definitions using their Template Haskell DSL, is
+  an ORM more than a type safe SQL package (if that makes sense).
+  
+All packages use generics of some description, not sure how much air time they
+need? Passing mention and throw some links around, move on.
+
+8 - BOSS FIGHT - B
+---
+Integration of 'classy mtl' style application design.
+
+* Briefly explain the problem with using a transformer stack or newtype'd stack
+  like we have.
+  * Concrete types
+  * Cannot generalise easily to abstract out larger moving parts
+* Discuss what we want is just constraints, PARAMETRICITY driven development!!
+* Build intuition for `AsFoo` & `HasFoo`
+* `mtl` classes are a start, but how do we make this easier?
+* Describe `CanFoo` and introduce `ConstraintKinds`
