@@ -25,6 +25,20 @@ We
 * Will utilise both type & test driven development techniques
 * Will explain architectural and design trade-offs when appropriate
 
+
+Tonys simpler version:
+---
+
+- Simplest web app - LEVEL 01
+- with shared state (RPS game) -- Not awesome, maybe just do config (readerT) instead.
+- with JSON/aeson
+- with testing (hedgehog and friends)
+- lenses and refactoring possibilities
+- with database layer (postgresql-simple | sqlite)
+
+Below is Sean going nuts for things
+---
+
 UNSURE:
 ===
 
@@ -120,9 +134,7 @@ Handling, catching, and rethrowing exceptions. Motivate errors as values over ex
   * I'm sure there are other points here, some Haskell applications are built
     not to care about these sorts of errors.
   
-* Logging ?
-
-* I'm want to start a fight about "errors as values + classy style = actually composable code"
+* Discuss how you might implement logging ? Leave as exercise.
 
 7 - BOSS FIGHT - A
 ---
