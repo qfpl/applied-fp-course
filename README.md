@@ -36,6 +36,17 @@ Tonys simpler version:
 - lenses and refactoring possibilities
 - with database layer (postgresql-simple | sqlite)
 
+* Level 01 : Simple Hello World web app.
+* Level 02 : Define our application spec with types!
+* Level 03 : Add some flexible configuration
+
+-- Working on this one...
+* Level 04 : Testing & Tools (tasty/hedgehog & ghcid)
+* Level 05 : Database layer (postgresql-simple)
+* Level 06 : ReaderT & Refactoring
+* Level 07 : ExceptT & Refactoring
+* Level 08 : (Bonus Round) Lenses & Refactoring
+
 Below is Sean going nuts for things
 ---
 
