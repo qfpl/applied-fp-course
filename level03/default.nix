@@ -1,4 +1,4 @@
-{ mkDerivation, base, stylish-haskell, wai, warp, http-types, yaml-config, aeson, optparse-applicative, stdenv }:
+{ mkDerivation, base, stylish-haskell, wai, warp, http-types, aeson, optparse-applicative, stdenv }:
 mkDerivation {
   pname = "level03";
   version = "0.1.0.0";
@@ -6,7 +6,7 @@ mkDerivation {
   isLibrary = false;
   isExecutable = true;
   executableHaskellDepends = [
-    base wai warp http-types yaml-config optparse-applicative aeson
+    base wai warp http-types optparse-applicative aeson
   ];
   description = "Simplest of web apps";
   license = stdenv.lib.licenses.bsd3;

@@ -63,7 +63,6 @@ executable level03
                      , http-types == 0.9.*
                      , bytestring == 0.10.*
                      , text == 1.2.*
-                     , yaml-config >= 0.4
                      , optparse-applicative >= 0.13
                      , aeson == 1.*
                       
