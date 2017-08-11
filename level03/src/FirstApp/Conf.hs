@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Conf
+module FirstApp.Conf
     ( Conf (..)
     , Port (getPort)
     , HelloMsg (getHelloMsg)

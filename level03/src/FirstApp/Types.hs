@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Types
+module FirstApp.Types
   ( Error (..)
   , RqType (..)
   , ContentType (..)
