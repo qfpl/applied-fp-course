@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Types
+module FirstApp.Types
   ( Error (..)
   , RqType (..)
   , ContentType (..)
@@ -97,6 +97,6 @@ data ContentType
 renderContentType
   :: ContentType
   -> ByteString
-renderContentType = error "renderContentType not implemented"
--- renderContentType PlainText = "text/plain"
--- renderContentType JSON      = "text/json"
+-- renderContentType = error "renderContentType not implemented"
+renderContentType PlainText = "text/plain"
+renderContentType JSON      = "text/json"

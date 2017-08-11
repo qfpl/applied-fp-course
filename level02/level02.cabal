@@ -45,6 +45,24 @@ extra-source-files:  ChangeLog.md
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >=1.10
 
+library
+  exposed-modules:     FirstApp.Types
+                     , FirstApp.Main
+  
+  -- Other library packages from which modules are imported.
+  build-depends:       base >=4.9 && <4.10
+                     , wai == 3.2.*
+                     , warp == 3.2.*
+                     , http-types == 0.9.*
+                     , bytestring == 0.10.*
+                     , text == 1.2.*
+                      
+  -- Directories containing source files.
+  hs-source-dirs:      src
+  
+  -- Base language which the package is written in.
+  default-language:    Haskell2010
+
 
 executable level02
   -- .hs or .lhs file containing the Main module.
@@ -58,6 +76,7 @@ executable level02
   
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.9 && <4.10
+                     , level02
                      , wai == 3.2.*
                      , warp == 3.2.*
                      , http-types == 0.9.*
