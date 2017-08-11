@@ -23,13 +23,17 @@ main = do
 
     Right cfg -> do
       let app' = pure ( Main.app cfg )
+          -- The hspec-wai package uses the IsString typeclass to be able to turn
+          -- String values into a ResponseMatcher record type. It's not terribly
+          -- transparent or elegant, but it works sufficiently well for these tests.
+          msg = fromString . LBS8.unpack $ Conf.mkMessage cfg
+
       hspec . with app' $ do
 
         -- AddRq Spec
         describe "POST /topic/add" $ do
 
           it "Should return 200 with well formed request" $ do
-            let msg = fromString . LBS8.unpack $ Conf.mkMessage cfg
             post "/fudge/add" "Fred" `shouldRespondWith` msg { matchStatus = 200 }
 
           it "Should 400 on empty input" $

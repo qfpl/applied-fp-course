@@ -33,39 +33,26 @@ newtype CommentText = CommentText
 
 -- Having specialised constructor functions for the newtypes allows you to set
 -- restrictions for your newtype.
+nonEmptyText
+  :: (Text -> a)
+  -> Error
+  -> Text
+  -> Either Error a
+nonEmptyText _ e "" = Left e
+nonEmptyText c _ tx = Right (c tx)
+
 mkTopic
   :: Text
   -> Either Error Topic
-mkTopic "" =
-  Left EmptyTopic
-mkTopic ti =
-  Right (Topic ti)
+mkTopic =
+  nonEmptyText Topic EmptyTopic
 
 mkCommentText
   :: Text
   -> Either Error CommentText
-mkCommentText "" =
-  Left EmptyCommentText
-mkCommentText ct =
-  Right (CommentText ct)
+mkCommentText =
+  nonEmptyText CommentText EmptyCommentText
 
-{-|
-Working through the specification for our application, what are the
-types of requests we're going to handle?
-
-Remember that we have to be able to:
-- Comment on a given topic
-- View a topic and its comments
-- List the current topics
-
-To that end, we will create the following types:
-
-AddRq : Which needs to the target topic, and the body of the comment.
-
-ViewRq : Which needs the topic being requestd.
-
-ListRq : Which lists all of the current topics.
--}
 data RqType
   = AddRq Topic CommentText
   | ViewRq Topic
