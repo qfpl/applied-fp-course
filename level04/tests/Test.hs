@@ -34,20 +34,20 @@ main = do
         describe "POST /topic/add" $ do
 
           it "Should return 200 with well formed request" $ do
-            post "/fudge/add" "Fred" `shouldRespondWith` msg { matchStatus = 200 }
+            post "/fudge/add" "Fred" `shouldRespondWith` msg
 
           it "Should 400 on empty input" $
             post "/fudge/add" "" `shouldRespondWith` 400
 
-          it "Should add a comment to the topic"
-            Test.Hspec.Wai.pending
+          it "Should add a comment to the topic" $
+            Test.Hspec.Wai.pendingWith "No db attached, yet..."
 
         -- ViewRq Spec
         describe "GET /topic/view" $ do
           it "Should return 200 with content" $
-            get "/fudge/view" `shouldRespondWith` "Susan was ere" { matchStatus = 200 }
+            get "/fudge/view" `shouldRespondWith` "Susan was ere"
 
         -- ListRq Spec
         describe "GET /list" $ do
           it "Should return 200 with content" $
-            get "/list" `shouldRespondWith` "[ \"Fred wuz ere\", \"Susan was ere\" ]" { matchStatus = 200 }
+            get "/list" `shouldRespondWith` "[ \"Fred wuz ere\", \"Susan was ere\" ]"

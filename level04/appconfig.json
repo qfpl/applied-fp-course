@@ -1,4 +1,4 @@
 {
-  "foo": 33,
-  "bar": "Fred"
+  "port": 33,
+  "helloMsg": "Oh, hurro!"
 }

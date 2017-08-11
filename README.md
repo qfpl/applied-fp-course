@@ -41,7 +41,7 @@ Tonys simpler version:
 * Level 03 : Add some flexible configuration
 
 -- Working on this one...
-* Level 04 : Testing & Tools (tasty/hedgehog & ghcid)
+* Level 04 : Testing & Tools (hspec & ghcid)
 
 * Level 05 : Database layer (postgresql-simple)
 * Level 06 : ReaderT & Refactoring
