@@ -42,6 +42,7 @@ Tonys simpler version:
 
 -- Working on this one...
 * Level 04 : Testing & Tools (tasty/hedgehog & ghcid)
+
 * Level 05 : Database layer (postgresql-simple)
 * Level 06 : ReaderT & Refactoring
 * Level 07 : ExceptT & Refactoring
