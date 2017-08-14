@@ -49,6 +49,8 @@ library
   -- Modules included in this executable, other than Main.
   exposed-modules:     FirstApp.Conf
                      , FirstApp.Types
+                     , FirstApp.Types.DB
+                     , FirstApp.DB
                      , FirstApp.Main
   
   -- Other library packages from which modules are imported.
@@ -62,6 +64,7 @@ library
                      , aeson == 1.*
                      , postgresql-simple == 0.5.*
                      , mtl == 2.2.*
+                     , time == 1.6.*
                       
   -- Directories containing source files.
   hs-source-dirs:      src
@@ -72,9 +75,9 @@ library
 executable level05
   -- .hs or .lhs file containing the Main module.
   main-is:             Main.hs
-  
-  -- Modules included in this executable, other than Main.
-  -- other-modules:       
+
+  -- Directories containing source files.
+  hs-source-dirs:      bin
   
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:    
@@ -89,10 +92,9 @@ executable level05
                      , text == 1.2.*
                      , aeson == 1.*
                      , optparse-applicative == 0.13.*
+                     , postgresql-simple == 0.5.*
+                     , time == 1.6.*
                       
-  -- Directories containing source files.
-  hs-source-dirs:      src
-  
   -- Base language which the package is written in.
   default-language:    Haskell2010
   

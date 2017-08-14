@@ -1,4 +1,6 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings          #-}
 module FirstApp.Types
   ( Error (..)
   , RqType (..)
@@ -6,14 +8,29 @@ module FirstApp.Types
   -- Exporting newtypes like this will hide the constructor.
   , Topic (getTopic)
   , CommentText (getCommentText)
+  , Comment (..)
   -- We provide specific constructor functions.
   , mkTopic
   , mkCommentText
   , renderContentType
-  )where
+  , fromDbComment
+  ) where
 
-import           Data.ByteString (ByteString)
-import           Data.Text       (Text)
+import           GHC.Generics      (Generic)
+
+import           Data.ByteString   (ByteString)
+import           Data.Text         (Text)
+
+import           Data.List         (stripPrefix)
+import           Data.Maybe        (fromMaybe)
+
+import           Data.Aeson        (ToJSON (..))
+import qualified Data.Aeson        as A
+import qualified Data.Aeson.Types  as A
+
+import           Data.Time         (UTCTime)
+
+import           FirstApp.Types.DB (DbComment (..))
 
 {-|
 In Haskell the `newtype` comes with zero runtime cost. It is purely used for
@@ -23,13 +40,41 @@ even [a], you can wrap it up in a `newtype` for clarity.
 The type system will check it for you, and the compiler will eliminate the cost
 once it has passed.
 -}
-newtype Topic = Topic
-  { getTopic :: Text }
-  deriving Show
+newtype CommentId = CommentId Int
+  deriving (Show, ToJSON)
 
-newtype CommentText = CommentText
-  { getCommentText :: Text }
-  deriving Show
+newtype Topic = Topic { getTopic :: Text }
+  deriving (Show, ToJSON)
+
+newtype CommentText = CommentText { getCommentText :: Text }
+  deriving (Show, ToJSON)
+
+data Comment = Comment
+  { commentId    :: CommentId
+  , commentTopic :: Topic
+  , commentText  :: CommentText
+  , commentTime  :: UTCTime
+  }
+  deriving ( Show, Generic )
+
+instance ToJSON Comment where
+  toEncoding = A.genericToEncoding opts
+    where
+      opts = A.defaultOptions
+             { A.fieldLabelModifier = modFieldLabel
+             }
+
+      modFieldLabel l =
+        fromMaybe l $ stripPrefix "comment" l
+
+fromDbComment
+  :: DbComment
+  -> Either Error Comment
+fromDbComment dbc =
+  Comment (CommentId $ dbCommentId dbc)
+    <$> (mkTopic $ dbCommentTopic dbc)
+    <*> (mkCommentText $ dbCommentComment dbc)
+    <*> pure (dbCommentTime dbc)
 
 -- Having specialised constructor functions for the newtypes allows you to set
 -- restrictions for your newtype.
@@ -70,6 +115,7 @@ data Error
   = UnknownRoute
   | EmptyCommentText
   | EmptyTopic
+  | DBError Text
   deriving Show
 
 -- Provide a type to list our response content types so we don't try to

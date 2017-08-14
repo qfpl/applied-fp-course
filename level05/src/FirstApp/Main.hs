@@ -14,6 +14,10 @@ import           Data.Either              (either)
 import           Data.Text                (Text)
 import           Data.Text.Encoding       (decodeUtf8)
 
+import Data.Aeson (ToJSON)
+import qualified Data.Aeson as A
+
+import qualified FirstApp.DB as DB
 import qualified FirstApp.Conf as Conf
 import           FirstApp.Types
 
@@ -22,7 +26,16 @@ runApp = do
   cfgE <- Conf.parseOptions "appconfig.json"
   case cfgE of
     Left err  -> print err
-    Right cfg -> run ( Conf.getPort $ Conf.port cfg ) ( app cfg )
+    Right cfg -> do
+
+      db <- DB.initDb
+        (DB.UserName "manky")
+        (Conf.dbName cfg)
+        (Conf.tableName cfg)
+
+      run ( Conf.getPort $ Conf.port cfg ) ( app cfg db )
+
+      DB.closeDb db
 
 -- | Just some helper functions to make our lives a little more DRY.
 mkResponse
@@ -50,12 +63,21 @@ resp400
   -> Response
 resp400 =
   mkResponse status400 PlainText
+
+resp200Json
+  :: ToJSON a
+  => a
+  -> Response
+resp200Json =
+  mkResponse status200 JSON . A.encode
+
 -- |
 
 app
   :: Conf.Conf
+  -> DB.FirstAppDB -- ^ Add the Database record to our app so we can use it
   -> Application
-app cfg rq cb = mkRequest rq
+app cfg db rq cb = mkRequest rq
   >>= fmap handleRespErr . handleRErr
   >>= cb
   where
@@ -64,18 +86,26 @@ app cfg rq cb = mkRequest rq
       either mkErrorResponse id
     -- Because it is clunky, and we have a better solution, later.
     handleRErr =
-      either ( pure . Left ) ( handleRequest cfg )
+      -- We want to pass the Database through to the handleRequest so it's
+      -- available to all of our handlers.
+      either ( pure . Left ) ( handleRequest cfg db )
 
 handleRequest
   :: Conf.Conf
+  -> DB.FirstAppDB
   -> RqType
   -> IO (Either Error Response)
-handleRequest cfg (AddRq _ _) =
-  pure . Right $ resp200 (Conf.mkMessage cfg)
-handleRequest _ (ViewRq _) =
-  pure . Right $ resp200 "Susan was ere"
-handleRequest _ ListRq =
-  pure . Right $ resp200 "[ \"Fred wuz ere\", \"Susan was ere\" ]"
+-- Fun time to play with some type driven development. Try inserting a
+-- type-hole on the left of the getComments function call and see what sort of
+-- functions you need to produce the desired output. See how well you can
+-- reduce the function you need to write with the application of abstractions
+-- you already know, no custom functions.
+handleRequest _ db (AddRq t c) =
+  fmap (\_ -> resp200 "Success") <$> DB.addCommentToTopic db t c
+handleRequest _ db (ViewRq t) =
+  fmap resp200Json <$> DB.getComments db t
+handleRequest _ db ListRq =
+  fmap resp200Json <$> DB.getTopics db
 
 mkRequest
   :: Request

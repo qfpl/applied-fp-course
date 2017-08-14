@@ -16,6 +16,7 @@ import           Data.String                (fromString)
 import           Data.ByteString.Lazy       (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as LBS
 import           Data.Text                  (Text)
+import qualified Data.Text                  as Text
 
 import           Data.Aeson                 (FromJSON)
 
@@ -30,6 +31,8 @@ import           Options.Applicative        (Parser, ParserInfo, eitherReader,
 
 import           Text.Read                  (readEither)
 
+import           FirstApp.DB                (DbName (..), Table (..))
+
 {-|
 Similar to when we were considering what might go wrong with the RqTypes, lets
 think about might go wrong when trying to gather our configuration information.
@@ -37,6 +40,8 @@ think about might go wrong when trying to gather our configuration information.
 data ConfigError
   = MissingPort
   | MissingHelloMsg
+  | MissingTableName
+  | MissingDbName
   deriving Show
 
 {-|
@@ -66,14 +71,17 @@ mkMessage =
   mappend "App says: "
   . getHelloMsg
   . helloMsg
+
 {-|
 This will be our configuration value, eventually it may contain more things
 but this will do for now. We will have a customisable port number, and a
 changeable message for our users.
 -}
 data Conf = Conf
-  { port     :: Port
-  , helloMsg :: HelloMsg
+  { port      :: Port
+  , helloMsg  :: HelloMsg
+  , tableName :: Table
+  , dbName    :: DbName
   }
 
 {-|
@@ -104,8 +112,10 @@ wrapped values. We can then define a Monoid instance for it and have our Conf be
 a known good configuration.
 -}
 data PartialConf = PartialConf
-  { pcPort     :: Last Port
-  , pcHelloMsg :: Last HelloMsg
+  { pcPort      :: Last Port
+  , pcHelloMsg  :: Last HelloMsg
+  , pcTableName :: Last Table
+  , pcDbName    :: Last DbName
   }
 
 {-|
@@ -118,11 +128,14 @@ Note that the types won't be able to completely save you here, if you mess up
 the ordering of your 'a' and 'b' you will not end up with the desired result.
 -}
 instance Monoid PartialConf where
-  mempty = PartialConf mempty mempty
+  mempty = PartialConf mempty mempty mempty mempty
 
   mappend a b = PartialConf
-    { pcPort     = pcPort a <> pcPort b
-    , pcHelloMsg = pcHelloMsg a <> pcHelloMsg b
+    -- Compiler tells us about the little things we might have forgotten.
+    { pcPort      = pcPort a <> pcPort b
+    , pcHelloMsg  = pcHelloMsg a <> pcHelloMsg b
+    , pcTableName = pcTableName a <> pcTableName b
+    , pcDbName    = pcDbName a <> pcDbName b
     }
 
 -- We have some sane defaults that we can always rely on, so define them using
@@ -132,6 +145,8 @@ defaultConf
 defaultConf = PartialConf
   (pure (Port 3000))
   (pure (HelloMsg "World!"))
+  (pure (Table "comments"))
+  (pure (DbName "firstapp"))
 
 -- We need something that will take our PartialConf and see if can finally build
 -- a complete Conf record. Also we need to highlight any missing config values
@@ -142,6 +157,8 @@ makeConfig
 makeConfig pc = Conf
   <$> lastToEither MissingPort pcPort
   <*> lastToEither MissingHelloMsg pcHelloMsg
+  <*> lastToEither MissingTableName pcTableName
+  <*> lastToEither MissingDbName pcDbName
   where
     -- You don't need to provide type signatures for most functions in where/let
     -- sections. Sometimes the compiler might need a bit of help, or you would
@@ -177,17 +194,20 @@ parseJSONConfigFile fp = do
   pure . fromMaybe mempty $ toPartialConf <$> fc
   where
     toPartialConf cObj = PartialConf
-      ( offObj "port" Port cObj )
-      ( offObj "helloMsg" helloFromStr cObj )
+      ( fromObj "port" Port cObj )
+      ( fromObj "helloMsg" helloFromStr cObj )
+      -- Pull the extra keys off the configuration file.
+      ( fromObj "tableName" Table cObj )
+      ( fromObj "dbName" DbName cObj )
 
     -- Parse out the keys from the object, maybe...
-    offObj
+    fromObj
       :: FromJSON a
       => Text
       -> (a -> b)
       -> Aeson.Object
       -> Last b
-    offObj k c obj =
+    fromObj k c obj =
       -- Too weird ?
       Last $ c <$> Aeson.parseMaybe (Aeson..: k) obj
 
@@ -221,7 +241,33 @@ partialConfParser
   :: Parser PartialConf
 partialConfParser = PartialConf
   <$> portParser
-  <*> helloMsgParser
+  <*> strParse helloFromStr helloMods
+  -- Add our two new fields to the parsing of the PartialConf record. Note that
+  -- if you update the data structure the compiler will do its best to inform
+  -- you about everywhere that needs attention.
+  <*> strParse ( Table . Text.pack ) tableMods
+  <*> strParse DbName dbNameMods
+  where
+    -- With the addition of two new very similar parsers, we can abstract out
+    -- part of the construction into a separate function so we avoid repeating
+    -- ourselves.
+    strParse c m =
+      Last <$> optional (c <$> strOption m)
+
+    helloMods = long "hello-msg"
+                <> short 'm'
+                <> metavar "HELLOMSG"
+                <> help "Message to respond to requests with."
+
+    tableMods = long "table-name"
+                 <> short 't'
+                 <> metavar "TABLENAME"
+                 <> help "Comments DB table name"
+
+    dbNameMods = long "db-name"
+                 <> short 'd'
+                 <> metavar "DBNAME"
+                 <> help "DB name"
 
 -- Parse the Port value off the command line args and into our Last wrapper.
 portParser
@@ -235,20 +281,3 @@ portParser =
         eitherReader (fmap Port . readEither)
   in
     Last <$> optional (option portReader mods)
-
--- Parse the HelloMsg from the input string into our type and into a Last
--- wrapper.
---
--- Remember that newtypes have zero runtime cost, they are removed by the
--- compiler. So don't be concerned by the wrapping / unwrapping of them in your
--- code. They are there for the type system and you.
-helloMsgParser
-  :: Parser (Last HelloMsg)
-helloMsgParser =
-  let mods = long "hello-msg"
-             <> short 'm'
-             <> metavar "HELLOMSG"
-             <> help "Message to respond to requests with."
-  in
-    -- String -> ByteString -> HelloMsg -> Last HelloMsg... Phew.
-    Last <$> optional (helloFromStr <$> strOption mods)

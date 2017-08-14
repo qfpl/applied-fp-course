@@ -1,4 +1,6 @@
 {
-  "port": 33,
-  "helloMsg": "Oh, hurro!"
+  "port": 3000,
+  "helloMsg": "Oh, hurro!",
+  "tableName": "comments",
+  "dbName": "firstapp"
 }
