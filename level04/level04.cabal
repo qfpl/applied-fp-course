@@ -80,16 +80,9 @@ executable level04
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.9 && <4.10
                      , level04
-                     , wai == 3.2.*
-                     , warp == 3.2.*
-                     , http-types == 0.9.*
-                     , bytestring == 0.10.*
-                     , text == 1.2.*
-                     , aeson == 1.*
-                     , optparse-applicative == 0.13.*
-                      
+ 
   -- Directories containing source files.
-  hs-source-dirs:      src
+  hs-source-dirs:      bin
   
   -- Base language which the package is written in.
   default-language:    Haskell2010

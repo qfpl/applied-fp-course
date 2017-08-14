@@ -72,7 +72,7 @@ library
   -- Base language which the package is written in.
   default-language:    Haskell2010
 
-executable level05
+executable level05-exe
   -- .hs or .lhs file containing the Main module.
   main-is:             Main.hs
 
@@ -85,15 +85,6 @@ executable level05
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.9 && <4.10
                      , level05
-                     , wai == 3.2.*
-                     , warp == 3.2.*
-                     , http-types == 0.9.*
-                     , bytestring == 0.10.*
-                     , text == 1.2.*
-                     , aeson == 1.*
-                     , optparse-applicative == 0.13.*
-                     , postgresql-simple == 0.5.*
-                     , time == 1.6.*
                       
   -- Base language which the package is written in.
   default-language:    Haskell2010
