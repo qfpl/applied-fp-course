@@ -1,5 +1,6 @@
 { mkDerivation, base, wai, warp, http-types, aeson, optparse-applicative,
-  hspec, hspec-wai, postgresql-simple, mtl, stdenv
+  hspec, hspec-wai, mtl, sqlite-simple, sqlite-simple-errors
+  , stdenv
 }:
 mkDerivation {
   pname = "level05";
@@ -9,7 +10,7 @@ mkDerivation {
   isExecutable = true;
   executableHaskellDepends = [
     base wai warp http-types optparse-applicative aeson
-    hspec hspec-wai mtl postgresql-simple
+    hspec hspec-wai mtl sqlite-simple sqlite-simple-errors
   ];
   description = "Simplest of web apps";
   license = stdenv.lib.licenses.bsd3;

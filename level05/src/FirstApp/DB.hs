@@ -1,16 +1,25 @@
 {-# LANGUAGE OverloadedStrings #-}
-module FirstApp.DB where
+module FirstApp.DB
+  ( Table (..)
+  , FirstAppDB (FirstAppDB)
+  , initDb
+  , closeDb
+  , addCommentToTopic
+  , getComments
+  , getTopics
+  , deleteTopic
+  ) where
 
-import GHC.Int (Int64)
+import           Data.Text                          (Text)
+import qualified Data.Text                          as Text
 
-import           Data.Text                        (Text)
+import           Data.Time                          (getCurrentTime)
 
-import Data.Time (getCurrentTime)
+import           Database.SQLite.Simple             (Connection, Query (..))
+import qualified Database.SQLite.Simple             as Sql
 
-import           Database.PostgreSQL.Simple       (Connection, ToRow, FromRow, Query)
-import           Database.PostgreSQL.Simple.Types (Identifier (..))
-
-import qualified Database.PostgreSQL.Simple       as PG
+import qualified Database.SQLite.SimpleErrors       as Sql
+import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import           FirstApp.Types
 
@@ -19,70 +28,70 @@ newtype Table = Table
   { getTableName :: Text }
   deriving Show
 
-newtype DbName = DbName
-  { getDbName :: String }
-  deriving Show
-
-newtype UserName = UserName
-  { getUserName :: String }
-  deriving Show
-
+-- We have a data type to simplify passing around the information we need to run
+-- our database queries. This also allows things to change over time without
+-- having to rewrite all of the functions that need to interact with DB related
+-- things in different ways.
 data FirstAppDB = FirstAppDB
   { dbConn  :: Connection
   , dbTable :: Table
   }
 
-tableName
-  :: FirstAppDB
-  -> Identifier
-tableName =
-  Identifier . getTableName . dbTable
-
+-- Quick helper to pull the connection and close it down.
 closeDb
   :: FirstAppDB
   -> IO ()
 closeDb =
-  PG.close . dbConn
+  Sql.close . dbConn
+
+-- Due to the way our application is designed, we have a slight SQL injection
+-- risk because we pull the table name from the config or input arguments. This
+-- attempts to mitigate that somewhat by removing the need for repetitive string
+-- mangling when building our queries. We simply write the query and pass it
+-- through this function that requires the Table information and everything is
+-- taken care of for us. This is probably not the way to do things in a large
+-- scale app.
+withTable
+  :: Table
+  -> Query
+  -> Query
+withTable t = Sql.Query
+  . Text.replace "$$tablename$$" (getTableName t)
+  . fromQuery
 
 initDb
-  :: UserName
-  -> DbName
+  :: FilePath
   -> Table
-  -> IO FirstAppDB
-initDb un dbN tab = do
-  -- The ConnectInfo type from PostgreSQL has extra configuration options if your local setup is a bit different
-  -- https://hackage.haskell.org/package/postgresql-simple-0.5.3.0/docs/Database-PostgreSQL-Simple.html#v:defaultConnectInfo
-  --
-  -- Use the info to adjust the default connection options.
-  let info = PG.defaultConnectInfo
-             { PG.connectUser     = getUserName un
-             , PG.connectDatabase = getDbName dbN
-             }
+  -> IO ( Either SQLiteResponse FirstAppDB )
+initDb fp tab = Sql.runDBAction $ do
   -- Initialise the connection to the DB...
   -- - What could go wrong here?
   -- - What haven't we be told in the types?
-  con <- PG.connect info
+  con <- Sql.open fp
   -- Initialise our one table, if it's not there already
-  _ <- PG.execute con createTableQ (PG.Only . Identifier $ getTableName tab)
-  -- Wrap it up and hand it back.
+  _ <- Sql.execute_ con createTableQ
   pure $ FirstAppDB con tab
-
-createTableQ
-  :: PG.Query
-createTableQ =
+  where
   -- Query has a IsString instance so you can write straight strings like this
   -- and it will convert them into a Query type, use '?' as placeholders for
   -- ORDER DEPENDENT interpolation.
-  "CREATE TABLE IF NOT EXISTS ? (id SERIAL PRIMARY KEY, topic TEXT, comment TEXT, time TIMESTAMPTZ)"
-  -- Another way to express this query if you prefer being able to use line
-  -- breaks is to use the QuasiQuotes extension and write the following:
-  -- [sql| CREATE TABLE IF NOT EXISTS ? (
-  --       id SERIAL PRIMARY KEY,
-  --       topic TEXT,
-  --       comment TEXT,
-  --       time TIMESTAMPTZ
-  --     )
-  --     |]
+    createTableQ = withTable tab
+      "CREATE TABLE IF NOT EXISTS $$tablename$$ (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time INTEGER)"
+
+runDb
+  :: (a -> Either Error b)
+  -> IO a
+  -> IO (Either Error b)
+runDb f a = do
+  r <- Sql.runDBAction a
+  pure $ either (Left . DBError) f r
+  -- Choices, choices...
+  -- Sql.runDBAction a >>= pure . either (Left . DBError) f
+  -- these two are pretty much the same.
+  -- Sql.runDBAction >=> pure . either (Left . DBError) f
+  -- this is because we noticed that our call to pure, which means we should
+  -- just be able to fmap to victory.
+  -- fmap ( either (Left . DBError) f ) . Sql.runDBAction
 
 getComments
   :: FirstAppDB
@@ -90,20 +99,12 @@ getComments
   -> IO (Either Error [Comment])
 getComments db t = do
   -- Write the query with an icky string and remember your placeholders!
-  let q = "SELECT id,topic,comment,time FROM ? WHERE topic = ?"
-  -- Run the query against our DB using our connection.
-  -- To build the replacements for the query placeholders, this package uses
-  -- tuples. Remember that the '?' are order dependent so if you get your input
-  -- parameters in the wrong order, the types won't save you here. More on that
-  -- sort of goodness later.
-  res <- PG.query (dbConn db) q (tableName db, getTopic t)
+  let q = withTable (dbTable db)
+        "SELECT id,topic,comment,time FROM $$tablename$$ WHERE topic = ?"
   -- To be doubly and triply sure we've no garbage in our response, we take care
   -- to convert our DB storage type into something we're going to share with the
-  -- outside world. Checking again for things like empty Topic or CommentText
-  -- values.
-  pure $ traverse fromDbComment res
-  -- Note that because of the use of traverse, this function will fail at the
-  -- first record that is invalid and discard any successful values.
+  -- outside world. Checking again for things like empty Topic or CommentText values.
+  runDb ( traverse fromDbComment ) $ Sql.query (dbConn db) q [ getTopic t ]
 
 addCommentToTopic
   :: FirstAppDB
@@ -115,26 +116,31 @@ addCommentToTopic db t c = do
   nowish <- getCurrentTime
   -- Note the triple, matching the number of values we're trying to insert, plus
   -- one for the table name.
-  let q = "INSERT INTO ? (topic,comment,time) VALUES (?,?,?)"
-  -- We use the PG.execute function this time as we don't care about anything
+  let q = withTable (dbTable db)
+        -- Remember that the '?' are order dependent so if you get your input
+        -- parameters in the wrong order, the types won't save you here. More on that
+        -- sort of goodness later.
+        "INSERT INTO $$tablename$$ (topic,comment,time) VALUES (?,?,?)"
+  -- We use the execute function this time as we don't care about anything
   -- that is returned. The execute function will still return the number of rows
   -- affected by the query, which in our case should always be 1.
-  res <- PG.execute (dbConn db) q (
-    tableName db,
-    getTopic t,
-    getCommentText c,
-    nowish
-    )
+  runDb Right $ Sql.execute (dbConn db) q (getTopic t, getCommentText c, nowish)
   -- An alternative is to write a returning query to get the Id of the DbComment
-  -- we've created. We're being pretty lazy right now so just check we've
-  -- affected a single row and move on.
-  pure $ if res == 1 then Right ()
-    else Left (DBError "Comment Insert Failed")
+  -- we've created. We're being lazy (hah!) for now, so assume awesome and move on.
 
 getTopics
   :: FirstAppDB
   -> IO (Either Error [Topic])
-getTopics db = do
-  let q = "SELECT DISTINCT topic FROM ?"
-  res <- PG.query (dbConn db) q (PG.Only $ tableName db)
-  pure $ traverse ( mkTopic . PG.fromOnly ) res
+getTopics db =
+  let q = withTable (dbTable db) "SELECT DISTINCT topic FROM $$tablename$$"
+  in
+    runDb (traverse ( mkTopic . Sql.fromOnly )) $ Sql.query_ (dbConn db) q
+
+deleteTopic
+  :: FirstAppDB
+  -> Topic
+  -> IO (Either Error ())
+deleteTopic db t =
+  let q = withTable (dbTable db) "DELETE FROM $$tablename$$ WHERE topic = ?"
+  in
+    runDb Right $ Sql.execute (dbConn db) q [getTopic t]

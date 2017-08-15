@@ -53,6 +53,7 @@ library
                      , FirstApp.DB
                      , FirstApp.Main
   
+  ghc-options:         -Wall -Werror
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.9 && <4.10
                      , wai == 3.2.*
@@ -62,10 +63,12 @@ library
                      , text == 1.2.*
                      , optparse-applicative == 0.13.*
                      , aeson == 1.*
-                     , postgresql-simple == 0.5.*
                      , mtl == 2.2.*
                      , time == 1.6.*
-                      
+                     , sqlite-simple == 0.4.*
+                     , sqlite-simple-errors == 0.6.*
+
+                     
   -- Directories containing source files.
   hs-source-dirs:      src
   

@@ -14,10 +14,13 @@ import qualified FirstApp.Main              as Main
 
 main :: IO ()
 main = do
+  -- We're still going to be running our application so we need to load the config.
   cfgE <- Conf.parseOptions "appconfig.json"
   case cfgE of
 
     Left err -> do
+      -- Die loudly if the config couldn't be loaded, ensuring we exit with a
+      -- failure code to trip up anything that might be watching out run status.
       print err
       Exit.exitFailure
 
@@ -28,7 +31,11 @@ main = do
           -- transparent or elegant, but it works sufficiently well for these tests.
           msg = fromString . LBS8.unpack $ Conf.mkMessage cfg
 
+      -- The hspec package provides a runner that is a contained context where
+      -- all of the specifications are executed.
       hspec . with app' $ do
+        -- For each specification, you describe and initial aspect and then
+        -- populate it with all of the individual test cases.
 
         -- AddRq Spec
         describe "POST /topic/add" $ do
