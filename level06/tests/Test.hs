@@ -12,7 +12,7 @@ import qualified FirstApp.Conf  as Conf
 import qualified FirstApp.DB    as DB
 import qualified FirstApp.Main  as Main
 import qualified FirstApp.Types as Types
-
+import qualified FirstApp.AppM  as AppM
 main :: IO ()
 main = do
   let dieWith m = print m >> Exit.exitFailure
@@ -22,17 +22,16 @@ main = do
 
     Left err -> dieWith err
 
-    Right (cfg,db) -> do
-      let app' = pure ( Main.app cfg db )
+    Right env -> do
+      let app' = pure ( Main.app env )
 
           flushTopic =
             -- Clean up and yell about our errors
             fmap ( either dieWith pure . join ) .
             -- Purge all of the comments for this topic for our tests
-            traverse ( DB.deleteTopic db )
+            traverse ( DB.deleteTopic (AppM.envDb env) )
             -- We don't export the constructor so even for known values we have
-            -- to play by the rules. There is no - "Oh just this one time.", do
-            -- it right.
+            -- to play by the rules. There is no - "Oh just this one time.", do it right.
             $ Types.mkTopic "fudge"
 
       -- Run the tests with a DB topic flush between each spec
