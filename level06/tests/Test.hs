@@ -17,6 +17,7 @@ main :: IO ()
 main = do
   let dieWith m = print m >> Exit.exitFailure
 
+  -- Keeping everything in sync with out larger application changes.
   reqsE <- Main.prepareAppReqs
   case reqsE of
 

@@ -89,8 +89,15 @@ app
 app env rq cb =
   requestToResponse >>= cb
   where
-    requestToResponse = runAppM env $
-      mkRequest rq >>= handleRErr >>= handleRespErr
+    -- Now that our request handling and response creating functions operate
+    -- within our AppM context, we need to run the AppM to get our IO action out
+    -- to be run and handed off to the callback function. We've already written
+    -- the function for this so include the 'runAppM' with the Env.
+    requestToResponse = runAppM env $ do
+      -- Exercise: Rewrite this function to remove the need for the intermediate values.
+      rq' <- mkRequest rq
+      er' <- handleRErr rq'
+      handleRespErr er'
 
     handleRespErr =
       either mkErrorResponse pure
@@ -102,14 +109,31 @@ handleRequest
   :: RqType
   -> AppM (Either Error Response)
 handleRequest rqType = do
+  -- Now that we're operating within the context of our AppM, which is a
+  -- ReaderT, we're able to access the values stored in the Env.
+  --
+  -- Two functions that allow us to access the data stored in our ReaderT are:
+  -- ask :: MonadReader r m => m r
+  -- &
+  -- asks :: MonadReader r m => (r -> a) -> m a
+  --
+  -- We will use asks here as we're only after the FirstAppDB, so...
+  -- > envDb      :: Env -> FirstAppDB
+  -- > AppM       :: ReaderT Env IO a
+  -- > asks       :: (Env -> a) -> AppM a
+  -- > asks envDb :: AppM FirstAppDB
   db <- asks envDb
   liftIO $ case rqType of
+    -- Exercise: Could this be generalised to clean up the repetition ?
     AddRq t c -> fmap (const ( Res.resp200 "Success" )) <$> DB.addCommentToTopic db t c
     ViewRq t  -> fmap Res.resp200Json <$> DB.getComments db t
     ListRq    -> fmap Res.resp200Json <$> DB.getTopics db
 
 mkRequest
   :: Request
+  -- We change this to be in our AppM context as well because when we're
+  -- constructing our RqType we might want to call on settings or other such
+  -- things, maybe.
   -> AppM ( Either Error RqType )
 mkRequest rq =
   case ( pathInfo rq, requestMethod rq ) of
@@ -153,6 +177,9 @@ mkErrorResponse UnknownRoute     = pure $ Res.resp404 "Unknown Route"
 mkErrorResponse EmptyCommentText = pure $ Res.resp400 "Empty Comment"
 mkErrorResponse EmptyTopic       = pure $ Res.resp400 "Empty Topic"
 mkErrorResponse ( DBError e )    = do
+  -- As with our request for the FirstAppDB, we use the asks function from
+  -- Control.Monad.Reader and pass the field accessor from the Env record.
   rick <- asks loggingRick
   rick . Text.pack $ show e
+  -- Be a sensible developer and don't leak your DB errors over the interwebs.
   pure $ Res.resp500 "OH NOES"
