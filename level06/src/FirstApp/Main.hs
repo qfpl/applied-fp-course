@@ -62,7 +62,7 @@ prepareAppReqs = do
   -- which might have failed to be created for some reason, but our DB start up
   -- might have also failed for some reason. This is a bit clunky
   dbE <- fmap join $ traverse initDB cfgE
-  -- Wrap our values (if we have them) in a tuple for use in other parts of our
+  -- Wrap our values (if we have them) in our Env for use in other parts of our
   -- application. We do it this way so we can have access to the bits we need
   -- when starting up the full app or one for testing.
   pure $ liftA2 ( Env logToErr ) cfgE dbE
