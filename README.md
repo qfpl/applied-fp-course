@@ -29,6 +29,8 @@ We
 Tonys simpler version:
 ---
 
+NB : No doctests yet :(
+
 - Simplest web app - LEVEL 01
 - with shared state (RPS game) -- Not awesome, maybe just do config (readerT) instead.
 - with JSON/aeson
@@ -39,14 +41,22 @@ Tonys simpler version:
 * Level 01 : Simple Hello World web app.
 * Level 02 : Define our application spec with types!
 * Level 03 : Add some flexible configuration
-
--- Working on this one...
 * Level 04 : Testing & Tools (hspec & ghcid)
-
 * Level 05 : Database layer (postgresql-simple)
 * Level 06 : ReaderT & Refactoring
+-- Working on this one...
 * Level 07 : ExceptT & Refactoring
+
+-- NEXT...
 * Level 08 : (Bonus Round) Lenses & Refactoring
+
+-- Unsure...
+* Level 09 : Add Sessions (handwave?), so I can have some semblance of application state so I can add some property based tests?
+
+TODO:
+* Teacher notes/guide
+* Second branch with stubbed out code for students to use
+* Answer branch with working code
 
 Below is Sean going nuts for things
 ---
