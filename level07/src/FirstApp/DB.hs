@@ -89,6 +89,11 @@ runDb
   -> AppM a
 runDb a = do
   db <- asks ( dbConn . envDb )
+  -- We use the liftDb function to take the IO (Either SQLiteResponse a) and
+  -- convert it into an `m (Either Error a)` so that it matches the requirements
+  -- to be in our AppM, we then lean on the ExceptT functionality and use our
+  -- helper to either `throwError` with any DB errors that have made it this far
+  -- or simply return the desired value.
   liftDb db >>= throwL
   -- Or alternatively, if you hate variables...
   -- asks (dbConn.envDb) >>= ( liftDb >=> throwL )

@@ -6,12 +6,13 @@ module FirstApp.Main
   ) where
 
 import           Control.Monad.Except               (ExceptT (ExceptT),
-                                                     runExceptT, withExceptT)
+                                                     runExceptT)
 import           Control.Monad.IO.Class             (liftIO)
 
 import           Network.Wai
 import           Network.Wai.Handler.Warp           (run)
 
+import           Data.Bifunctor                     (first)
 import           Data.Either                        (Either (..), either)
 
 import           Data.Text                          (Text)
@@ -68,8 +69,7 @@ prepareAppReqs = runExceptT $ do
   pure $ Env cfg db
   where
     toStartUpErr e =
-      withExceptT e   -- apply our error constructor to unify the error types to StartUpError
-      . ExceptT       -- convert our function to an ExceptT with the constructor
+      ExceptT . fmap (first e)
 
     -- Take our possibly failing configuration/db functions with their unique
     -- error types and turn them into a consistently typed ExceptT. We can then
@@ -134,6 +134,7 @@ mkAddRequest
   -> Either Error RqType
 mkAddRequest ti c = AddRq
   <$> mkTopic ti
+  -- Got string types...
   <*> (mkCommentText . decodeUtf8 $ LBS.toStrict c)
 
 mkViewRequest
