@@ -14,6 +14,8 @@ module FirstApp.DB
 import           Control.Monad.IO.Class             (liftIO)
 import           Control.Monad.Reader               (asks)
 
+import           Data.Bifunctor                     (first)
+
 import qualified Data.Text                          as Text
 
 import           Data.Time                          (getCurrentTime)
@@ -53,13 +55,15 @@ withTable t = Sql.Query
   . Text.replace "$$tablename$$" (getTableName t)
   . fromQuery
 
+-- If we're using AppM, then the Table information will be stored in our
+-- ReaderT, so we can request it from there without requiring it to be passed.
+-- If this location or type changes, then the compiler will complain so it won't
+-- be a forgotten feature.
 withTableM
   :: Query
   -> AppM Query
-withTableM q = do
-  t <- asks (dbTable . envDb)
-  let replc = Text.replace "$$tablename$$" (getTableName t)
-  pure $ Sql.Query . replc $ fromQuery q
+withTableM q =
+  (`withTable` q) <$> asks (dbTable . envDb)
 
 initDb
   :: FilePath
@@ -86,9 +90,14 @@ runDb
 runDb a = do
   db <- asks ( dbConn . envDb )
   liftDb db >>= throwL
+  -- Or alternatively, if you hate variables...
+  -- asks (dbConn.envDb) >>= ( liftDb >=> throwL )
   where
-    liftDb conn = liftIO
-      $ either (( Left . DBError )) Right
+    -- The first function here is from the Data.Bifunctor module and lets us run
+    -- functions on the left side of a Bifunctor:
+    -- first :: ( a -> b ) -> p a c -> p b c
+    -- Where `p` is our Bifunctor: Either
+    liftDb conn = liftIO $ first DBError
       <$> Sql.runDBAction (a conn)
 
 faQuery

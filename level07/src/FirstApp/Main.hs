@@ -33,7 +33,7 @@ import           FirstApp.Error                     (Error (..))
 import qualified FirstApp.Responses                 as Res
 import           FirstApp.Types
 
--- Our startup is becoming more complicated and could fail in new and
+-- Our startup process is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
 -- single type so that we can deal with the entire startup process as a whole.
 data StartUpError
@@ -41,7 +41,8 @@ data StartUpError
   | DbInitErr SQLiteResponse
   deriving Show
 
-runApp :: IO ()
+runApp
+  :: IO ()
 runApp = do
   appE <- prepareAppReqs
   either print runWithDbConn appE
@@ -52,6 +53,13 @@ runApp = do
     appWithDb env =
       run ( Conf.getPort . Conf.port $ envConfig env ) (app env)
 
+-- Monad transformers can be used without needing to write the newtype. Recall
+-- that the constructor for ExceptT has a type of :: m (Either e a). So if you
+-- have multiple functions that match that pattern and you don't want to have to
+-- thread the error handling needle yourself. You can apply the constructor to
+-- the functions and work directly on the values, knowing that the error
+-- handling will work as expected. Then you simply `runExceptT` and produce the
+-- final Either value.
 prepareAppReqs
   :: IO (Either StartUpError Env)
 prepareAppReqs = runExceptT $ do
@@ -60,8 +68,13 @@ prepareAppReqs = runExceptT $ do
   pure $ Env cfg db
   where
     toStartUpErr e =
-      withExceptT e . ExceptT
+      withExceptT e   -- apply our error constructor to unify the error types to StartUpError
+      . ExceptT       -- convert our function to an ExceptT with the constructor
 
+    -- Take our possibly failing configuration/db functions with their unique
+    -- error types and turn them into a consistently typed ExceptT. We can then
+    -- use them in a `do` block as if the Either isn't there. Extracting the
+    -- final result before returning.
     initConf = toStartUpErr ConfErr $
       Conf.parseOptions "appconfig.json"
 
@@ -85,26 +98,35 @@ app env rq cb = do
       _ <- logToErr $ Text.pack (show e)
       pure $ mkErrorResponse e
 
+-- This function has changed quite a bit since we changed our DB functions to be
+-- part of AppM. We no longer have to deal with the extra layer of the returned
+-- Either and these functions share the same Monad, AppM.
 handleRequest
   :: RqType
   -> AppM Response
-handleRequest ( AddRq t c ) = Res.resp200 "Success" <$  DB.addCommentToTopic t c
-handleRequest ( ViewRq t )  = Res.resp200Json       <$> DB.getComments t
-handleRequest ListRq        = Res.resp200Json       <$> DB.getTopics
+handleRequest ( AddRq t c ) =
+  -- We've cleaned this branch up a bit more by dropping our use of `const` as
+  -- we can use the Functor operator that ignores the result on the right hand
+  -- side and returns the result of the function on the left.
+  Res.resp200 "Success" <$  DB.addCommentToTopic t c
+handleRequest ( ViewRq t )  =
+  Res.resp200Json       <$> DB.getComments t
+handleRequest ListRq        =
+  Res.resp200Json       <$> DB.getTopics
 
 mkRequest
   :: Request
   -> AppM RqType
-mkRequest rq = throwL =<<
-  case ( pathInfo rq, requestMethod rq ) of
-      -- Commenting on a given topic
-      ( [t, "add"], "POST" ) -> liftIO $ mkAddRequest t <$> strictRequestBody rq
-      -- View the comments on a given topic
-      ( [t, "view"], "GET" ) -> pure ( mkViewRequest t )
-      -- List the current topics
-      ( ["list"], "GET" )    -> pure mkListRequest
-      -- Finally we don't care about any other requests so throw your hands in the air
-      _                      -> pure mkUnknownRouteErr
+mkRequest rq =
+  throwL =<< case ( pathInfo rq, requestMethod rq ) of
+  -- Commenting on a given topic
+  ( [t, "add"], "POST" ) -> liftIO $ mkAddRequest t <$> strictRequestBody rq
+    -- View the comments on a given topic
+  ( [t, "view"], "GET" ) -> pure ( mkViewRequest t )
+  -- List the current topics
+  ( ["list"], "GET" )    -> pure mkListRequest
+  -- We don't care about any other requests so throw your hands in the air
+  _                      -> pure mkUnknownRouteErr
 
 mkAddRequest
   :: Text
