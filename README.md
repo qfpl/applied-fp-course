@@ -36,14 +36,15 @@ NB : No doctests yet :(
 - with JSON/aeson
 - with testing (hedgehog and friends)
 - lenses and refactoring possibilities
-- with database layer (postgresql-simple | sqlite)
+- with database layer (sqlite-simple)
 
 * Level 01 : Simple Hello World web app.
 * Level 02 : Define our application spec with types!
 * Level 03 : Add some flexible configuration
 * Level 04 : Testing & Tools (hspec & ghcid)
-* Level 05 : Database layer (postgresql-simple)
+* Level 05 : Database layer (sqlite-simple)
 * Level 06 : ReaderT & Refactoring
+
 -- Working on this one...
 * Level 07 : ExceptT & Refactoring
 
@@ -51,7 +52,8 @@ NB : No doctests yet :(
 * Level 08 : (Bonus Round) Lenses & Refactoring
 
 -- Unsure...
-* Level 09 : Add Sessions (handwave?), so I can have some semblance of application state so I can add some property based tests?
+* Level 09 : Add session controls (login, logout), so I can have some semblance
+  of application state so I can add some property based tests?
 
 TODO:
 * Teacher notes/guide
