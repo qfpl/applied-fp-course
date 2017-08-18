@@ -50,7 +50,7 @@ runApp = do
       appWithDb env >> DB.closeDb (envDb env)
 
     appWithDb env =
-      run ( Conf.getPort . Conf.port $ envConfig env) (app env)
+      run ( Conf.getPort . Conf.port $ envConfig env ) (app env)
 
 prepareAppReqs
   :: IO (Either StartUpError Env)
@@ -88,30 +88,23 @@ app env rq cb = do
 handleRequest
   :: RqType
   -> AppM Response
-handleRequest rqType = do
-  case rqType of
-    AddRq t c -> Res.resp200 "Success" <$ DB.addCommentToTopic t c
-    ViewRq t  -> Res.resp200Json <$> DB.getComments t
-    ListRq    -> Res.resp200Json <$> DB.getTopics
+handleRequest ( AddRq t c ) = Res.resp200 "Success" <$  DB.addCommentToTopic t c
+handleRequest ( ViewRq t )  = Res.resp200Json       <$> DB.getComments t
+handleRequest ListRq        = Res.resp200Json       <$> DB.getTopics
 
 mkRequest
   :: Request
-  -- We change this to be in our AppM context as well because when we're
-  -- constructing our RqType we might want to call on settings or other such
-  -- things, maybe.
   -> AppM RqType
-mkRequest rq =
-    case ( pathInfo rq, requestMethod rq ) of
+mkRequest rq = throwL =<<
+  case ( pathInfo rq, requestMethod rq ) of
       -- Commenting on a given topic
-      ( [t, "add"], "POST" ) -> do
-        r <- liftIO $ mkAddRequest t <$> strictRequestBody rq
-        throwL r
+      ( [t, "add"], "POST" ) -> liftIO $ mkAddRequest t <$> strictRequestBody rq
       -- View the comments on a given topic
-      ( [t, "view"], "GET" ) -> throwL ( mkViewRequest t )
+      ( [t, "view"], "GET" ) -> pure ( mkViewRequest t )
       -- List the current topics
-      ( ["list"], "GET" )    -> throwL mkListRequest
+      ( ["list"], "GET" )    -> pure mkListRequest
       -- Finally we don't care about any other requests so throw your hands in the air
-      _                      -> throwL mkUnknownRouteErr
+      _                      -> pure mkUnknownRouteErr
 
 mkAddRequest
   :: Text
