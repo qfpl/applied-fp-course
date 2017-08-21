@@ -50,6 +50,7 @@ main = do
 
       -- Run the tests with a DB topic flush between each spec
       hspec . with ( flushTopic >> app' ) $ do
+        -- Save us a bit of repetition
         let pOST = post ( "/" <> testTopic <> "/add" )
 
         -- AddRq Spec

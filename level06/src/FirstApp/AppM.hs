@@ -9,13 +9,7 @@ import           Data.Text              (Text)
 import           FirstApp.Conf          (Conf)
 import           FirstApp.DB            (FirstAppDB)
 
--- One motivation for using ReaderT is that there exists some information in
--- your application that is used almost everywhere and it is tiresome to have to
--- weave it through everywhere. We also don't allow "global variables" as they
--- are error prone, fragile, and prevent you from properly being able to reason
--- about the operation of your program.
---
--- a ReaderT is a function from some 'r' to some 'm a' : (r -> m a). Where by
+-- a ReaderT is a function from some 'r' to some 'm a' : (r -> m a). Whereby
 -- the 'r' is accessible to all functions that run in the context of that 'm'.
 --
 -- This means that if you use the 'r' everywhere or simply enough throughout
@@ -48,7 +42,7 @@ newtype AppM a = AppM
   -- but the name differences alone make the confusion a little less likely.
   { unAppM :: ReaderT Env IO a }
   -- Because we're using a newtype, all of the instance definitions for ReaderT
-  -- would normally no apply. However, because we've done nothing but create a
+  -- would normally not apply. However, because we've done nothing but create a
   -- convenience wrapper for our ReaderT, there is an extension for Haskell that
   -- allows it to simply extend all the existing instances to work without AppM.
   -- Add the GeneralizedNewtypeDeriving pragma to the top of the file and these
@@ -85,4 +79,3 @@ runAppM
   -> IO a
 runAppM env appM =
   runReaderT (unAppM appM) env
-

@@ -14,6 +14,7 @@ import           Control.Monad.Reader               (asks)
 import           Network.Wai
 import           Network.Wai.Handler.Warp           (run)
 
+import           Data.Bifunctor                     (first)
 import           Data.Either                        (Either (..), either)
 
 import           Data.Text                          (Text)
@@ -73,7 +74,7 @@ prepareAppReqs = do
       -- This just makes it a bit easier to take our individual initialisation
       -- functions and ensure that they both conform to the StartUpError type
       -- that we want them too.
-      fmap ( either (Left . e) Right )
+      fmap (first e)
 
     initConf = toStartUpErr ConfErr
       -- Prepare the configgening
