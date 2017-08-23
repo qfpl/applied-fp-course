@@ -34,29 +34,29 @@ Similar to when we were considering what might go wrong with the RqTypes, lets
 think about might go wrong when trying to gather our configuration information.
 -}
 data ConfigError
-  = MissingPort
-  | MissingHelloMsg
-  deriving Show
+  -- = MissingPort
+  -- | MissingHelloMsg
+  -- deriving Show
 
 {-|
 As before, a bare Int or ByteString doesn't tell us anything about our intent,
 so lets wrap it up in a newtype.
 -}
-newtype Port = Port
-  { getPort :: Int }
-  deriving Show
+-- newtype Port = Port
+--   { getPort :: Int }
+--   deriving Show
 
-newtype HelloMsg = HelloMsg
-  { getHelloMsg :: ByteString }
-  deriving Show
+-- newtype HelloMsg = HelloMsg
+--   { getHelloMsg :: ByteString }
+--   deriving Show
 
 -- This is a helper function to take a string and turn it into our HelloMsg
 -- type.
-helloFromStr
-  :: String
-  -> HelloMsg
-helloFromStr =
-  HelloMsg . fromString
+-- helloFromStr
+--   :: String
+--   -> HelloMsg
+-- helloFromStr =
+  -- HelloMsg . fromString
 
 {-|
 This will be our configuration value, eventually it may contain more things
@@ -64,9 +64,9 @@ but this will do for now. We will have a customisable port number, and a
 changeable message for our users.
 -}
 data Conf = Conf
-  { port     :: Port
-  , helloMsg :: HelloMsg
-  }
+  -- { port     :: Port
+  -- , helloMsg :: HelloMsg
+  -- }
 
 {-|
 Our application will be able to have configuration from both a file and from
@@ -96,9 +96,9 @@ wrapped values. We can then define a Monoid instance for it and have our Conf be
 a known good configuration.
 -}
 data PartialConf = PartialConf
-  { pcPort     :: Last Port
-  , pcHelloMsg :: Last HelloMsg
-  }
+  -- { pcPort     :: Last Port
+  -- , pcHelloMsg :: Last HelloMsg
+  -- }
 
 {-|
 We now define our Monoid instance for PartialConf. Allowing us to define our
@@ -110,20 +110,22 @@ Note that the types won't be able to completely save you here, if you mess up
 the ordering of your 'a' and 'b' you will not end up with the desired result.
 -}
 instance Monoid PartialConf where
-  mempty = PartialConf mempty mempty
+  -- mempty = PartialConf mempty mempty
 
-  mappend a b = PartialConf
-    { pcPort     = pcPort a <> pcPort b
-    , pcHelloMsg = pcHelloMsg a <> pcHelloMsg b
-    }
+  -- mappend a b = PartialConf
+  --   { pcPort     = pcPort a <> pcPort b
+  --   , pcHelloMsg = pcHelloMsg a <> pcHelloMsg b
+  --   }
 
 -- We have some sane defaults that we can always rely on, so define them using
 -- our PartialConf.
 defaultConf
   :: PartialConf
-defaultConf = PartialConf
-  (pure (Port 3000))
-  (pure (HelloMsg "World!"))
+defaultConf =
+  error "defaultConf not implemented"
+  -- PartialConf
+  -- (pure (Port 3000))
+  -- (pure (HelloMsg "World!"))
 
 -- We need something that will take our PartialConf and see if can finally build
 -- a complete Conf record. Also we need to highlight any missing config values
@@ -131,15 +133,17 @@ defaultConf = PartialConf
 makeConfig
   :: PartialConf
   -> Either ConfigError Conf
-makeConfig pc = Conf
-  <$> lastToEither MissingPort pcPort
-  <*> lastToEither MissingHelloMsg pcHelloMsg
-  where
-    -- You don't need to provide type signatures for most functions in where/let
-    -- sections. Sometimes the compiler might need a bit of help, or you would
-    -- like to be explicit in your intentions.
-    lastToEither e g =
-      maybe (Left e) Right . getLast $ g pc
+makeConfig pc =
+  error "makeConfig not implemented"
+  -- Conf
+  -- <$> lastToEither MissingPort pcPort
+  -- <*> lastToEither MissingHelloMsg pcHelloMsg
+  -- where
+  --   -- You don't need to provide type signatures for most functions in where/let
+  --   -- sections. Sometimes the compiler might need a bit of help, or you would
+  --   -- like to be explicit in your intentions.
+  --   lastToEither e g =
+  --     maybe (Left e) Right . getLast $ g pc
 
 -- This is the function we'll actually export for building our configuration.
 -- Since it wraps all our efforts to read information from the command line, and
@@ -149,10 +153,12 @@ makeConfig pc = Conf
 parseOptions
   :: FilePath
   -> IO (Either ConfigError Conf)
-parseOptions fp = do
-  fileConf <- parseJSONConfigFile fp
-  cmdLine  <- execParser commandLineParser
-  pure $ makeConfig (defaultConf <> fileConf <> cmdLine)
+parseOptions fp =
+  error "parseOptions not implemented"
+  -- do
+  -- fileConf <- parseJSONConfigFile fp
+  -- cmdLine  <- execParser commandLineParser
+  -- pure $ makeConfig (defaultConf <> fileConf <> cmdLine)
 
 -- | File Parsing
 
@@ -164,35 +170,37 @@ parseOptions fp = do
 parseJSONConfigFile
   :: FilePath
   -> IO PartialConf
-parseJSONConfigFile fp = do
-  fc <- readObject
-  pure . fromMaybe mempty $ toPartialConf <$> fc
-  where
-    toPartialConf cObj = PartialConf
-      ( offObj "port" Port cObj )
-      ( offObj "helloMsg" helloFromStr cObj )
+parseJSONConfigFile fp =
+  error "parseJSONConfigFile not implemented"
+  -- do
+  -- fc <- readObject
+  -- pure . fromMaybe mempty $ toPartialConf <$> fc
+  -- where
+  --   toPartialConf cObj = PartialConf
+  --     ( offObj "port" Port cObj )
+  --     ( offObj "helloMsg" helloFromStr cObj )
 
-    -- Parse out the keys from the object, maybe...
-    offObj
-      :: FromJSON a
-      => Text
-      -> (a -> b)
-      -> Aeson.Object
-      -> Last b
-    offObj k c obj =
-      -- Too weird ?
-      Last $ c <$> Aeson.parseMaybe (Aeson..: k) obj
+  --   -- Parse out the keys from the object, maybe...
+  --   offObj
+  --     :: FromJSON a
+  --     => Text
+  --     -> (a -> b)
+  --     -> Aeson.Object
+  --     -> Last b
+  --   offObj k c obj =
+  --     -- Too weird ?
+  --     Last $ c <$> Aeson.parseMaybe (Aeson..: k) obj
 
-    -- Use bracket to save ourselves from horrible exceptions, which are
-    -- horrible.
-    --
-    -- Better ways to do this ?
-    readObject
-      :: IO (Maybe Aeson.Object)
-    readObject = bracketOnError
-      (LBS.readFile fp)
-      (const ( pure Nothing ))
-      (pure . Aeson.decode)
+  --   -- Use bracket to save ourselves from horrible exceptions, which are
+  --   -- horrible.
+  --   --
+  --   -- Better ways to do this ?
+  --   readObject
+  --     :: IO (Maybe Aeson.Object)
+  --   readObject = bracketOnError
+  --     (LBS.readFile fp)
+  --     (const ( pure Nothing ))
+  --     (pure . Aeson.decode)
 
 -- | Command Line Parsing
 
@@ -211,9 +219,11 @@ commandLineParser =
 -- Combine the smaller parsers into our larger PartialConf type.
 partialConfParser
   :: Parser PartialConf
-partialConfParser = PartialConf
-  <$> portParser
-  <*> helloMsgParser
+partialConfParser =
+  error "partialConfParser not implemented"
+  -- PartialConf
+  -- <$> portParser
+  -- <*> helloMsgParser
 
 -- Parse the Port value off the command line args and into our Last wrapper.
 portParser
@@ -223,10 +233,11 @@ portParser =
              <> short 'p'
              <> metavar "PORT"
              <> help "TCP Port to accept requests on"
-      portReader =
-        eitherReader (fmap Port . readEither)
+      -- portReader =
+      --   eitherReader (fmap Port . readEither)
   in
-    Last <$> optional (option portReader mods)
+    error "portParser not implemented"
+    -- Last <$> optional (option portReader mods)
 
 -- Parse the HelloMsg from the input string into our type and into a Last
 -- wrapper.
@@ -243,4 +254,5 @@ helloMsgParser =
              <> help "Message to respond to requests with."
   in
     -- String -> ByteString -> HelloMsg -> Last HelloMsg... Phew.
-    Last <$> optional (helloFromStr <$> strOption mods)
+    -- Last <$> optional (helloFromStr <$> strOption mods)
+    error "helloMsgParser not implemented"

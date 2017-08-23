@@ -1,19 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
-module FirstApp.Types
-  ( Error (..)
-  , RqType (..)
-  , ContentType (..)
-  -- Exporting newtypes like this will hide the constructor.
-  , Topic (getTopic)
-  , CommentText (getCommentText)
-  -- We provide specific constructor functions.
-  , mkTopic
-  , mkCommentText
-  , renderContentType
-  )where
+module FirstApp.Types where
 
-import Data.Text (Text)
-import Data.ByteString (ByteString)
+import           Data.ByteString (ByteString)
+import           Data.Text       (Text)
 
 {-|
 In Haskell the `newtype` comes with zero runtime cost. It is purely used for
@@ -23,31 +12,20 @@ even [a], you can wrap it up in a `newtype` for clarity.
 The type system will check it for you, and the compiler will eliminate the cost
 once it has passed.
 -}
-newtype Topic = Topic
-  { getTopic :: Text }
-  deriving Show
-
-newtype CommentText = CommentText
-  { getCommentText :: Text }
-  deriving Show
 
 -- Having specialised constructor functions for the newtypes allows you to set
 -- restrictions for your newtype.
 mkTopic
   :: Text
   -> Either Error Topic
-mkTopic "" =
-  Left EmptyTopic
-mkTopic ti =
-  Right (Topic ti)
+mkTopic =
+  error "mkTopic not implemented"
 
 mkCommentText
   :: Text
   -> Either Error CommentText
-mkCommentText "" =
-  Left EmptyCommentText
-mkCommentText ct =
-  Right (CommentText ct)
+mkCommentText =
+  error "mkCommentText not implemented"
 
 {-|
 Working through the specification for our application, what are the
@@ -62,14 +40,11 @@ To that end, we will create the following types:
 
 AddRq : Which needs to the target topic, and the body of the comment.
 
-ViewRq : Which needs the topic being requestd.
+ViewRq : Which needs the topic being requested.
 
 ListRq : Which lists all of the current topics.
 -}
 data RqType
-  = AddRq Topic CommentText
-  | ViewRq Topic
-  | ListRq
 
 {-|
 Not everything goes according to plan, but it's important that our
@@ -80,16 +55,10 @@ So lets think about some of the basic things that can wrong with our
 program and create some values to represent that.
 -}
 data Error
-  = UnknownRoute
-  | EmptyCommentText
-  | EmptyTopic
-  deriving Show
 
 -- Provide a type to list our response content types so we don't try to
 -- do the wrong thing with what we meant to be used as text/JSON etc.
 data ContentType
-  = PlainText
-  | JSON
 
 -- The ContentType description for a header doesn't match our data definition
 -- so we write a little helper function to pattern match on our ContentType
@@ -97,6 +66,5 @@ data ContentType
 renderContentType
   :: ContentType
   -> ByteString
--- renderContentType = error "renderContentType not implemented"
-renderContentType PlainText = "text/plain"
-renderContentType JSON      = "text/json"
+renderContentType =
+  error "renderContentType not implemented"

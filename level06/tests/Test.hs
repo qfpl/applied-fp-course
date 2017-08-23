@@ -27,13 +27,14 @@ main = do
       let app' = pure ( Main.app env )
 
           flushTopic =
+            error "Flush topic not implemented"
             -- Clean up and yell about our errors
-            fmap ( either dieWith pure . join ) .
+            -- fmap ( either dieWith pure . join ) .
             -- Purge all of the comments for this topic for our tests
-            traverse ( DB.deleteTopic (AppM.envDb env) )
+            -- traverse ( DB.deleteTopic (AppM.envDb env) )
             -- We don't export the constructor so even for known values we have
             -- to play by the rules. There is no - "Oh just this one time.", do it right.
-            $ Types.mkTopic "fudge"
+            -- $ Types.mkTopic "fudge"
 
       -- Run the tests with a DB topic flush between each spec
       hspec . with ( flushTopic >> app' ) $ do

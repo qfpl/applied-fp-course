@@ -1,19 +1,20 @@
 {-# LANGUAGE OverloadedStrings #-}
 module FirstApp.Main (runApp) where
 
-import Network.Wai
-import Network.Wai.Handler.Warp (run)
+import           Network.Wai
+import           Network.Wai.Handler.Warp (run)
 
-import Network.HTTP.Types (Status, status200, status404, status400, hContentType)
+import           Network.HTTP.Types       (Status, hContentType, status200,
+                                           status400, status404)
 
-import qualified Data.ByteString.Lazy as LBS
+import qualified Data.ByteString.Lazy     as LBS
 
-import Data.Either (either)
+import           Data.Either              (either)
 
-import Data.Text (Text)
-import Data.Text.Encoding (decodeUtf8)
+import           Data.Text                (Text)
+import           Data.Text.Encoding       (decodeUtf8)
 
-import FirstApp.Types
+import           FirstApp.Types
 
 runApp :: IO ()
 runApp = run 3000 app
@@ -24,26 +25,26 @@ mkResponse
   -> ContentType
   -> LBS.ByteString
   -> Response
-mkResponse sts ct msg =
-  responseLBS sts [(hContentType, renderContentType ct)] msg
+mkResponse =
+  error "mkResponse not implemented"
 
 resp200
   :: LBS.ByteString
   -> Response
 resp200 =
-  mkResponse status200 PlainText
+  error "resp200 not implemented"
 
 resp404
   :: LBS.ByteString
   -> Response
 resp404 =
-  mkResponse status404 PlainText
+  error "resp404 not implemented"
 
 resp400
   :: LBS.ByteString
   -> Response
 resp400 =
-  mkResponse status400 PlainText
+  error "resp400 not implemented"
 -- |
 
 {-|
@@ -54,16 +55,8 @@ that matches our current specification.
 -}
 app
   :: Application
-app rq cb = mkRequest rq
-  >>= fmap handleRespErr . handleRErr
-  >>= cb
-  where
-    -- Does this seem clunky to you?
-    handleRespErr =
-      either mkErrorResponse id
-    -- Because it is clunky, and we have a better solution, later.
-    handleRErr =
-      either ( pure . Left ) handleRequest
+app rq cb =
+  error "app not implemented"
 
 {-|
 Lets use our RqTypes to write a function that will take the input from the
@@ -73,15 +66,7 @@ mkRequest
   :: Request
   -> IO ( Either Error RqType )
 mkRequest rq =
-  case ( pathInfo rq, requestMethod rq ) of
-    -- Commenting on a given topic
-    ( [t, "add"], "POST" ) -> mkAddRequest t <$> strictRequestBody rq
-    -- View the comments on a given topic
-    ( [t, "view"], "GET" ) -> pure ( mkViewRequest t )
-    -- List the current topics
-    ( ["list"], "GET" )    -> pure mkListRequest
-    -- Finally we don't care about any other requests so throw your hands in the air
-    _                      -> pure mkUnknownRouteErr
+  error "mkRequest not implemented"
 
 -- These helpers will take the raw request information and turn it into
 -- one of our data types. This means we draw a line about where the unruly outside
@@ -90,9 +75,8 @@ mkAddRequest
   :: Text
   -> LBS.ByteString
   -> Either Error RqType
-mkAddRequest ti c = AddRq
-  <$> mkTopic ti
-  <*> (mkCommentText . decodeUtf8 $ LBS.toStrict c)
+mkAddRequest ti c =
+  error "mkAddRequest not implemented"
 
 -- This has other benefits, we're able isolate our validation requirements into the
 -- smallest chunks we can manage. This allows for fantastic reuse and it also means
@@ -101,7 +85,7 @@ mkViewRequest
   :: Text
   -> Either Error RqType
 mkViewRequest =
-  fmap ViewRq . mkTopic
+  error "mkViewRequest not implemented"
 
 -- Even thought it may seem trivial or even pointless to write functions such as these
 -- it allows for much greater consistency across the application.
@@ -112,7 +96,8 @@ mkViewRequest =
 mkListRequest
   :: Either Error RqType
 mkListRequest =
-  Right ListRq
+  error "mkListRequest not implemented"
+
 
 {-|
 HALP
@@ -126,19 +111,13 @@ is polymorphic we could mess up and use this where we're trying to return a Topi
 mkUnknownRouteErr
   :: Either Error RqType
 mkUnknownRouteErr =
-  Left UnknownRoute
+  error "mkUnknownRouteErr not implemented"
 
 mkErrorResponse
   :: Error
   -> Response
-mkErrorResponse UnknownRoute =
-  resp404 "Unknown Route"
-mkErrorResponse EmptyCommentText =
-  resp400 "Empty Comment"
-mkErrorResponse EmptyTopic =
-  resp400 "Empty Topic"
--- mkErrorResponse _ =
---   error "mkErrorResponse not implemented"
+mkErrorResponse _ =
+  error "mkErrorResponse not implemented"
 
 {-|
 We'll stub these for now as the general structure and the process of reaching
@@ -156,12 +135,6 @@ a small piece is one of the benefits of developing in this way.
 -}
 handleRequest
   :: RqType
-  -> IO (Either Error Response)
-handleRequest (AddRq _ _) =
-  pure . Right $ resp200 "Fred wuz ere"
-handleRequest (ViewRq _) =
-  pure . Right $ resp200 "Susan was ere"
-handleRequest ListRq =
-  pure . Right $ resp200 "Fred wuz ere, Susan was ere"
--- handleRequest _ =
---   error "handleRequest not implemented"
+  -> Either Error Response
+handleRequest _ =
+  error "handleRequest not implemented"

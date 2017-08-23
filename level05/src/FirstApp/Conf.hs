@@ -32,7 +32,7 @@ import           Options.Applicative        (Parser, ParserInfo, eitherReader,
 
 import           Text.Read                  (readEither)
 
-import           FirstApp.DB                (Table (..))
+-- import           FirstApp.DB                (Table (..))
 
 {-|
 Similar to when we were considering what might go wrong with the RqTypes, lets
@@ -42,7 +42,7 @@ data ConfigError
   = MissingPort
   | MissingHelloMsg
   | MissingTableName
-  | MissingDbFilePath
+  -- | MissingDbFilePath
   deriving Show
 
 {-|
@@ -81,8 +81,8 @@ changeable message for our users.
 data Conf = Conf
   { port       :: Port
   , helloMsg   :: HelloMsg
-  , tableName  :: Table
-  , dbFilePath :: FilePath
+  -- , tableName  :: Table
+  -- , dbFilePath :: FilePath
   }
 
 {-|
@@ -115,8 +115,8 @@ a known good configuration.
 data PartialConf = PartialConf
   { pcPort       :: Last Port
   , pcHelloMsg   :: Last HelloMsg
-  , pcTableName  :: Last Table
-  , pcDbFilePath :: Last FilePath
+  -- , pcTableName  :: Last Table
+  -- , pcDbFilePath :: Last FilePath
   }
 
 {-|
@@ -129,14 +129,14 @@ Note that the types won't be able to completely save you here, if you mess up
 the ordering of your 'a' and 'b' you will not end up with the desired result.
 -}
 instance Monoid PartialConf where
-  mempty = PartialConf mempty mempty mempty mempty
+  mempty = PartialConf mempty mempty 
 
   mappend a b = PartialConf
     -- Compiler tells us about the little things we might have forgotten.
     { pcPort      = pcPort a <> pcPort b
     , pcHelloMsg  = pcHelloMsg a <> pcHelloMsg b
-    , pcTableName = pcTableName a <> pcTableName b
-    , pcDbFilePath = pcDbFilePath a <> pcDbFilePath b
+    -- , pcTableName = pcTableName a <> pcTableName b
+    -- , pcDbFilePath = pcDbFilePath a <> pcDbFilePath b
     }
 
 -- We have some sane defaults that we can always rely on, so define them using
@@ -146,8 +146,8 @@ defaultConf
 defaultConf = PartialConf
   (pure (Port 3000))
   (pure (HelloMsg "World!"))
-  (pure (Table "comments"))
-  (pure "firstapp_db.db")
+  -- (pure (Table "comments"))
+  -- (pure "firstapp_db.db")
 
 -- We need something that will take our PartialConf and see if can finally build
 -- a complete Conf record. Also we need to highlight any missing config values
@@ -158,8 +158,8 @@ makeConfig
 makeConfig pc = Conf
   <$> lastToEither MissingPort pcPort
   <*> lastToEither MissingHelloMsg pcHelloMsg
-  <*> lastToEither MissingTableName pcTableName
-  <*> lastToEither MissingDbFilePath pcDbFilePath
+  -- <*> lastToEither MissingTableName pcTableName
+  -- <*> lastToEither MissingDbFilePath pcDbFilePath
   where
     -- You don't need to provide type signatures for most functions in where/let
     -- sections. Sometimes the compiler might need a bit of help, or you would
@@ -198,8 +198,8 @@ parseJSONConfigFile fp = do
       ( fromObj "port" Port cObj )
       ( fromObj "helloMsg" helloFromStr cObj )
       -- Pull the extra keys off the configuration file.
-      ( fromObj "tableName" Table cObj )
-      ( fromObj "dbFilePath" id cObj )
+      -- ( fromObj "tableName" Table cObj )
+      -- ( fromObj "dbFilePath" id cObj )
 
     -- Parse out the keys from the object, maybe...
     fromObj
@@ -246,8 +246,8 @@ partialConfParser = PartialConf
   -- Add our two new fields to the parsing of the PartialConf record. Note that
   -- if you update the data structure the compiler will do its best to inform
   -- you about everywhere that needs attention.
-  <*> strParse ( Table . Text.pack ) tableMods
-  <*> strParse id dbFilePathMods
+  -- <*> strParse ( Table . Text.pack ) tableMods
+  -- <*> strParse id dbFilePathMods
   where
     -- With the addition of two new very similar parsers, we can abstract out
     -- part of the construction into a separate function so we avoid repeating
@@ -260,15 +260,15 @@ partialConfParser = PartialConf
                 <> metavar "HELLOMSG"
                 <> help "Message to respond to requests with."
 
-    dbFilePathMods = long "db-filepath"
-                 <> short 'd'
-                 <> metavar "DBFILEPATH"
-                 <> help "FilePath to the SQLite DB"
+    -- dbFilePathMods = long "db-filepath"
+    --              <> short 'd'
+    --              <> metavar "DBFILEPATH"
+    --              <> help "FilePath to the SQLite DB"
 
-    tableMods = long "table-name"
-                 <> short 't'
-                 <> metavar "TABLENAME"
-                 <> help "Comments DB table name"
+    -- tableMods = long "table-name"
+    --              <> short 't'
+    --              <> metavar "TABLENAME"
+    --              <> help "Comments DB table name"
 
 -- Parse the Port value off the command line args and into our Last wrapper.
 portParser

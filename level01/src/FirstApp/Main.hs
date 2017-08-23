@@ -1,10 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 module FirstApp.Main (runApp) where
 
-import Network.Wai
-import Network.Wai.Handler.Warp (run)
+import           Network.Wai
+import           Network.Wai.Handler.Warp (run)
 
-import Network.HTTP.Types (status200)
+import           Network.HTTP.Types       (status200)
 
 {-|
 This is about as basic as it gets.
@@ -30,7 +30,4 @@ part and it's free to close any resources it had and send the response.
 app
   :: Application
 app _ cb =
-  let headers = [("Content-Type", "text/plain")]
-      message = "Hello, World!"
-  in
-    cb $ responseLBS status200 headers message
+  error "Application not implemented"

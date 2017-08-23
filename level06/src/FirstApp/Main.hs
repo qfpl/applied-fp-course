@@ -70,11 +70,11 @@ prepareAppReqs = do
   where
     logToErr = liftIO . hPutStrLn stderr
 
-    toStartUpErr e =
-      -- This just makes it a bit easier to take our individual initialisation
-      -- functions and ensure that they both conform to the StartUpError type
-      -- that we want them too.
-      fmap (first e)
+    -- This just makes it a bit easier to take our individual initialisation
+    -- functions and ensure that they both conform to the StartUpError type
+    -- that we want them too.
+    toStartUpErr =
+      fmap . first
 
     initConf = toStartUpErr ConfErr
       -- Prepare the configgening
@@ -126,7 +126,7 @@ handleRequest rqType = do
   db <- asks envDb
   liftIO $ case rqType of
     -- Exercise: Could this be generalised to clean up the repetition ?
-    AddRq t c -> fmap (const ( Res.resp200 "Success" )) <$> DB.addCommentToTopic db t c
+    AddRq t c -> fmap (const ( Res.resp200 "Success" )) <$ DB.addCommentToTopic db t c
     ViewRq t  -> fmap Res.resp200Json <$> DB.getComments db t
     ListRq    -> fmap Res.resp200Json <$> DB.getTopics db
 

@@ -14,7 +14,7 @@ import           Data.Either              (either)
 import           Data.Text                (Text)
 import           Data.Text.Encoding       (decodeUtf8)
 
-import qualified FirstApp.Conf as Conf
+import qualified FirstApp.Conf            as Conf
 import           FirstApp.Types
 
 runApp :: IO ()
@@ -56,7 +56,7 @@ app
   :: Conf.Conf
   -> Application
 app cfg rq cb = mkRequest rq
-  >>= fmap handleRespErr . handleRErr
+  >>= fmap handleRespErr . pure . handleRErr
   >>= cb
   where
     -- Does this seem clunky to you?
@@ -64,18 +64,18 @@ app cfg rq cb = mkRequest rq
       either mkErrorResponse id
     -- Because it is clunky, and we have a better solution, later.
     handleRErr =
-      either ( pure . Left ) ( handleRequest cfg )
+      either Left ( handleRequest cfg )
 
 handleRequest
   :: Conf.Conf
   -> RqType
-  -> IO (Either Error Response)
+  -> Either Error Response
 handleRequest cfg (AddRq _ _) =
-  pure . Right $ resp200 (Conf.mkMessage cfg)
+  Right $ resp200 (Conf.mkMessage cfg)
 handleRequest _ (ViewRq _) =
-  pure . Right $ resp200 "Susan was ere"
+  Right $ resp200 "Susan was ere"
 handleRequest _ ListRq =
-  pure . Right $ resp200 "[ \"Fred wuz ere\", \"Susan was ere\" ]"
+  Right $ resp200 "[ \"Fred wuz ere\", \"Susan was ere\" ]"
 
 mkRequest
   :: Request

@@ -63,13 +63,14 @@ runApp = do
 -- final Either value.
 prepareAppReqs
   :: IO (Either StartUpError Env)
-prepareAppReqs = runExceptT $ do
+prepareAppReqs = do -- runExceptT $ do
   cfg <- initConf
   db <- initDB cfg
   pure $ Env cfg db
   where
     toStartUpErr e =
-      ExceptT . fmap (first e)
+      error "toStartUpErr not reimplemented"
+      -- ExceptT . fmap (first e)
 
     -- Take our possibly failing configuration/db functions with their unique
     -- error types and turn them into a consistently typed ExceptT. We can then
@@ -91,7 +92,7 @@ app env rq cb = do
   where
     logToErr = liftIO . hPutStrLn stderr
 
-    requestToResponse = runAppM env $ do
+    requestToResponse = runAppM env $
       mkRequest rq >>= handleRequest
 
     handleError e = do

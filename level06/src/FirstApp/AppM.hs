@@ -25,10 +25,10 @@ import           FirstApp.DB            (FirstAppDB)
 -- just values!
 data Env = Env
   -- Add the type signature of a very general "logging" function.
-  { loggingRick :: Text -> AppM ()
-  , envConfig   :: Conf
-  , envDb       :: FirstAppDB
-  }
+  -- { loggingRick :: Text -> AppM ()
+  -- , envConfig   :: Conf
+  -- , envDb       :: FirstAppDB
+  -- }
 
 -- Lets crack on and define a newtype wrapper for our ReaderT, this will save us
 -- having to write out the full ReaderT definition for every function that uses it.
@@ -40,19 +40,19 @@ newtype AppM a = AppM
   -- different ReaderT when we meant to use our own, or vice versa. In such a
   -- situation it is extremely unlikely the application would compile at all,
   -- but the name differences alone make the confusion a little less likely.
-  { unAppM :: ReaderT Env IO a }
+  -- { unAppM :: ReaderT Env IO a }
   -- Because we're using a newtype, all of the instance definitions for ReaderT
   -- would normally not apply. However, because we've done nothing but create a
   -- convenience wrapper for our ReaderT, there is an extension for Haskell that
   -- allows it to simply extend all the existing instances to work without AppM.
   -- Add the GeneralizedNewtypeDeriving pragma to the top of the file and these
   -- all work without any extra effort.
-  deriving ( Functor
-           , Applicative
-           , Monad
-           , MonadReader Env
-           , MonadIO
-           )
+  -- deriving ( Functor
+  --          , Applicative
+  --          , Monad
+  --          , MonadReader Env
+  --          , MonadIO
+  --          )
 
 -- This a helper function that will take the requirements for our ReaderT, an
 -- Env, and the (AppM a) that is the context/action to be run with the given Env.
@@ -78,4 +78,5 @@ runAppM
   -> AppM a
   -> IO a
 runAppM env appM =
-  runReaderT (unAppM appM) env
+  error "runAppM not implemented"
+  -- runReaderT (unAppM appM) env

@@ -15,17 +15,16 @@ import           Data.Monoid              ((<>))
 import           Data.Text                (Text)
 import           Data.Text.Encoding       (decodeUtf8)
 
-import qualified FirstApp.Conf as Conf
 import           FirstApp.Types
 
 runApp :: IO ()
 runApp = do
   -- Load up the configuration by providing a FilePath for the JSON config file.
-  cfgE <- Conf.parseOptions "appconfig.json"
+  cfgE <- error "configuration not implemented" -- Conf.parseOptions "appconfig.json"
   -- Loading the configuration can fail, so we have to take that into account now.
   case cfgE of
-    Left err  -> print err
-    Right cfg -> run ( Conf.getPort $ Conf.port cfg ) ( app cfg )
+    Left err  -> putStrLn err
+    Right cfg -> run ( _f cfg ) ( app cfg )
 
 -- | Just some helper functions to make our lives a little more DRY.
 mkResponse
@@ -57,10 +56,10 @@ resp400 =
 
 -- Now that we have our configuration, pass it where it needs to go.
 app
-  :: Conf.Conf
+  :: a
   -> Application
 app cfg rq cb = mkRequest rq
-  >>= fmap handleRespErr . handleRErr
+  >>= fmap handleRespErr . pure . handleRErr
   >>= cb
   where
     -- Does this seem clunky to you?
@@ -68,23 +67,20 @@ app cfg rq cb = mkRequest rq
       either mkErrorResponse id
     -- Because it is clunky, and we have a better solution, later.
     handleRErr =
-      either ( pure . Left ) ( handleRequest cfg )
+      either Left ( handleRequest cfg )
 
 -- Now we have some config, we can pull our configured helloMsg off it and use it
 -- in the response.
 handleRequest
-  :: Conf.Conf
+  :: a
   -> RqType
-  -> IO (Either Error Response)
+  -> Either Error Response
 handleRequest cfg (AddRq _ _) =
-  pure . Right . resp200
-    . ( "App says: " <> )
-    . Conf.getHelloMsg
-    $ Conf.helloMsg cfg
+  Right . resp200 . ( "App says: " <> ) $ _f cfg
 handleRequest _ (ViewRq _) =
-  pure . Right $ resp200 "Susan was ere"
+  Right $ resp200 "Susan was ere"
 handleRequest _ ListRq =
-  pure . Right $ resp200 "[ \"Fred wuz ere\", \"Susan was ere\" ]"
+  Right $ resp200 "[ \"Fred wuz ere\", \"Susan was ere\" ]"
 
 mkRequest
   :: Request
