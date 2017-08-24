@@ -26,9 +26,10 @@
 ### Course Sequence:
 
 You're welcome to setup your own project with ``$ cabal init`` and follow along
-with the general flow of the course or work through the exercises in the
-projects provided. Subsequent lessons may have spoilers, don't cheat yourself
-out of the experience.
+with the general flow of the course, or work through the exercises in the
+projects provided. 
+
+#### Subsequent lessons may have spoilers, don't cheat yourself out of experience!
 
 NB : No doctests yet :(
 
@@ -45,7 +46,8 @@ NB : No doctests yet :(
 
 -- Unsure...
 * Level 09 : Add session controls (login, logout), so I can have some semblance
-  of application state so I can add some property based tests?
+  of application state so I can add some property based tests for the
+  login/logout/access restricted area state machine
 
 TODO:
 * Teacher notes/guide
