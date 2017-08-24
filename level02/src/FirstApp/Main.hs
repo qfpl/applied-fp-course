@@ -17,9 +17,9 @@ import           Data.Text.Encoding       (decodeUtf8)
 import           FirstApp.Types
 
 
--- |------------------------------------------------------|
--- | Don't start here, go straight to FirstApp.Types! :)  |
--- |------------------------------------------------------|
+-- ---------------------------------------------|
+--  Don't start here, go to FirstApp.Types! :)  |
+-- ---------------------------------------------|
 
 runApp :: IO ()
 runApp = run 3000 app
@@ -65,6 +65,7 @@ mkRequest rq =
 -- These helpers will take the raw request information and turn it into
 -- one of our data types. This means we draw a line about where the unruly outside
 -- world must end, and where the well-typed world of our application begins.
+
 mkAddRequest
   :: Text
   -> LBS.ByteString
@@ -75,25 +76,27 @@ mkAddRequest ti c =
 -- This has other benefits, we're able isolate our validation requirements into the
 -- smallest chunks we can manage. This allows for fantastic reuse and it also means
 -- that validation is not spread across the application. It is kept at the borders.
+
 mkViewRequest
   :: Text
   -> Either Error RqType
 mkViewRequest =
   error "mkViewRequest not implemented"
 
--- Even thought it may seem trivial or even pointless to write functions such as these
--- it allows for much greater consistency across the application.
-
--- These are straight forward data constructors, but by doing it this way we don't
--- have any snowflakes littered about the code. It also enhances our ability to
--- spot larger patterns in our application, which are opportunities for abstraction.
+-- Even though it may seem too trivial or even pointless to write functions such
+-- as these it allows for much greater consistency across the application.
+--
+-- Some of these are straight forward data constructors, but by doing it this
+-- way we don't have any snowflakes littered about the code. It also enhances
+-- our ability to spot larger patterns in our application, which are
+-- opportunities for abstraction.
 mkListRequest
   :: Either Error RqType
 mkListRequest =
   error "mkListRequest not implemented"
 
 {-|
-HALP
+HALP - wording - is it useful?
 
 Alternative type sig:
 Either Error a
@@ -112,20 +115,17 @@ mkErrorResponse
 mkErrorResponse _ =
   error "mkErrorResponse not implemented"
 
-{-|
-We'll stub these for now as the general structure and the process of reaching
-this stage is the more important lesson here.
-
-Notice how we're only accepting our predefined request types that have the required
-information already validated and prepared for use in the handling of the request.
-
-If we find that we need more information to handle a request, or we have a new
-type of request that we'd like to handle then we simply update the RqType structure
-and the compiler will let us know the affected portions of our application.
-
-Reduction of concerns such that each section of the application only deals with
-a small piece is one of the benefits of developing in this way.
--}
+-- Notice how we're only accepting our predefined request types that have the
+-- required information already validated and prepared for use in the handling
+-- of the request.
+--
+-- If we find that we need more information to handle a request, or we have a
+-- new type of request that we'd like to handle then we simply update the RqType
+-- structure and the compiler will let us know the affected portions of our
+-- application.
+--
+-- Reduction of concerns such that each section of the application only deals
+-- with a small piece is one of the benefits of developing in this way.
 handleRequest
   :: RqType
   -> Either Error Response
