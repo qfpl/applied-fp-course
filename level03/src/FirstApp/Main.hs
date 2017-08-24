@@ -20,7 +20,7 @@ import           FirstApp.Types
 runApp :: IO ()
 runApp = do
   -- Load up the configuration by providing a FilePath for the JSON config file.
-  cfgE <- error "configuration not implemented" -- Conf.parseOptions "appconfig.json"
+  cfgE <- error "configuration not implemented"
   -- Loading the configuration can fail, so we have to take that into account now.
   case cfgE of
     Left err  -> putStrLn err
@@ -76,11 +76,11 @@ handleRequest
   -> RqType
   -> Either Error Response
 handleRequest cfg (AddRq _ _) =
-  Right . resp200 . ( "App says: " <> ) $ _f cfg
+  Right . resp200 $ "App says: " <> _f cfg
 handleRequest _ (ViewRq _) =
-  Right $ resp200 "Susan was ere"
+  Right $ resp200 "Susan was here"
 handleRequest _ ListRq =
-  Right $ resp200 "[ \"Fred wuz ere\", \"Susan was ere\" ]"
+  Right $ resp200 "[ \"Fred was here\", \"Susan was here\" ]"
 
 mkRequest
   :: Request

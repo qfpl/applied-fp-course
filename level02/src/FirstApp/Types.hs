@@ -24,15 +24,15 @@ data RqType
 -- it's useful to be able to be descriptive about what went wrong.
 
 -- Think about some of the basic things that can wrong with our Requests and
--- building the RqTypes, and create some values to represent that.
+-- building the RqTypes, and create some values to represent that. For now we
+-- don't need to worry about things like malformed requests or invalid headers
+-- etc.
 data Error
--- For now we don't need to worry about things like malformed requests or
--- invalid headers etc.
 
 -- Provide a type to list our response content types so we don't try to
 -- do the wrong thing with what we meant to be used as text/JSON etc.
 data ContentType
---
+
 -- The ContentType description for a header doesn't match our data definition
 -- so we write a little helper function to pattern match on our ContentType
 -- value and provide the correct header value.
