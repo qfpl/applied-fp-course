@@ -16,6 +16,11 @@ import           Data.Text.Encoding       (decodeUtf8)
 
 import           FirstApp.Types
 
+
+-- |------------------------------------------------------|
+-- | Don't start here, go straight to FirstApp.Types! :)  |
+-- |------------------------------------------------------|
+
 runApp :: IO ()
 runApp = run 3000 app
 
@@ -46,17 +51,6 @@ resp400
 resp400 =
   error "resp400 not implemented"
 -- |
-
-{-|
-How can we use the types to make this better?
-
-We need a way to go from the pathInfo and requestMethod to a Request type
-that matches our current specification.
--}
-app
-  :: Application
-app rq cb =
-  error "app not implemented"
 
 {-|
 Lets use our RqTypes to write a function that will take the input from the
@@ -98,7 +92,6 @@ mkListRequest
 mkListRequest =
   error "mkListRequest not implemented"
 
-
 {-|
 HALP
 
@@ -138,3 +131,10 @@ handleRequest
   -> Either Error Response
 handleRequest _ =
   error "handleRequest not implemented"
+
+-- Reimplement our `app` function using the new functions and the RqTypes as a
+-- guide.
+app
+  :: Application
+app rq cb =
+  error "app not reimplemented"
