@@ -49,8 +49,7 @@ newtype HelloMsg = HelloMsg
   { getHelloMsg :: ByteString }
   deriving Show
 
--- This is a helper function to take a string and turn it into our HelloMsg
--- type.
+-- This is a helper function to take a string and turn it into our HelloMsg type.
 helloFromStr
   :: String
   -> HelloMsg
@@ -90,8 +89,7 @@ instance Monoid PartialConf where
     , pcDbFilePath = pcDbFilePath a <> pcDbFilePath b
     }
 
--- We have some sane defaults that we can always rely on, so define them using
--- our PartialConf.
+-- We have some sane defaults that we can always rely on, so define them using our PartialConf.
 defaultConf
   :: PartialConf
 defaultConf = PartialConf

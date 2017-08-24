@@ -95,16 +95,16 @@ data Env = Env
 --
 -- This gives us the final AppM looking like:
 newtype AppM a = AppM
-  -- { unAppM :: ReaderT Env (ExceptT Error IO) a }
-  -- deriving ( Functor
-  --          , Applicative
-  --          , Monad
-  --          , MonadReader Env
+  { unAppM :: _ }
+  deriving ( Functor
+           , Applicative
+           , Monad
+           , MonadIO
+           , MonadReader Env
            -- This is a new instance we've derived because we want to be able to
            -- `throwError` our own Error type.
-           -- , MonadError Error
-           -- , MonadIO
-           -- )
+           , MonadError Error
+           )
 
 runAppM
   :: Env
@@ -112,12 +112,11 @@ runAppM
   -> IO (Either Error a)
 runAppM env appM =
   error "runAppM not reimplemented"
-  -- Now that we've two transfomers we have to 'run' them in order to effect the
-  -- computations and produce our result in our base monad. When you're running
-  -- monad transformers you have to unpack them in order. Since our outer
+  -- Now that we've two transfomers in out 'stack', we have to 'run' them in order
+  -- to effect the computations and produce our result in our base monad. When
+  -- you're running monad transformers you have to unpack them in order. Since our outer
   -- transformer is a ReaderT, we have to run that first. Followed by running
   -- the ExceptT to retrieve our `IO (Either Error a)`.
-  -- runExceptT ( runReaderT (unAppM appM) env )
 
 -- This is a helper function that will `lift` an Either value into our new AppM
 -- by applying `throwError` to the Left value, and using `pure` to lift the
@@ -131,4 +130,3 @@ throwL
   -> AppM a
 throwL =
   error "throwL not implemented"
-  -- either throwError pure

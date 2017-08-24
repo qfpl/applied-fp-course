@@ -31,7 +31,7 @@ import qualified Data.Aeson.Types                   as A
 import           Data.Time                          (UTCTime)
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
-import           FirstApp.Types.DB                  (DbComment (..))
+import           FirstApp.DB.Types                  (DbComment (..))
 
 newtype CommentId = CommentId Int
   deriving (Show, ToJSON)

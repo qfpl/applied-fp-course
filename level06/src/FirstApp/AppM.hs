@@ -21,8 +21,7 @@ import           FirstApp.DB            (FirstAppDB)
 -- foo :: r -> m a
 --
 -- First, let's clean up our (Conf,FirstAppDB) with an application Env type. We
--- will add a general purpose logging function, since we're not limited to
--- just values!
+-- will add a general purpose logging function as well
 data Env = Env
 
 -- Lets crack on and define a newtype wrapper for our ReaderT, this will save us
@@ -40,8 +39,9 @@ newtype AppM a = AppM
   -- would normally not apply. However, because we've done nothing but create a
   -- convenience wrapper for our ReaderT, there is an extension for Haskell that
   -- allows it to simply extend all the existing instances to work without AppM.
-  -- Add the GeneralizedNewtypeDeriving pragma to the top of the file and these
-  -- all work without any extra effort.
+  --
+  -- Add the 'GeneralizedNewtypeDeriving' pragma to the top of the file, we will
+  -- be able to derive these instances automatically.
   deriving ( Functor
            , Applicative
            , Monad

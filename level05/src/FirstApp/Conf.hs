@@ -32,13 +32,13 @@ import           Options.Applicative        (Parser, ParserInfo, eitherReader,
 
 import           Text.Read                  (readEither)
 
--- import           FirstApp.DB                (Table (..))
+import           FirstApp.DB                (Table (..))
 
 data ConfigError
   = MissingPort
   | MissingHelloMsg
   | MissingTableName
-  -- | MissingDbFilePath
+  -- Do we have anything else that can go wrong with our Conf now ?
   deriving Show
 
 newtype Port = Port
@@ -49,8 +49,6 @@ newtype HelloMsg = HelloMsg
   { getHelloMsg :: ByteString }
   deriving Show
 
--- This is a helper function to take a string and turn it into our HelloMsg
--- type.
 helloFromStr
   :: String
   -> HelloMsg
@@ -69,15 +67,11 @@ mkMessage =
 data Conf = Conf
   { port       :: Port
   , helloMsg   :: HelloMsg
-  -- , tableName  :: Table
-  -- , dbFilePath :: FilePath
   }
 
 data PartialConf = PartialConf
   { pcPort       :: Last Port
   , pcHelloMsg   :: Last HelloMsg
-  -- , pcTableName  :: Last Table
-  -- , pcDbFilePath :: Last FilePath
   }
 
 -- Note that the types won't be able to completely save you here, if you mess up
@@ -89,8 +83,6 @@ instance Monoid PartialConf where
     -- Compiler tells us about the little things we might have forgotten.
     { pcPort      = pcPort a <> pcPort b
     , pcHelloMsg  = pcHelloMsg a <> pcHelloMsg b
-    -- , pcTableName = pcTableName a <> pcTableName b
-    -- , pcDbFilePath = pcDbFilePath a <> pcDbFilePath b
     }
 
 -- We have some sane defaults that we can always rely on, so define them using
@@ -100,8 +92,6 @@ defaultConf
 defaultConf = PartialConf
   (pure (Port 3000))
   (pure (HelloMsg "World!"))
-  -- (pure (Table "comments"))
-  -- (pure "firstapp_db.db")
 
 makeConfig
   :: PartialConf
@@ -109,8 +99,6 @@ makeConfig
 makeConfig pc = Conf
   <$> lastToEither MissingPort pcPort
   <*> lastToEither MissingHelloMsg pcHelloMsg
-  -- <*> lastToEither MissingTableName pcTableName
-  -- <*> lastToEither MissingDbFilePath pcDbFilePath
   where
     -- You don't need to provide type signatures for most functions in where/let
     -- sections. Sometimes the compiler might need a bit of help, or you would
@@ -138,9 +126,6 @@ parseJSONConfigFile fp = do
     toPartialConf cObj = PartialConf
       ( fromObj "port" Port cObj )
       ( fromObj "helloMsg" helloFromStr cObj )
-      -- Pull the extra keys off the configuration file.
-      -- ( fromObj "tableName" Table cObj )
-      -- ( fromObj "dbFilePath" id cObj )
 
     -- Parse out the keys from the object, maybe...
     fromObj

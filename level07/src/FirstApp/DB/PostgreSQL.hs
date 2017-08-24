@@ -17,7 +17,6 @@ import qualified Database.PostgreSQL.Simple       as PG
 
 import           FirstApp.Types
 
--- newtype all the things!!
 newtype Table = Table
   { getTableName :: Text }
   deriving Show

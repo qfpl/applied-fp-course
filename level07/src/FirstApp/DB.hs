@@ -63,7 +63,7 @@ withTableM
   :: Query
   -> AppM Query
 withTableM q =
-  (`withTable` q) <$> asks (dbTable . envDb)
+  error "withTableM not implemented"
 
 initDb
   :: FilePath

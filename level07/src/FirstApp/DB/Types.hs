@@ -7,7 +7,6 @@ import           Data.Text                      (Text)
 import           Database.SQLite.Simple         (Connection)
 import           Database.SQLite.Simple.FromRow (FromRow (..), field)
 
--- newtype all the things!!
 newtype Table = Table
   { getTableName :: Text }
   deriving Show
@@ -20,7 +19,6 @@ data FirstAppDB = FirstAppDB
   { dbConn  :: Connection
   , dbTable :: Table
   }
-
 
 -- To try to avoid leaking various types and expected functionality around the
 -- application, we create a stand alone type that will represent the data we

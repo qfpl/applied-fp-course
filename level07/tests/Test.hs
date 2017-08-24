@@ -37,13 +37,12 @@ main = do
           -- and now wrapping our DB layer in the AppM as well. This function
           -- needs an overhaul.
           flushTopic = do
-            error "flushTopic not reimplemented"
             -- To lift our AppM into the base IO, we run it as would if it were
             -- a normal AppM, returning our IO ( Either ) result.
-            -- r <- AppM.runAppM env $ do
+            r <- AppM.runAppM env $ do
               -- This inner 'do' is running as if it were an AppM, including all of the nice error handling etc.
-              -- t <- AppM.throwL $ Types.mkTopic testTopic
-              -- DB.deleteTopic t
+              t <- AppM.throwL $ Types.mkTopic testTopic
+              DB.deleteTopic t
             -- This outer 'do' is in the base IO monad and if we have a failure
             -- here we need to exit with an error code to ensure the test-suite
             -- knows to fail our tests.
