@@ -30,19 +30,13 @@ import           Options.Applicative        (Parser, ParserInfo, eitherReader,
 
 import           Text.Read                  (readEither)
 
-{-|
-Similar to when we were considering what might go wrong with the RqTypes, lets
-think about might go wrong when trying to gather our configuration information.
--}
+-- Similar to when we were considering what might go wrong with the RqTypes, lets
+-- think about might go wrong when trying to gather our configuration information.
 data ConfigError
   = MissingPort
   | MissingHelloMsg
   deriving Show
 
-{-|
-As before, a bare Int or ByteString doesn't tell us anything about our intent,
-so lets wrap it up in a newtype.
--}
 newtype Port = Port
   { getPort :: Int }
   deriving Show
@@ -51,8 +45,6 @@ newtype HelloMsg = HelloMsg
   { getHelloMsg :: ByteString }
   deriving Show
 
--- This is a helper function to take a string and turn it into our HelloMsg
--- type.
 helloFromStr
   :: String
   -> HelloMsg
@@ -66,57 +58,19 @@ mkMessage =
   mappend "App says: "
   . getHelloMsg
   . helloMsg
-{-|
-This will be our configuration value, eventually it may contain more things
-but this will do for now. We will have a customisable port number, and a
-changeable message for our users.
--}
+
 data Conf = Conf
   { port     :: Port
   , helloMsg :: HelloMsg
   }
 
-{-|
-Our application will be able to have configuration from both a file and from
-command line input. We can use the command line to temporarily override the
-configuration from our file. But how to combine them? This question will help us
-find which abstraction is correct for our needs...
-
-We want the CommandLine configuration to override the File configuration, so if
-we think about combining each of our config records, we want to be able to write
-something like this:
-
-defaults <> file <> commandLine
-
-The commandLine should override any options it has input for.
-
-We can use the Monoid typeclass to handle combining the config records together,
-and the Last newtype to wrap up our values. The Last newtype is a wrapper for
-Maybe that when used with its Monoid instance will always preference the last
-Just value that it has:
-
-Last (Just 3) <> Last (Just 1) = Last (Just 1)
-Last Nothing  <> Last (Just 1) = Last (Just 1)
-Last (Just 1) <> Last Nothing  = Last (Just 1)
-
-To make this easier, we'll make a new record PartialConf that will have our Last
-wrapped values. We can then define a Monoid instance for it and have our Conf be
-a known good configuration.
--}
 data PartialConf = PartialConf
   { pcPort     :: Last Port
   , pcHelloMsg :: Last HelloMsg
   }
 
-{-|
-We now define our Monoid instance for PartialConf. Allowing us to define our
-always empty configuration, which would always fail our requirements. More
-interestingly, we define our mappend function to lean on the Monoid instance for
-Last to always get the last value.
-
-Note that the types won't be able to completely save you here, if you mess up
-the ordering of your 'a' and 'b' you will not end up with the desired result.
--}
+-- Note that the types won't be able to completely save you here, if you mess up
+-- the ordering of your 'a' and 'b' you will not end up with the desired result.
 instance Monoid PartialConf where
   mempty = PartialConf mempty mempty
 
@@ -125,17 +79,12 @@ instance Monoid PartialConf where
     , pcHelloMsg = pcHelloMsg a <> pcHelloMsg b
     }
 
--- We have some sane defaults that we can always rely on, so define them using
--- our PartialConf.
 defaultConf
   :: PartialConf
 defaultConf = PartialConf
   (pure (Port 3000))
   (pure (HelloMsg "World!"))
 
--- We need something that will take our PartialConf and see if can finally build
--- a complete Conf record. Also we need to highlight any missing config values
--- by providing the relevant error.
 makeConfig
   :: PartialConf
   -> Either ConfigError Conf
@@ -149,11 +98,6 @@ makeConfig pc = Conf
     lastToEither e g =
       maybe (Left e) Right . getLast $ g pc
 
--- This is the function we'll actually export for building our configuration.
--- Since it wraps all our efforts to read information from the command line, and
--- the file, before combining it all and returning the required information.
---
--- Additional Exercise: Rewrite this using applicative style.
 parseOptions
   :: FilePath
   -> IO (Either ConfigError Conf)
@@ -164,11 +108,8 @@ parseOptions fp = do
 
 -- | File Parsing
 
--- Avoiding too many complications with selecting a configuration file package
--- from hackage. We'll use an encoding that you are probably familiar with, for
--- better or worse, and write a small parser to pull out the bits we need.
---
--- Additional Exercise: Rewrite this without using Do notation, fmap should be sufficient.
+-- Additional Exercise: Rewrite this without using Do notation
+-- 'fmap' should be sufficient.
 parseJSONConfigFile
   :: FilePath
   -> IO PartialConf
@@ -236,12 +177,7 @@ portParser =
   in
     Last <$> optional (option portReader mods)
 
--- Parse the HelloMsg from the input string into our type and into a Last
--- wrapper.
---
--- Remember that newtypes have zero runtime cost, they are removed by the
--- compiler. So don't be concerned by the wrapping / unwrapping of them in your
--- code. They are there for the type system and you.
+-- Parse the HelloMsg from the input string into our type and into a Last wrapper.
 helloMsgParser
   :: Parser (Last HelloMsg)
 helloMsgParser =

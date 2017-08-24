@@ -73,9 +73,9 @@ handleRequest
 handleRequest cfg (AddRq _ _) =
   Right $ resp200 (Conf.mkMessage cfg)
 handleRequest _ (ViewRq _) =
-  Right $ resp200 "Susan was ere"
+  Right $ resp200 "Susan was here"
 handleRequest _ ListRq =
-  Right $ resp200 "[ \"Fred wuz ere\", \"Susan was ere\" ]"
+  Right $ resp200 "[ \"Fred was here\", \"Susan was here\" ]"
 
 mkRequest
   :: Request

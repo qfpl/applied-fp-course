@@ -44,47 +44,12 @@ data StartUpError
 runApp :: IO ()
 runApp = do
   appE <- prepareAppReqs
-  error "runApp not re-implemented"
-  -- either print runWithDbConn appE
-  -- where
-  --   runWithDbConn ( cfg, db ) =
-  --     -- The bracket function will take care of closing our DB connection in the
-  --     -- event of an application collapse. It is a very useful function for
-  --     -- managing resources and deferred actions.
-  --     bracket (pure db) DB.closeDb (appWithDb cfg)
-
-  --   appWithDb cfg db =
-  --     -- Just a helper to actually use the Wai function to run out fully
-  --     -- realised app function.
-  --     run ( Conf.getPort $ Conf.port cfg ) $ app cfg db
+  _f appE
 
 prepareAppReqs
   :: IO (Either StartUpError (Conf.Conf,DB.FirstAppDB))
 prepareAppReqs = do
   error "prepareAppReqs not implemented"
-  -- cfgE <- initConf
-  -- -- This is awkward because we need to initialise our DB using the config,
-  -- -- which might have failed to be created for some reason, but our DB start up
-  -- -- might have also failed for some reason. This is a bit clunky
-  -- dbE <- fmap join $ traverse initDB cfgE
-  -- -- Wrap our values (if we have them) in a tuple for use in other parts of our
-  -- -- application. We do it this way so we can have access to the bits we need
-  -- -- when starting up the full app or one for testing.
-  -- pure $ liftA2 (,) cfgE dbE
-  -- where
-  --   toStartUpErr e =
-  --     -- This just makes it a bit easier to take our individual initialisation
-  --     -- functions and ensure that they both conform to the StartUpError type
-  --     -- that we want them too.
-  --     fmap ( either (Left . e) Right )
-
-  --   initConf = toStartUpErr ConfErr
-  --     -- Prepare the configgening
-  --     $ Conf.parseOptions "appconfig.json"
-
-  --   initDB cfg = toStartUpErr DbInitErr
-  --     -- Power up the tubes
-  --     $ DB.initDb (Conf.dbFilePath cfg) (Conf.tableName cfg)
 
 -- | Just some helper functions to make our lives a little more DRY.
 mkResponse
@@ -150,18 +115,9 @@ handleRequest
   -> DB.FirstAppDB
   -> RqType
   -> IO (Either Error Response)
--- Fun time to play with some type driven development. Try inserting a
--- type-hole on the left of the getComments function call and see what sort of
--- functions you need to produce the desired output. See how well you can
--- reduce the function you need to write with the application of abstractions
--- you already know, no custom functions.
-handleRequest _ db (AddRq t c) =
-  -- How could we eliminate the need for `const` here?
-  fmap (const ( resp200 "Success" )) <$> error "db func not implemented" -- DB.addCommentToTopic db t c
-handleRequest _ db (ViewRq t) =
-  fmap resp200Json <$> error "db func not implemented" -- DB.getComments db t
-handleRequest _ db ListRq =
-  fmap resp200Json <$> error "db func not implemented" -- DB.getTopics db
+handleRequest _ db (AddRq t c) = fmap (const ( resp200 "Success" )) <$> _f db
+handleRequest _ db (ViewRq t)  = fmap resp200Json                   <$> _g db
+handleRequest _ db ListRq      = fmap resp200Json                   <$> _h db
 
 mkRequest
   :: Request
@@ -210,7 +166,3 @@ mkErrorResponse EmptyCommentText =
   resp400 "Empty Comment"
 mkErrorResponse EmptyTopic =
   resp400 "Empty Topic"
--- mkErrorResponse ( DBError e ) =
-  -- If a DB error happens, it's going to be sad town, population you. But you
-  -- should let someone know. How we go about changing this function to include logging ?
-  -- resp500 . LBS.pack $ "Database Error" <> show e
