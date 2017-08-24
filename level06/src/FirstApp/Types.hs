@@ -33,14 +33,6 @@ import           Data.Time                          (UTCTime)
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 import           FirstApp.Types.DB                  (DbComment (..))
 
-{-|
-In Haskell the `newtype` comes with zero runtime cost. It is purely used for
-typechecking. So when you have a bare 'primitive' value, like an Int, String, or
-even [a], you can wrap it up in a `newtype` for clarity.
-
-The type system will check it for you, and the compiler will eliminate the cost
-once it has passed.
--}
 newtype CommentId = CommentId Int
   deriving (Show, ToJSON)
 
@@ -50,12 +42,6 @@ newtype Topic = Topic { getTopic :: Text }
 newtype CommentText = CommentText { getCommentText :: Text }
   deriving (Show, ToJSON)
 
--- This is our comment record that we will be sending to users, it's a simple
--- record type. However notice that we've also derived the Generic type class
--- instance as well. This saves us some effort when it comes to creating
--- encoding/decoding instances. Since our types are all simple types at the end
--- of the day, we're able to just let GHC work out what the instances should be.
--- With a minor adjustment.
 data Comment = Comment
   { commentId    :: CommentId
   , commentTopic :: Topic
@@ -95,7 +81,7 @@ fromDbComment dbc =
   Comment (CommentId     $ dbCommentId dbc)
       <$> (mkTopic       $ dbCommentTopic dbc)
       <*> (mkCommentText $ dbCommentComment dbc)
-      <*> pure            (dbCommentTime dbc)
+      <*> (pure          $ dbCommentTime dbc)
 
 -- Having specialised constructor functions for the newtypes allows you to set
 -- restrictions for your newtype.
@@ -124,14 +110,6 @@ data RqType
   | ViewRq Topic
   | ListRq
 
-{-|
-Not everything goes according to plan, but it's important that our
-types reflect when errors can be introduced into our program. Additionally
-it's useful to be able to be descriptive about what went wrong.
-
-So lets think about some of the basic things that can wrong with our
-program and create some values to represent that.
--}
 data Error
   = UnknownRoute
   | EmptyCommentText
@@ -146,12 +124,8 @@ data ContentType
   = PlainText
   | JSON
 
--- The ContentType description for a header doesn't match our data definition
--- so we write a little helper function to pattern match on our ContentType
--- value and provide the correct header value.
 renderContentType
   :: ContentType
   -> ByteString
--- renderContentType = error "renderContentType not implemented"
 renderContentType PlainText = "text/plain"
 renderContentType JSON      = "text/json"

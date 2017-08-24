@@ -94,7 +94,7 @@ app env rq cb =
     -- within our AppM context, we need to run the AppM to get our IO action out
     -- to be run and handed off to the callback function. We've already written
     -- the function for this so include the 'runAppM' with the Env.
-    requestToResponse = runAppM env $ do
+    requestToResponse = _f env $ do
       -- Exercise: Rewrite this function to remove the need for the intermediate values.
       rq' <- mkRequest rq
       er' <- handleRErr rq'
