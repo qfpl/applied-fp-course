@@ -1,27 +1,10 @@
-Use of lenses and classy `mtl` will be left to supplemental material. I would
-like to be able to use it lenses more but the additional explanation required
+Use of lenses and classy `mtl` will be left to supplemental material. It would
+be nice to be able to use it lenses more but the additional explanation required
 might be a bit much and not very predictable ?
 
-Ultimate Goal
-===============
+### Further lessons
 
-This course aims to teach some of the techniques for building a larger
-application with FP, using Haskell. By the end of this course you should be
-comfortable tackling more advanced projects, and expanding on the concepts and
-choices presented here in your own future efforts.
-
-We will build an ultra basic web application and build upon it.
-
-Subgoals (?)
-========
-- ghcid
-- hedgehog
-- cabal files
-
-Goals
-======
-
-1 - Death to Strings
+N - Death to Strings
 ---
 Start up and Servant introduction.
 
@@ -29,7 +12,7 @@ Start up and Servant introduction.
 * Explain that we're using strings for routes and this is bad(TM).
 * Move to Servant, explain why, show type driven dev to explain routes->function relationship.
 
-2 - Faking Global Vars with Science
+N - Faking Global Vars with Science
 ---
 Show that nothing can be changed in the current app without recompliation.
 Rework the application so we can change the port values and have general app
@@ -40,7 +23,7 @@ config.
 * Add `mtl` dependency.
 * Natural Transformation required from our new `ReaderT` to Servant (too much?).
 
-3 - Would you like to play a game?
+N - Would you like to play a game?
 ---
 Introduce handling input/output also preempt the inclusion of persistent storage.
 
@@ -50,7 +33,7 @@ Introduce handling input/output also preempt the inclusion of persistent storage
 * Add the required instances.
 * Change the function up so that it randomly selects a move, evaluates victory/defeat.
 
-4 - Type safe tantrums
+N - Type safe tantrums
 ---
 Introduce error handling by breaking REST rules by having our application throw
 an error when it loses at Rock-Paper-Scissors.
@@ -61,7 +44,7 @@ an error when it loses at Rock-Paper-Scissors.
   * More discussion to be had here regarding the ordering of transformer stacks.
 * Discuss the errors that appear. Work through fixing these with type-holes in the Natural Transform.
 
-5 - Elephants
+N - Elephants
 ---
 We'd like to be able to store a history of RPS games. 
 
@@ -77,7 +60,7 @@ We'd like to be able to store a history of RPS games.
 
 ** Prompt discussion about what lurks beneath the surface of the `IO a` query functionality.
 
-6 - Except when exceptionally excepted
+N - Except when exceptionally excepted
 ---
 Handling, catching, and rethrowing exceptions. Motivate errors as values over exceptions.
 
@@ -92,7 +75,7 @@ Handling, catching, and rethrowing exceptions. Motivate errors as values over ex
   
 * Discuss how you might implement logging ? Leave as exercise.
 
-7 - BOSS FIGHT - A
+N - BOSS FIGHT - A
 ---
 Replace the stringly DB layer with something better:
 - [Selda](https://selda.link/)
@@ -111,7 +94,7 @@ time, to varying degrees:
 All packages use generics of some description, not sure how much air time they
 need? Passing mention and throw some links around, move on.
 
-8 - BOSS FIGHT - B
+N - BOSS FIGHT - B
 ---
 Integration of 'classy mtl' style application design.
 
