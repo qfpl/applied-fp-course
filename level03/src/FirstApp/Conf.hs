@@ -58,9 +58,9 @@ data Conf
 -- The Last newtype is a wrapper for Maybe that when used with its Monoid instance
 -- will always preference the last Just value that it has:
 
--- Last (Just 3)  <> Last (Just 1)  = Last (Just 1)
--- Last Nothing <> Last (Just 1)  = Last (Just 1)
--- Last (Just 1)  <> Last Nothing = Last (Just 1)
+-- Last (Just 3) <> Last (Just 1) = Last (Just 1)
+-- Last Nothing  <> Last (Just 1) = Last (Just 1)
+-- Last (Just 1) <> Last Nothing  = Last (Just 1)
 
 -- To make this easier, we'll make a new type `PartialConf` that will have our Last
 -- wrapped values. We can then define a Monoid instance for it and have our Conf be
