@@ -59,7 +59,7 @@ runApp = do
 -- have multiple functions that match that pattern and you don't want to have to
 -- thread the error handling needle yourself. You can apply the constructor to
 -- the functions and work directly on the values, knowing that the error
--- handling will work as expected. Then you simply `runExceptT` and produce the
+-- handling will work as expected. Then you `runExceptT` and produce the
 -- final Either value.
 prepareAppReqs
   :: IO (Either StartUpError Env)

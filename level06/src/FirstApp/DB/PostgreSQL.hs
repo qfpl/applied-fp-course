@@ -130,7 +130,7 @@ addCommentToTopic db t c = do
   -- affected by the query, which in our case should always be 1.
   res <- PG.execute (dbConn db) q (tableName db, getTopic t, getCommentText c, nowish)
   -- An alternative is to write a returning query to get the Id of the DbComment
-  -- we've created. We're being pretty lazy right now so just check we've
+  -- we've created. We're being pretty lazy right now so check we've
   -- affected a single row and move on.
   pure $ if res == 1 then Right ()
     else Left (DBError "Comment Insert Failed")

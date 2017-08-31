@@ -26,7 +26,7 @@ runApp = do
     Left err  -> putStrLn err
     Right cfg -> run ( _f cfg ) ( app cfg )
 
--- | Just some helper functions to make our lives a little more DRY.
+-- | Some helper functions to make our lives a little more DRY.
 mkResponse
   :: Status
   -> ContentType

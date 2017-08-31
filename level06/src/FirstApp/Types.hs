@@ -52,7 +52,7 @@ data Comment = Comment
   deriving ( Show, Generic )
 
 instance ToJSON Comment where
-  -- This is one place where we can take advantage of our Generic instance. Aeson already has the encoding functions written for anything that implements the Generic typeclass. So we don't have to write our encoding, we just tell Aeson to build it.
+  -- This is one place where we can take advantage of our Generic instance. Aeson already has the encoding functions written for anything that implements the Generic typeclass. So we don't have to write our encoding, we tell Aeson to build it.
   toEncoding = A.genericToEncoding opts
     where
       -- These options let us make some minor adjustments to how Aeson treats

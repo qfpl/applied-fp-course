@@ -70,7 +70,7 @@ prepareAppReqs = do
   where
     logToErr = liftIO . hPutStrLn stderr
 
-    -- This just makes it a bit easier to take our individual initialisation
+    -- This makes it a bit easier to take our individual initialisation
     -- functions and ensure that they both conform to the StartUpError type
     -- that we want them too.
     toStartUpErr =

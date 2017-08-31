@@ -19,7 +19,7 @@ main :: IO ()
 main = do
   let dieWith m = print m >> Exit.exitFailure
 
-      -- This just helps keep the string polymorphic so we can use it in both
+      -- This helps keep the string polymorphic so we can use it in both
       -- ByteString and Text forms in this file, without having to run encoding
       -- functions. The compiler takes care of it for us.
       testTopic :: IsString s => s

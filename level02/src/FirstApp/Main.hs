@@ -24,7 +24,7 @@ import           FirstApp.Types
 runApp :: IO ()
 runApp = run 3000 app
 
--- | Just some helper functions to make our lives a little more DRY.
+-- | Some helper functions to make our lives a little more DRY.
 mkResponse
   :: Status
   -> ContentType
@@ -120,7 +120,7 @@ mkErrorResponse _ =
 -- of the request.
 --
 -- If we find that we need more information to handle a request, or we have a
--- new type of request that we'd like to handle then we simply update the RqType
+-- new type of request that we'd like to handle then we update the RqType
 -- structure and the compiler will let us know the affected portions of our
 -- application.
 --

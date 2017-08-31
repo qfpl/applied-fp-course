@@ -24,7 +24,7 @@ runApp = do
     Left err  -> print err
     Right cfg -> run ( Conf.getPort $ Conf.port cfg ) ( app cfg )
 
--- | Just some helper functions to make our lives a little more DRY.
+-- | Some helper functions to make our lives a little more DRY.
 mkResponse
   :: Status
   -> ContentType

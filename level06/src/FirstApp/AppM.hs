@@ -12,8 +12,8 @@ import           FirstApp.DB            (FirstAppDB)
 -- a ReaderT is a function from some 'r' to some 'm a' : (r -> m a). Whereby
 -- the 'r' is accessible to all functions that run in the context of that 'm'.
 --
--- This means that if you use the 'r' everywhere or simply enough throughout
--- your application, you no longer have to constantly weave the extra 'r' as an
+-- This means that if you use the 'r' everywhere or enough throughout your
+-- application, you no longer have to constantly weave the extra 'r' as an
 -- argument to everything that might need it.
 -- Since by definition:
 -- foo :: ReaderT r m a
@@ -38,7 +38,7 @@ newtype AppM a = AppM
   -- Because we're using a newtype, all of the instance definitions for ReaderT
   -- would normally not apply. However, because we've done nothing but create a
   -- convenience wrapper for our ReaderT, there is an extension for Haskell that
-  -- allows it to simply extend all the existing instances to work without AppM.
+  -- allows it to extend all the existing instances to work without AppM.
   --
   -- Add the 'GeneralizedNewtypeDeriving' pragma to the top of the file, we will
   -- be able to derive these instances automatically.
@@ -56,7 +56,7 @@ newtype AppM a = AppM
 -- that function:
 -- unAppM :: AppM a -> ReaderT Env IO a
 --
--- Then we run the ReaderT, which itself is just a newtype to get access to the
+-- Then we run the ReaderT, which itself is a newtype to get access to the
 -- action we're going to evaluate:
 -- runReaderT :: ReaderT r m a -> r -> m a
 -- ~

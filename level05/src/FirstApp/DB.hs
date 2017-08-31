@@ -28,8 +28,8 @@ import           FirstApp.Types
 -- ------------------------------------------------------------------------|
 
 -- We need to have a way to pass around the name of the Table we're going to us
--- for the comments in this application. We _could_ just pass around a `Text`
--- value. What should we do instead?
+-- for the comments in this application. We _could_ pass around a `Text` value.
+-- What should we do instead?
 newtype Table
 
 -- We have a data type to simplify passing around the information we need to run

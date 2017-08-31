@@ -46,10 +46,10 @@ closeDb =
 -- Due to the way our application is designed, we have a slight SQL injection
 -- risk because we pull the table name from the config or input arguments. This
 -- attempts to mitigate that somewhat by removing the need for repetitive string
--- mangling when building our queries. We simply write the query and pass it
--- through this function that requires the Table information and everything is
--- taken care of for us. This is probably not the way to do things in a large
--- scale app.
+-- mangling when building our queries. We write the query and pass it through
+-- this function that requires the Table information and everything is taken
+-- care of for us. This is probably not the way to do things in a large scale
+-- app.
 withTable
   :: Table
   -> Query
@@ -89,7 +89,7 @@ runDb f a = do
   -- these two are pretty much the same.
   -- Sql.runDBAction >=> pure . either (Left . DBError) f
   -- this is because we noticed that our call to pure, which means we should
-  -- just be able to fmap to victory.
+  -- be able to fmap to victory.
   -- fmap ( either (Left . DBError) f ) . Sql.runDBAction
 
 getComments

@@ -51,7 +51,7 @@ prepareAppReqs
 prepareAppReqs = do
   error "prepareAppReqs not implemented"
 
--- | Just some helper functions to make our lives a little more DRY.
+-- | Some helper functions to make our lives a little more DRY.
 mkResponse
   :: Status
   -> ContentType

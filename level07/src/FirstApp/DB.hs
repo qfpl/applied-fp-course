@@ -43,15 +43,16 @@ closeDb =
 -- Due to the way our application is designed, we have a slight SQL injection
 -- risk because we pull the table name from the config or input arguments. This
 -- attempts to mitigate that somewhat by removing the need for repetitive string
--- mangling when building our queries. We simply write the query and pass it
--- through this function that requires the Table information and everything is
--- taken care of for us. This is probably not the way to do things in a large
--- scale app.
+-- mangling when building our queries. We write the query and pass it through
+-- this function that requires the Table information and everything is taken
+-- care of for us. This is probably not the way to do things in a large scale
+-- app.
 withTable
   :: Table
   -> Query
   -> Query
 withTable t = Sql.Query
+  -- This '$$foo$$' is our own made up placeholder value, it is not part of the Query type.
   . Text.replace "$$tablename$$" (getTableName t)
   . fromQuery
 
@@ -93,7 +94,7 @@ runDb a = do
   -- convert it into an `m (Either Error a)` so that it matches the requirements
   -- to be in our AppM, we then lean on the ExceptT functionality and use our
   -- helper to either `throwError` with any DB errors that have made it this far
-  -- or simply return the desired value.
+  -- or return the desired value.
   liftDb db >>= throwL
   -- Or alternatively, if you hate variables...
   -- asks (dbConn.envDb) >>= ( liftDb >=> throwL )

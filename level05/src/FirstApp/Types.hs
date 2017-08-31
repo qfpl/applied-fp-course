@@ -40,7 +40,7 @@ newtype CommentText = CommentText { getCommentText :: Text }
 -- record type, containing an Int, Topic, CommentText, and UTCTime. However notice
 -- that we've also derived the Generic type class instance as well. This saves us
 -- some effort when it comes to creating encoding/decoding instances. Since our
--- types are all simple types at the end of the day, we're able to just let GHC do
+-- types are all simple types at the end of the day, we're able to let GHC do
 -- the work.
 --
 -- Is an 'Int' acceptable here?
@@ -50,7 +50,7 @@ data Comment = Comment { ... }
 instance ToJSON Comment where
   -- This is one place where we can take advantage of our Generic instance. Aeson
   -- already has the encoding functions written for anything that implements
-  -- the Generic typeclass. So we don't have to write our encoding, we just ask
+  -- the Generic typeclass. So we don't have to write our encoding, we ask
   -- Aeson to construct it for us.
   toEncoding = A.genericToEncoding opts
     where

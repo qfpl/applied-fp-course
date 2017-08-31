@@ -14,7 +14,7 @@ import           Network.HTTP.Types       (status200)
 runApp :: IO ()
 runApp = run 3000 app
 
--- Our "application" will simply respond to ALL incoming requests with a 200
+-- Our "application" will respond to ALL incoming requests with a 200
 -- status code response and the message "Hello, World!"
 --
 -- The Application type from Wai is a type synonym for the follwing type:
