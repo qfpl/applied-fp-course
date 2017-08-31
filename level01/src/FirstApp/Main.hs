@@ -17,7 +17,7 @@ runApp = run 3000 app
 -- Our "application" will respond to ALL incoming requests with a 200
 -- status code response and the message "Hello, World!"
 --
--- The Application type from Wai is a type synonym for the follwing type:
+-- The Application type from Wai is a type synonym for the following type:
 --
 -- :: Request -> (Response -> IO ResponseReceived) -> IO ResponseReceived
 --
