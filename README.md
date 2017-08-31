@@ -24,7 +24,7 @@
 * Will utilise both type & test driven development techniques.
 * Will explain architectural and design trade-offs when appropriate.
 
-### Course Sequence:
+### Setup build tools:
 
 You're welcome to setup your own project with ``$ cabal init`` and follow along
 with the general flow of the course, or work through the exercises in the
@@ -66,7 +66,7 @@ These lessons are designed to be completed with an instructor as part of the
 Data61 Advanced Functional Programming Course. You are of course welcome to
 clone the repository and give it a try, but you may find the tasks more
 difficult. If you have any questions we can be contacted in the
-Freenode [#fp-course IRC channel](https://freenode.net). You can use the
+Freenode [#nicta-course IRC channel](https://freenode.net). You can use the
 free [WebChat client](https://webchat.freenode.net).
 
 #### Subsequent lessons may contain spoilers, don't cheat yourself out of the experience!
