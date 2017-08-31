@@ -1,6 +1,6 @@
 # Advanced Functional Programming Course
 
-![Data61](http://i.imgur.com/0h9dFhl.png)
+<img src="http://i.imgur.com/0h9dFhl.png" height="400" width="640" />
 
 ### You:
 
