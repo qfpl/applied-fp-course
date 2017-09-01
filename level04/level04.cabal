@@ -51,7 +51,7 @@ library
                      , FirstApp.Types
                      , FirstApp.Main
   
-  ghc-options:         -Wall -Werror
+  ghc-options:         -Wall -fno-warn-unused-binds -fno-warn-unused-do-bind -fno-warn-unused-imports -fno-warn-type-defaults -ferror-spans
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.9 && <4.10
                      , wai == 3.2.*
@@ -82,7 +82,7 @@ executable level04
   build-depends:       base >=4.9 && <4.10
                      , level04
  
-  ghc-options:         -Wall -Werror
+  ghc-options:         -Wall -fno-warn-unused-binds -fno-warn-unused-do-bind -fno-warn-unused-imports -fno-warn-type-defaults -ferror-spans
   -- Directories containing source files.
   hs-source-dirs:      bin
   

@@ -53,7 +53,7 @@ library
                      , FirstApp.DB.Types
                      , FirstApp.Main
 
-  ghc-options:         -Wall -Werror
+  ghc-options:         -Wall -fno-warn-unused-binds -fno-warn-unused-do-bind -fno-warn-unused-imports -fno-warn-type-defaults -ferror-spans
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.9 && <4.10
                      , wai == 3.2.*
