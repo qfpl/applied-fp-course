@@ -92,7 +92,7 @@ data Env = Env
 -- But ExceptT has an `m` type variable, so what do we put there?
 --
 newtype AppM a = AppM
-  { unAppM :: _ }
+  { unAppM :: ReaderT Env (ExceptT Error IO) a }
   deriving ( Functor
            , Applicative
            , Monad
@@ -112,7 +112,7 @@ runAppM
   :: Env
   -> AppM a
   -> IO (Either Error a)
-runAppM env appM =
+runAppM =
   error "runAppM not reimplemented"
 
 -- This is a helper function that will `lift` an Either value into our new AppM

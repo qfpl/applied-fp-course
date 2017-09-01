@@ -49,11 +49,14 @@ runApp = do
   appE <- prepareAppReqs
   either print runWithDbConn appE
   where
+    getPort' =
+      Conf.getPort . Conf.port . envConfig
+
     runWithDbConn env =
       appWithDb env >> DB.closeDb (envDb env)
 
     appWithDb env =
-      run ( Conf.getPort . Conf.port $ envConfig env) (app env)
+      run ( getPort' env) (app env)
 
 prepareAppReqs
   :: IO (Either StartUpError Env)
@@ -62,7 +65,7 @@ prepareAppReqs = do
   -- This is awkward because we need to initialise our DB using the config,
   -- which might have failed to be created for some reason, but our DB start up
   -- might have also failed for some reason. This is a bit clunky
-  dbE <- fmap join $ traverse initDB cfgE
+  dbE <- fmap join (traverse initDB cfgE)
   -- Wrap our values (if we have them) in our Env for use in other parts of our
   -- application. We do it this way so we can have access to the bits we need
   -- when starting up the full app or one for testing.
@@ -87,14 +90,14 @@ prepareAppReqs = do
 app
   :: Env
   -> Application
-app env rq cb =
-  requestToResponse >>= cb
+app _env rq _cb =
+  error "app not implemented"
   where
     -- Now that our request handling and response creating functions operate
     -- within our AppM context, we need to run the AppM to get our IO action out
     -- to be run and handed off to the callback function. We've already written
     -- the function for this so include the 'runAppM' with the Env.
-    requestToResponse = _f env $ do
+    requestToResponse = do
       -- Exercise: Rewrite this function to remove the need for the intermediate values.
       rq' <- mkRequest rq
       er' <- handleRErr rq'
@@ -126,9 +129,12 @@ handleRequest rqType = do
   db <- asks envDb
   liftIO $ case rqType of
     -- Exercise: Could this be generalised to clean up the repetition ?
-    AddRq t c -> fmap (const ( Res.resp200 "Success" )) <$ DB.addCommentToTopic db t c
-    ViewRq t  -> fmap Res.resp200Json <$> DB.getComments db t
-    ListRq    -> fmap Res.resp200Json <$> DB.getTopics db
+    AddRq t c ->
+      (pure (Res.resp200 PlainText "Success")) <$ DB.addCommentToTopic db t c
+    ViewRq t  ->
+      fmap Res.resp200Json <$> DB.getComments db t
+    ListRq    ->
+      fmap Res.resp200Json <$> DB.getTopics db
 
 mkRequest
   :: Request
@@ -139,13 +145,17 @@ mkRequest
 mkRequest rq =
   case ( pathInfo rq, requestMethod rq ) of
     -- Commenting on a given topic
-    ( [t, "add"], "POST" ) -> liftIO $ mkAddRequest t <$> strictRequestBody rq
+    ( [t, "add"], "POST" ) ->
+      liftIO (mkAddRequest t <$> strictRequestBody rq)
     -- View the comments on a given topic
-    ( [t, "view"], "GET" ) -> pure ( mkViewRequest t )
+    ( [t, "view"], "GET" ) ->
+      pure ( mkViewRequest t )
     -- List the current topics
-    ( ["list"], "GET" )    -> pure mkListRequest
+    ( ["list"], "GET" )    ->
+      pure mkListRequest
     -- Finally we don't care about any other requests so throw your hands in the air
-    _                      -> pure mkUnknownRouteErr
+    _                      ->
+      pure mkUnknownRouteErr
 
 mkAddRequest
   :: Text
@@ -174,13 +184,13 @@ mkUnknownRouteErr =
 mkErrorResponse
   :: Error
   -> AppM Response
-mkErrorResponse UnknownRoute     = pure $ Res.resp404 "Unknown Route"
-mkErrorResponse EmptyCommentText = pure $ Res.resp400 "Empty Comment"
-mkErrorResponse EmptyTopic       = pure $ Res.resp400 "Empty Topic"
+mkErrorResponse UnknownRoute     = pure $ Res.resp404 PlainText "Unknown Route"
+mkErrorResponse EmptyCommentText = pure $ Res.resp400 PlainText "Empty Comment"
+mkErrorResponse EmptyTopic       = pure $ Res.resp400 PlainText "Empty Topic"
 mkErrorResponse ( DBError e )    = do
   -- As with our request for the FirstAppDB, we use the asks function from
   -- Control.Monad.Reader and pass the field accessor from the Env record.
-  rick <- asks loggingRick
-  rick . Text.pack $ show e
+  rick <- asks envLoggingFn
+  (rick . Text.pack . show) e
   -- Be a sensible developer and don't leak your DB errors over the interwebs.
-  pure $ Res.resp500 "OH NOES"
+  pure (Res.resp500 PlainText "OH NOES")

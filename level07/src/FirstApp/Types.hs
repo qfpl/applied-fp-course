@@ -4,13 +4,13 @@
 module FirstApp.Types
   ( RqType (..)
   , ContentType (..)
-  -- Exporting newtypes like this will hide the constructor.
-  , Topic (getTopic)
-  , CommentText (getCommentText)
+  , Topic
+  , CommentText
   , Comment (..)
-  -- We provide specific constructor functions.
   , mkTopic
+  , getTopic
   , mkCommentText
+  , getCommentText
   , renderContentType
   , fromDbComment
   ) where
@@ -35,10 +35,10 @@ import           FirstApp.Error    (Error (..))
 newtype CommentId = CommentId Int
   deriving (Show, ToJSON)
 
-newtype Topic = Topic { getTopic :: Text }
+newtype Topic = Topic Text
   deriving (Show, ToJSON)
 
-newtype CommentText = CommentText { getCommentText :: Text }
+newtype CommentText = CommentText Text
   deriving (Show, ToJSON)
 
 data Comment = Comment
@@ -98,11 +98,23 @@ mkTopic
 mkTopic =
   nonEmptyText Topic EmptyTopic
 
+getTopic
+  :: Topic
+  -> Text
+getTopic (Topic t) =
+  t
+
 mkCommentText
   :: Text
   -> Either Error CommentText
 mkCommentText =
   nonEmptyText CommentText EmptyCommentText
+
+getCommentText
+  :: CommentText
+  -> Text
+getCommentText (CommentText t) =
+  t
 
 data RqType
   = AddRq Topic CommentText

@@ -5,13 +5,13 @@ module FirstApp.Types
   ( Error (..)
   , RqType (..)
   , ContentType (..)
-  -- Exporting newtypes like this will hide the constructor.
-  , Topic (getTopic)
-  , CommentText (getCommentText)
+  , Topic
+  , CommentText
   , Comment (..)
-  -- We provide specific constructor functions.
   , mkTopic
+  , getTopic
   , mkCommentText
+  , getCommentText
   , renderContentType
   , fromDbComment
   ) where
@@ -30,10 +30,12 @@ import qualified Data.Aeson.Types                   as A
 
 import           Data.Time                          (UTCTime)
 
-newtype Topic = Topic { getTopic :: Text }
+import FirstApp.DB.Types (DbComment (..))
+
+newtype Topic = Topic Text
   deriving (Show, ToJSON)
 
-newtype CommentText = CommentText { getCommentText :: Text }
+newtype CommentText = CommentText Text
   deriving (Show, ToJSON)
 
 -- This is the Comment record that we will be sending to users, it's a simple
@@ -42,9 +44,16 @@ newtype CommentText = CommentText { getCommentText :: Text }
 -- some effort when it comes to creating encoding/decoding instances. Since our
 -- types are all simple types at the end of the day, we're able to let GHC do
 -- the work.
---
--- Is an 'Int' acceptable here?
-data Comment = Comment { ... }
+
+newtype CommentId = CommentId Int
+  deriving (Eq, Show, ToJSON)
+
+data Comment = Comment
+  { commentId :: CommentId
+  , topic :: Topic
+  , body :: CommentText
+  , time :: UTCTime
+  }
   deriving ( Show, Generic )
 
 instance ToJSON Comment where
@@ -64,7 +73,7 @@ instance ToJSON Comment where
              }
       -- Strip the prefix (which may fail if the prefix isn't present), fall
       -- back to the original label if need be, then camel-case the name.
-      modFieldLabel l = error "modFieldLabel not implemented"
+      modFieldLabel = error "modFieldLabel not implemented"
 
 -- For safety we take our stored DbComment and try to construct a Comment that
 -- we would be okay with showing someone. However unlikely it may be, this is a
@@ -73,7 +82,7 @@ instance ToJSON Comment where
 fromDbComment
   :: DbComment
   -> Either Error Comment
-fromDbComment dbc =
+fromDbComment =
   error "fromDbComment not yet implemented"
 
 -- Having specialised constructor functions for the newtypes allows you to set
@@ -92,11 +101,23 @@ mkTopic
 mkTopic =
   nonEmptyText Topic EmptyTopic
 
+getTopic
+  :: Topic
+  -> Text
+getTopic (Topic t) =
+  t
+
 mkCommentText
   :: Text
   -> Either Error CommentText
 mkCommentText =
   nonEmptyText CommentText EmptyCommentText
+
+getCommentText
+  :: CommentText
+  -> Text
+getCommentText (CommentText t) =
+  t
 
 data RqType
   = AddRq Topic CommentText

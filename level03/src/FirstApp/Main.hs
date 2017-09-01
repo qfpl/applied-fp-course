@@ -24,7 +24,7 @@ runApp = do
   -- Loading the configuration can fail, so we have to take that into account now.
   case cfgE of
     Left err  -> putStrLn err
-    Right cfg -> run ( _f cfg ) ( app cfg )
+    Right _cfg ->  run undefined undefined
 
 -- | Some helper functions to make our lives a little more DRY.
 mkResponse
@@ -75,8 +75,8 @@ handleRequest
   :: a
   -> RqType
   -> Either Error Response
-handleRequest cfg (AddRq _ _) =
-  Right . resp200 $ "App says: " <> _f cfg
+handleRequest _cfg (AddRq _ _) =
+  Right . resp200 $ "App says: " <> undefined
 handleRequest _ (ViewRq _) =
   Right $ resp200 "Susan was here"
 handleRequest _ ListRq =

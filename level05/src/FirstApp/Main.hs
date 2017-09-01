@@ -44,7 +44,7 @@ data StartUpError
 runApp :: IO ()
 runApp = do
   appE <- prepareAppReqs
-  _f appE
+  undefined appE
 
 prepareAppReqs
   :: IO (Either StartUpError (Conf.Conf,DB.FirstAppDB))
@@ -61,29 +61,33 @@ mkResponse sts ct msg =
   responseLBS sts [(hContentType, renderContentType ct)] msg
 
 resp200
-  :: LBS.ByteString
+  :: ContentType
+  -> LBS.ByteString
   -> Response
 resp200 =
-  mkResponse status200 PlainText
+  mkResponse status200
 
 resp404
-  :: LBS.ByteString
+  :: ContentType
+  -> LBS.ByteString
   -> Response
 resp404 =
-  mkResponse status404 PlainText
+  mkResponse status404
 
 resp400
-  :: LBS.ByteString
+  :: ContentType
+  -> LBS.ByteString
   -> Response
 resp400 =
-  mkResponse status400 PlainText
+  mkResponse status400
 
 -- Some new helpers for different statuses and content types
 resp500
-  :: LBS.ByteString
+  :: ContentType
+  -> LBS.ByteString
   -> Response
 resp500 =
-  mkResponse status500 PlainText
+  mkResponse status500
 
 resp200Json
   :: ToJSON a
@@ -115,9 +119,12 @@ handleRequest
   -> DB.FirstAppDB
   -> RqType
   -> IO (Either Error Response)
-handleRequest _ db (AddRq t c) = fmap (const ( resp200 "Success" )) <$> _f db
-handleRequest _ db (ViewRq t)  = fmap resp200Json                   <$> _g db
-handleRequest _ db ListRq      = fmap resp200Json                   <$> _h db
+handleRequest _ _db (AddRq _ _) =
+  fmap (const ( resp200 PlainText "Success" )) <$> undefined
+handleRequest _ _db (ViewRq _)  =
+  fmap undefined                     <$> undefined
+handleRequest _ _db ListRq      =
+  fmap undefined                     <$> undefined
 
 mkRequest
   :: Request
@@ -161,8 +168,8 @@ mkErrorResponse
   :: Error
   -> Response
 mkErrorResponse UnknownRoute =
-  resp404 "Unknown Route"
+  resp404 PlainText "Unknown Route"
 mkErrorResponse EmptyCommentText =
-  resp400 "Empty Comment"
+  resp400 PlainText "Empty Comment"
 mkErrorResponse EmptyTopic =
-  resp400 "Empty Topic"
+  resp400 PlainText "Empty Topic"

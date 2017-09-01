@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-warn-missing-methods #-}
 module FirstApp.DB.Types where
 
 import           Data.Text                      (Text)
@@ -17,4 +18,3 @@ data DbComment = DbComment
 -- our type. This technique of translating a result row to a type will differ
 -- between different packages/databases.
 instance FromRow DbComment where
-  fromRow = DbComment

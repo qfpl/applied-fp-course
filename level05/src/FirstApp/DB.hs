@@ -30,13 +30,14 @@ import           FirstApp.Types
 -- We need to have a way to pass around the name of the Table we're going to us
 -- for the comments in this application. We _could_ pass around a `Text` value.
 -- What should we do instead?
-newtype Table
+newtype Table = Table Text
+  deriving Show
 
 -- We have a data type to simplify passing around the information we need to run
 -- our database queries. This also allows things to change over time without
 -- having to rewrite all of the functions that need to interact with DB related
 -- things in different ways.
-data FirstAppDB
+data FirstAppDB = FirstAppDB
 
 -- Quick helper to pull the connection and close it down.
 closeDb
@@ -56,7 +57,7 @@ withTable
   :: Table
   -> Query
   -> Query
-withTable t =
+withTable =
   error "withTable not yet implemented"
 
 -- Given a `FilePath` to our SQLite DB file, initialise the database and ensure
@@ -65,7 +66,7 @@ initDb
   :: FilePath
   -> Table
   -> IO ( Either SQLiteResponse FirstAppDB )
-initDb fp tab =
+initDb _fp tab =
   error "initDb not implemented"
   where
   -- Query has a IsString instance so you can write straight strings like this
@@ -81,7 +82,7 @@ getComments
   :: FirstAppDB
   -> Topic
   -> IO (Either Error [Comment])
-getComments db t =
+getComments =
   error "getComments not implemented"
 
 addCommentToTopic
@@ -89,18 +90,18 @@ addCommentToTopic
   -> Topic
   -> CommentText
   -> IO (Either Error ())
-addCommentToTopic db t c =
+addCommentToTopic =
   error "addCommentToTopic not implemented"
 
 getTopics
   :: FirstAppDB
   -> IO (Either Error [Topic])
-getTopics db =
+getTopics =
   error "getTopics not implemented"
 
 deleteTopic
   :: FirstAppDB
   -> Topic
   -> IO (Either Error ())
-deleteTopic db t =
+deleteTopic =
   error "deleteTopic not implemented"

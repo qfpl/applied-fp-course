@@ -6,18 +6,10 @@ import           Network.Wai.Handler.Warp (run)
 
 import           Network.HTTP.Types       (status200)
 
--- We keep this main function here as it is useful to build your application as
--- a library. The reasoning behind this is that when you come to do your
--- testing, you'll be able to import the entire application as a library without
--- needing to worry about any initialisation code you've buried in your
--- executeable Main.sh.
-runApp :: IO ()
-runApp = run 3000 app
-
 -- Our "application" will respond to ALL incoming requests with a 200
 -- status code response and the message "Hello, World!"
 --
--- The Application type from Wai is a type synonym for the following type:
+-- The `Application` type from Wai is a type synonym for the following type:
 --
 -- :: Request -> (Response -> IO ResponseReceived) -> IO ResponseReceived
 --
@@ -38,5 +30,14 @@ app
   :: Request
   -> (Response -> IO ResponseReceived)
   -> IO ResponseReceived
-app rq cb =
+app _ cb =
   error "Application not implemented"
+
+-- We keep this main function here as it is useful to build your application as
+-- a library. The reasoning behind this is that when you come to do your
+-- testing, you'll be able to import the entire application as a library without
+-- needing to worry about any initialisation code you've buried in your
+-- executeable Main.sh.
+runApp :: IO ()
+runApp = run 3000 app
+

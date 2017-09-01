@@ -165,7 +165,7 @@ partialConfParser
   :: Parser PartialConf
 partialConfParser = PartialConf
   <$> portParser
-  <*> (Last <$> optional (helloFromStr <$> strOption helloMods)
+  <*> (Last <$> optional (helloFromStr <$> strOption helloMods))
   -- Add our two new fields to the parsing of the PartialConf record. Note that
   -- if you update the data structure the compiler will do its best to inform
   -- you about everywhere that needs attention.
@@ -175,15 +175,15 @@ partialConfParser = PartialConf
                 <> metavar "HELLOMSG"
                 <> help "Message to respond to requests with."
 
-    dbFilePathMods = long "db-filepath"
-                 <> short 'd'
-                 <> metavar "DBFILEPATH"
-                 <> help "FilePath to the SQLite DB"
+    -- dbFilePathMods = long "db-filepath"
+    --              <> short 'd'
+    --              <> metavar "DBFILEPATH"
+    --              <> help "FilePath to the SQLite DB"
 
-    tableMods = long "table-name"
-                 <> short 't'
-                 <> metavar "TABLENAME"
-                 <> help "Comments DB table name"
+    -- tableMods = long "table-name"
+    --              <> short 't'
+    --              <> metavar "TABLENAME"
+    --              <> help "Comments DB table name"
 
 -- Parse the Port value off the command line args and into our Last wrapper.
 portParser

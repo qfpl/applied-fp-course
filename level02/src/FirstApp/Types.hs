@@ -1,5 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
-module FirstApp.Types where
+module FirstApp.Types
+  ( Topic
+  , CommentText
+  , ContentType (..)
+  , RqType (..)
+  , Error (..)
+  , mkTopic
+  , getTopic
+  , mkCommentText
+  , getCommentText
+  , renderContentType
+  ) where
 
 import           Data.ByteString (ByteString)
 import           Data.Text       (Text)
@@ -17,7 +28,7 @@ import           Data.Text       (Text)
 -- AddRq : Which needs to the target topic, and the body of the comment.
 -- ViewRq : Which needs the topic being requested.
 -- ListRq : Which lists all of the current topics.
-data RqType
+data RqType = RqType
 
 -- Not everything goes according to plan, but it's important that our
 -- types reflect when errors can be introduced into our program. Additionally
@@ -27,11 +38,11 @@ data RqType
 -- building the RqTypes, and create some values to represent that. For now we
 -- don't need to worry about things like malformed requests or invalid headers
 -- etc.
-data Error
+data Error = Error
 
 -- Provide a type to list our response content types so we don't try to
 -- do the wrong thing with what we meant to be used as text/JSON etc.
-data ContentType
+data ContentType = ContentType
 
 -- The ContentType description for a header doesn't match our data definition
 -- so we write a little helper function to pattern match on our ContentType
@@ -55,11 +66,12 @@ renderContentType =
 -- `Text` value
 
 -- Topic
---
+newtype Topic = Topic Text
+  deriving Show
 
--- Comment
---
-
+-- CommentText
+newtype CommentText = CommentText Text
+  deriving Show
 -- |
 
 -- A benefit of `newtype` is that we can choose to *not* export the constructor
@@ -71,13 +83,20 @@ mkTopic
 mkTopic =
   error "mkTopic not implemented"
 
+getTopic
+  :: Topic
+  -> Text
+getTopic =
+  error "getTopic not implemented"
+
 mkCommentText
   :: Text
   -> Either Error CommentText
 mkCommentText =
   error "mkCommentText not implemented"
 
--- After you've implemented these functions, adjust the export list in the
--- module declaration so your constructor functions cannot be bypassed. Also
--- export the functions that let you access the inner value of the newtype.
-
+getCommentText
+  :: CommentText
+  -> Text
+getCommentText =
+  error "getCommentText not implemented"

@@ -66,9 +66,9 @@ prepareAppReqs
 prepareAppReqs = do
   cfg <- initConf
   db <- initDB cfg
-  pure $ Env cfg db
+  pure (Right $ Env cfg db)
   where
-    toStartUpErr e =
+    toStartUpErr =
       error "toStartUpErr not reimplemented"
 
     -- Take our possibly failing configuration/db functions with their unique

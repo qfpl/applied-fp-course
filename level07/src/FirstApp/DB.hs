@@ -63,7 +63,7 @@ withTable t = Sql.Query
 withTableM
   :: Query
   -> AppM Query
-withTableM q =
+withTableM =
   error "withTableM not implemented"
 
 initDb

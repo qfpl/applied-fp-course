@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# OPTIONS_GHC -fno-warn-missing-methods #-}
 module FirstApp.Conf
     ( Conf (..)
     , Port (getPort)
@@ -34,13 +35,18 @@ import           Text.Read                  (readEither)
 -- information.
 data ConfigError
 
--- Create newtypes for `Port` and `HelloMsg`,  to wrap an `Int` and `ByteString`
--- respectively.
+newtype Port = Port
+  { getPort :: Int }
+  deriving (Eq, Show)
+
+newtype HelloMsg = HelloMsg
+  { getHelloMsg :: ByteString }
+  deriving (Eq, Show)
 
 -- The Conf type will need:
 -- - A customisable port number: `Port`
 -- - A changeable message for our users: `HelloMsg`
-data Conf
+data Conf = Conf
 
 -- Our application will be able to load configuration from both a file and
 -- command line input. We want to be able to use the command line to temporarily
@@ -85,7 +91,7 @@ defaultConf =
 makeConfig
   :: PartialConf
   -> Either ConfigError Conf
-makeConfig pc =
+makeConfig =
   error "makeConfig not implemented"
 
 -- This is the function we'll actually export for building our configuration.
@@ -94,7 +100,7 @@ makeConfig pc =
 parseOptions
   :: FilePath
   -> IO (Either ConfigError Conf)
-parseOptions fp =
+parseOptions =
   error "parseOptions not implemented"
 
 -- | File Parsing
@@ -109,7 +115,7 @@ parseOptions fp =
 parseJSONConfigFile
   :: FilePath
   -> IO PartialConf
-parseJSONConfigFile fp =
+parseJSONConfigFile =
   error "parseJSONConfigFile not implemented"
 
 -- | Command Line Parsing
@@ -140,10 +146,11 @@ partialConfParser =
 portParser
   :: Parser (Last Port)
 portParser =
-  let mods = long "port"
-             <> short 'p'
-             <> metavar "PORT"
-             <> help "TCP Port to accept requests on"
+  let
+    -- mods = long "port"
+    --        <> short 'p'
+    --        <> metavar "PORT"
+    --        <> help "TCP Port to accept requests on"
   in
     error "portParser not implemented"
 
@@ -151,9 +158,10 @@ portParser =
 helloMsgParser
   :: Parser (Last HelloMsg)
 helloMsgParser =
-  let mods = long "hello-msg"
-             <> short 'm'
-             <> metavar "HELLOMSG"
-             <> help "Message to respond to requests with."
+  let
+    -- mods = long "hello-msg"
+    --        <> short 'm'
+    --        <> metavar "HELLOMSG"
+    --        <> help "Message to respond to requests with."
   in
     error "helloMsgParser not implemented"

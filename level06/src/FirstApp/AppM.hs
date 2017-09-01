@@ -23,6 +23,10 @@ import           FirstApp.DB            (FirstAppDB)
 -- First, let's clean up our (Conf,FirstAppDB) with an application Env type. We
 -- will add a general purpose logging function as well
 data Env = Env
+  { envLoggingFn :: Text -> AppM ()
+  , envConfig :: Conf
+  , envDb :: FirstAppDB
+  }
 
 -- Lets crack on and define a newtype wrapper for our ReaderT, this will save us
 -- having to write out the full ReaderT definition for every function that uses it.
@@ -42,6 +46,7 @@ newtype AppM a = AppM
   --
   -- Add the 'GeneralizedNewtypeDeriving' pragma to the top of the file, we will
   -- be able to derive these instances automatically.
+  { unAppM :: ReaderT Env IO a }
   deriving ( Functor
            , Applicative
            , Monad
@@ -72,5 +77,5 @@ runAppM
   :: Env
   -> AppM a
   -> IO a
-runAppM env appM =
+runAppM =
   error "runAppM not implemented"

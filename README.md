@@ -28,7 +28,7 @@
 
 You're welcome to setup your own project with ``$ cabal init`` and follow along
 with the general flow of the course, or work through the exercises in the
-projects provided. 
+projects provided.
 
 Each level is a self-contained Haskell application, containing incomplete, or as
 yet undefined, data types and functions. There is a cabal file and Nix
@@ -70,6 +70,9 @@ Freenode [#nicta-course IRC channel](https://freenode.net). You can use the
 free [WebChat client](https://webchat.freenode.net).
 
 #### Subsequent lessons may contain spoilers, don't cheat yourself out of the experience!
+
+There is a ``README.md`` file in each Level project that will provide instructions about
+what the goal is for that specific level.
 
 * Level 01 : Simple Hello World web app.
 * Level 02 : Define our application spec with types!
