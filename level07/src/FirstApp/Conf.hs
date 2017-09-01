@@ -147,6 +147,11 @@ parseJSONConfigFile fp = do
       ( fromObj "dbFilePath" id cObj )
 
     -- Parse out the keys from the object, maybe...
+    -- >>> fromObj "foo" id (encode "{\"foo\":\"Susan\"}")
+    -- Last (Just "Susan")
+    -- >>> fromObj "foo" id (encode "{\"bar\":33}")
+    -- Last Nothing
+    --
     fromObj
       :: FromJSON a
       => Text

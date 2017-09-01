@@ -91,9 +91,6 @@ data Env = Env
 --
 -- But ExceptT has an `m` type variable, so what do we put there?
 --
--- The answer is to put the IO that we replaced as the base monad for ExceptT.
---
--- This gives us the final AppM looking like:
 newtype AppM a = AppM
   { unAppM :: _ }
   deriving ( Functor
@@ -106,17 +103,17 @@ newtype AppM a = AppM
            , MonadError Error
            )
 
+-- Now that we've two transfomers in out 'stack', we have to 'run' them in order
+-- to effect the computations and produce our result in our base monad. When
+-- you're running monad transformers you have to unpack them in order. Since our outer
+-- transformer is a ReaderT, we have to run that first. Followed by running
+-- the ExceptT to retrieve our `IO (Either Error a)`.
 runAppM
   :: Env
   -> AppM a
   -> IO (Either Error a)
 runAppM env appM =
   error "runAppM not reimplemented"
-  -- Now that we've two transfomers in out 'stack', we have to 'run' them in order
-  -- to effect the computations and produce our result in our base monad. When
-  -- you're running monad transformers you have to unpack them in order. Since our outer
-  -- transformer is a ReaderT, we have to run that first. Followed by running
-  -- the ExceptT to retrieve our `IO (Either Error a)`.
 
 -- This is a helper function that will `lift` an Either value into our new AppM
 -- by applying `throwError` to the Left value, and using `pure` to lift the

@@ -47,7 +47,8 @@ data Comment = Comment
   , commentText  :: CommentText
   , commentTime  :: UTCTime
   }
-  -- Generic has been added to our deriving list.
+  -- Generic has been added to our deriving list. This will require the
+  -- DeriveGeneric pragma to be added to the top of the file
   deriving ( Show, Generic )
 
 instance ToJSON Comment where
