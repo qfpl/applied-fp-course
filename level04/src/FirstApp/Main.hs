@@ -34,22 +34,25 @@ mkResponse sts ct msg =
   responseLBS sts [(hContentType, renderContentType ct)] msg
 
 resp200
-  :: LBS.ByteString
+  :: ContentType
+  -> LBS.ByteString
   -> Response
 resp200 =
-  mkResponse status200 PlainText
+  mkResponse status200
 
 resp404
-  :: LBS.ByteString
+  :: ContentType
+  -> LBS.ByteString
   -> Response
 resp404 =
-  mkResponse status404 PlainText
+  mkResponse status404
 
 resp400
-  :: LBS.ByteString
+  :: ContentType
+  -> LBS.ByteString
   -> Response
 resp400 =
-  mkResponse status400 PlainText
+  mkResponse status400
 -- |
 
 app
@@ -71,11 +74,11 @@ handleRequest
   -> RqType
   -> Either Error Response
 handleRequest cfg (AddRq _ _) =
-  Right $ resp200 (Conf.mkMessage cfg)
+  Right $ resp200 PlainText (Conf.mkMessage cfg)
 handleRequest _ (ViewRq _) =
-  Right $ resp200 "Susan was here"
+  Right $ resp200 PlainText "Susan was here"
 handleRequest _ ListRq =
-  Right $ resp200 "[ \"Fred was here\", \"Susan was here\" ]"
+  Right $ resp200 PlainText "[ \"Fred was here\", \"Susan was here\" ]"
 
 mkRequest
   :: Request
@@ -119,9 +122,9 @@ mkErrorResponse
   :: Error
   -> Response
 mkErrorResponse UnknownRoute =
-  resp404 "Unknown Route"
+  resp404 PlainText "Unknown Route"
 mkErrorResponse EmptyCommentText =
-  resp400 "Empty Comment"
+  resp400 PlainText "Empty Comment"
 mkErrorResponse EmptyTopic =
-  resp400 "Empty Topic"
+  resp400 PlainText "Empty Topic"
 

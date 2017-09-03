@@ -79,12 +79,14 @@ prepareAppReqs = do
     toStartUpErr =
       fmap . first
 
-    initConf = toStartUpErr ConfErr
+    initConf =
       -- Prepare the configgening
+      toStartUpErr ConfErr
       $ Conf.parseOptions "appconfig.json"
 
-    initDB cfg = toStartUpErr DbInitErr
+    initDB cfg =
       -- Power up the tubes
+      toStartUpErr DbInitErr
       $ DB.initDb (Conf.dbFilePath cfg) (Conf.tableName cfg)
 
 app
@@ -130,7 +132,7 @@ handleRequest rqType = do
   liftIO $ case rqType of
     -- Exercise: Could this be generalised to clean up the repetition ?
     AddRq t c ->
-      (pure (Res.resp200 PlainText "Success")) <$ DB.addCommentToTopic db t c
+      pure (Res.resp200 PlainText "Success") <$ DB.addCommentToTopic db t c
     ViewRq t  ->
       fmap Res.resp200Json <$> DB.getComments db t
     ListRq    ->
@@ -191,6 +193,6 @@ mkErrorResponse ( DBError e )    = do
   -- As with our request for the FirstAppDB, we use the asks function from
   -- Control.Monad.Reader and pass the field accessor from the Env record.
   rick <- asks envLoggingFn
-  (rick . Text.pack . show) e
+  _ <- (rick . Text.pack . show) e
   -- Be a sensible developer and don't leak your DB errors over the interwebs.
   pure (Res.resp500 PlainText "OH NOES")
