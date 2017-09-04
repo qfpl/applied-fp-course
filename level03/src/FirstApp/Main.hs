@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# OPTIONS_GHC -fno-warn-unused-matches #-}
 module FirstApp.Main (runApp, app) where
 
 import           Network.Wai
