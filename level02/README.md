@@ -5,14 +5,14 @@ structures, and how we can then use those data structures to guide construction.
 
 By using these data structures we provide a mechanism for utilising the compiler
 as a pair programmer. It will inform us when we've forgotten to handle a given
-path, tried to use information we don't have access to, or haven't validated
-our inputs sufficiently.
+path, tried to use information we don't have access to, or haven't validated our
+inputs sufficiently.
 
 First, to build this application we're going to need some requirements:
 
-### Requirements
-"We have a WebThing(TM) somewhere and we would like, for some unknown reason, to
-be able to add comments to various topics on this WebThing(TM)."
+### Requirements "We have a WebThing(TM) somewhere and we would like, for some
+unknown reason, to be able to add comments to various topics on this
+WebThing(TM)."
 
 Let's pretend we've completed a dozen specification meetings with our Project
 Manager, resulting in the specification below:
