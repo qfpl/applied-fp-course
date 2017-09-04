@@ -23,7 +23,7 @@ runApp = do
   cfgE <- error "configuration not implemented"
   -- Loading the configuration can fail, so we have to take that into account now.
   case cfgE of
-    Left err  -> putStrLn err
+    Left err  -> undefined
     Right _cfg ->  run undefined undefined
 
 -- | Some helper functions to make our lives a little more DRY.

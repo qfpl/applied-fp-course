@@ -120,13 +120,17 @@ mkRequest
 mkRequest rq =
   throwL =<< case ( pathInfo rq, requestMethod rq ) of
   -- Commenting on a given topic
-  ( [t, "add"], "POST" ) -> liftIO $ mkAddRequest t <$> strictRequestBody rq
+  ( [t, "add"], "POST" ) ->
+    liftIO $ mkAddRequest t <$> strictRequestBody rq
     -- View the comments on a given topic
-  ( [t, "view"], "GET" ) -> pure ( mkViewRequest t )
+  ( [t, "view"], "GET" ) ->
+    pure ( mkViewRequest t )
   -- List the current topics
-  ( ["list"], "GET" )    -> pure mkListRequest
+  ( ["list"], "GET" )    ->
+    pure mkListRequest
   -- We don't care about any other requests so throw your hands in the air
-  _                      -> pure mkUnknownRouteErr
+  _                      ->
+    pure mkUnknownRouteErr
 
 mkAddRequest
   :: Text
@@ -156,8 +160,12 @@ mkUnknownRouteErr =
 mkErrorResponse
   :: Error
   -> Response
-mkErrorResponse UnknownRoute     = Res.resp404 "Unknown Route"
-mkErrorResponse EmptyCommentText = Res.resp400 "Empty Comment"
-mkErrorResponse EmptyTopic       = Res.resp400 "Empty Topic"
-mkErrorResponse ( DBError _ )    = Res.resp500 "OH NOES"
+mkErrorResponse UnknownRoute     =
+  Res.resp404 "Unknown Route"
+mkErrorResponse EmptyCommentText =
+  Res.resp400 "Empty Comment"
+mkErrorResponse EmptyTopic       =
+  Res.resp400 "Empty Topic"
+mkErrorResponse ( DBError _ )    =
+  Res.resp500 "OH NOES"
 

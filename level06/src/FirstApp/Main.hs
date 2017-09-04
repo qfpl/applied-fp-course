@@ -186,9 +186,12 @@ mkUnknownRouteErr =
 mkErrorResponse
   :: Error
   -> AppM Response
-mkErrorResponse UnknownRoute     = pure $ Res.resp404 PlainText "Unknown Route"
-mkErrorResponse EmptyCommentText = pure $ Res.resp400 PlainText "Empty Comment"
-mkErrorResponse EmptyTopic       = pure $ Res.resp400 PlainText "Empty Topic"
+mkErrorResponse UnknownRoute     =
+  pure $ Res.resp404 PlainText "Unknown Route"
+mkErrorResponse EmptyCommentText =
+  pure $ Res.resp400 PlainText "Empty Comment"
+mkErrorResponse EmptyTopic       =
+  pure $ Res.resp400 PlainText "Empty Topic"
 mkErrorResponse ( DBError e )    = do
   -- As with our request for the FirstAppDB, we use the asks function from
   -- Control.Monad.Reader and pass the field accessor from the Env record.

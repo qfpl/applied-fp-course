@@ -132,13 +132,17 @@ mkRequest
 mkRequest rq =
   case ( pathInfo rq, requestMethod rq ) of
     -- Commenting on a given topic
-    ( [t, "add"], "POST" ) -> mkAddRequest t <$> strictRequestBody rq
+    ( [t, "add"], "POST" ) ->
+      mkAddRequest t <$> strictRequestBody rq
     -- View the comments on a given topic
-    ( [t, "view"], "GET" ) -> pure ( mkViewRequest t )
+    ( [t, "view"], "GET" ) ->
+      pure ( mkViewRequest t )
     -- List the current topics
-    ( ["list"], "GET" )    -> pure mkListRequest
+    ( ["list"], "GET" )    ->
+      pure mkListRequest
     -- Finally we don't care about any other requests so throw your hands in the air
-    _                      -> pure mkUnknownRouteErr
+    _                      ->
+      pure mkUnknownRouteErr
 
 mkAddRequest
   :: Text
