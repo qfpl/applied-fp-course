@@ -114,7 +114,7 @@ makeConfig pc = Conf
     -- sections. Sometimes the compiler might need a bit of help, or you would
     -- like to be explicit in your intentions.
     lastToEither e g =
-      maybe (Left e) Right . getLast $ g pc
+      maybe (Left e) Right (getLast (g pc))
 
 -- This is the function we'll actually export for building our configuration.
 -- Since it wraps all our efforts to read information from the command line, and
@@ -160,7 +160,7 @@ parseJSONConfigFile fp = do
       -> Last b
     fromObj k c obj =
       -- Too weird ?
-      Last $ c <$> Aeson.parseMaybe (Aeson..: k) obj
+      Last (c <$> Aeson.parseMaybe (Aeson..: k) obj)
 
     -- Use bracket to save ourselves from horrible exceptions, which are
     -- horrible.
@@ -170,7 +170,7 @@ parseJSONConfigFile fp = do
       :: IO (Maybe Aeson.Object)
     readObject = bracketOnError
       (LBS.readFile fp)
-      (const ( pure Nothing ))
+      (pure . const Nothing)
       (pure . Aeson.decode)
 
 -- | Command Line Parsing
