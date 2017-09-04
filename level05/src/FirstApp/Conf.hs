@@ -135,7 +135,6 @@ parseJSONConfigFile fp = do
       -> Aeson.Object
       -> Last b
     fromObj k c obj =
-      -- Too weird ?
       Last $ c <$> Aeson.parseMaybe (Aeson..: k) obj
 
     -- Use bracket to save ourselves from horrible exceptions, which are

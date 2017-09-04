@@ -37,7 +37,7 @@ app _ cb =
 -- a library. The reasoning behind this is that when you come to do your
 -- testing, you'll be able to import the entire application as a library without
 -- needing to worry about any initialisation code you've buried in your
--- executeable Main.sh.
+-- executable Main.sh.
 runApp :: IO ()
 runApp = run 3000 app
 

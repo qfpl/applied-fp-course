@@ -17,7 +17,7 @@ import           Data.Text       (Text)
 
 {-|
 In Haskell the `newtype` comes with zero runtime cost. It is purely used for
-typechecking. So when you have a bare 'primitive' value, like an Int, String, or
+type-checking. So when you have a bare 'primitive' value, like an Int, String, or
 even [a], you can wrap it up in a `newtype` for clarity.
 
 The type system will check it for you, and the compiler will eliminate the cost

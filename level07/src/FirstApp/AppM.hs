@@ -25,8 +25,8 @@ data Env = Env
 --
 -- ExceptT e m a ~ m (Either e a)
 --
--- Notice that ExceptT is parameterised over the `e` in same way that our
--- ReaderT is parameterised over the `r`.
+-- Notice that ExceptT is parametrised over the `e` in same way that our
+-- ReaderT is parametrised over the `r`.
 --
 -- ReaderT r m a ~ r -> m a
 --
@@ -103,7 +103,7 @@ newtype AppM a = AppM
            , MonadError Error
            )
 
--- Now that we've two transfomers in out 'stack', we have to 'run' them in order
+-- Now that we've two transformers in out 'stack', we have to 'run' them in order
 -- to effect the computations and produce our result in our base monad. When
 -- you're running monad transformers you have to unpack them in order. Since our outer
 -- transformer is a ReaderT, we have to run that first. Followed by running

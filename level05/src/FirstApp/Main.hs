@@ -33,9 +33,9 @@ import qualified FirstApp.Conf                      as Conf
 import qualified FirstApp.DB                        as DB
 import           FirstApp.Types
 
--- Our startup is becoming more complicated and could fail in new and
+-- Our start-up is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
--- single type so that we can deal with the entire startup process as a whole.
+-- single type so that we can deal with the entire start-up process as a whole.
 data StartUpError
   = ConfErr Conf.ConfigError
   | DbInitErr SQLiteResponse

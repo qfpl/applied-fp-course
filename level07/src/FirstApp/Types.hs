@@ -72,7 +72,7 @@ instance ToJSON Comment where
 -- For safety we take our stored DbComment and try to construct a Comment that
 -- we would be okay with showing someone. However unlikely it may be, this is a
 -- nice method for separating out the back and front end of a web app and
--- providing greater guaranteees about data cleanliness.
+-- providing greater guarantees about data cleanliness.
 fromDbComment
   :: DbComment
   -> Either Error Comment
@@ -122,7 +122,7 @@ data RqType
   | ListRq
 
 -- Provide a type to list our response content types so we don't try to
--- do the wrong thing with what we meant to be used as text/JSON etc.
+-- do the wrong thing with what we meant to be used as text or JSON etc.
 data ContentType
   = PlainText
   | JSON

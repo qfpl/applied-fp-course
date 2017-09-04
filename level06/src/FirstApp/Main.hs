@@ -36,9 +36,9 @@ import           FirstApp.Types
 
 import           FirstApp.AppM
 
--- Our startup is becoming more complicated and could fail in new and
+-- Our start-up is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
--- single type so that we can deal with the entire startup process as a whole.
+-- single type so that we can deal with the entire start-up process as a whole.
 data StartUpError
   = ConfErr Conf.ConfigError
   | DbInitErr SQLiteResponse
@@ -80,7 +80,7 @@ prepareAppReqs = do
       fmap . first
 
     initConf =
-      -- Prepare the configgening
+      -- Prepare the config
       toStartUpErr ConfErr
       $ Conf.parseOptions "appconfig.json"
 
@@ -194,8 +194,8 @@ mkErrorResponse EmptyTopic       =
   pure $ Res.resp400 PlainText "Empty Topic"
 mkErrorResponse ( DBError e )    = do
   -- As with our request for the FirstAppDB, we use the asks function from
-  -- Control.Monad.Reader and pass the field accessor from the Env record.
+  -- Control.Monad.Reader and pass the field accessors from the Env record.
   rick <- asks envLoggingFn
   _ <- (rick . Text.pack . show) e
-  -- Be a sensible developer and don't leak your DB errors over the interwebs.
+  -- Be a sensible developer and don't leak your DB errors over the internet.
   pure (Res.resp500 PlainText "OH NOES")

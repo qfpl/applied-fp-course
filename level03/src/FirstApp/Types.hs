@@ -3,10 +3,8 @@ module FirstApp.Types
   ( Error (..)
   , RqType (..)
   , ContentType (..)
-  -- Exporting newtypes like this will hide the constructor.
   , Topic
   , CommentText
-  -- We provide specific constructor functions.
   , mkTopic
   , getTopic
   , mkCommentText
@@ -61,7 +59,7 @@ getCommentText (CommentText t) =
 -- To that end, we have the following types:
 --
 -- AddRq : Which needs to the target topic, and the body of the comment.
--- ViewRq : Which needs the topic being requestd.
+-- ViewRq : Which needs the topic being requested.
 -- ListRq : Which lists all of the current topics.
 data RqType
   = AddRq Topic CommentText

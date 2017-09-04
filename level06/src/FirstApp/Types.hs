@@ -52,7 +52,10 @@ data Comment = Comment
   deriving ( Show, Generic )
 
 instance ToJSON Comment where
-  -- This is one place where we can take advantage of our Generic instance. Aeson already has the encoding functions written for anything that implements the Generic typeclass. So we don't have to write our encoding, we tell Aeson to build it.
+  -- This is one place where we can take advantage of our Generic instance. Aeson
+  -- already has the encoding functions written for anything that implements the
+  -- Generic typeclass. So we don't have to write our encoding, we tell Aeson to
+  -- build it.
   toEncoding = A.genericToEncoding opts
     where
       -- These options let us make some minor adjustments to how Aeson treats
@@ -73,7 +76,7 @@ instance ToJSON Comment where
 -- For safety we take our stored DbComment and try to construct a Comment that
 -- we would be okay with showing someone. However unlikely it may be, this is a
 -- nice method for separating out the back and front end of a web app and
--- providing greater guaranteees about data cleanliness.
+-- providing greater guarantees about data cleanliness.
 fromDbComment
   :: DbComment
   -> Either Error Comment
@@ -131,7 +134,7 @@ data Error
   deriving Show
 
 -- Provide a type to list our response content types so we don't try to
--- do the wrong thing with what we meant to be used as text/JSON etc.
+-- do the wrong thing with what we meant to be used as text or JSON etc.
 data ContentType
   = PlainText
   | JSON

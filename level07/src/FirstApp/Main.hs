@@ -34,9 +34,9 @@ import           FirstApp.Error                     (Error (..))
 import qualified FirstApp.Responses                 as Res
 import           FirstApp.Types
 
--- Our startup process is becoming more complicated and could fail in new and
+-- Our start-up process is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
--- single type so that we can deal with the entire startup process as a whole.
+-- single type so that we can deal with the entire start-up process as a whole.
 data StartUpError
   = ConfErr Conf.ConfigError
   | DbInitErr SQLiteResponse
@@ -138,7 +138,6 @@ mkAddRequest
   -> Either Error RqType
 mkAddRequest ti c = AddRq
   <$> mkTopic ti
-  -- Got string types...
   <*> (mkCommentText . decodeUtf8 $ LBS.toStrict c)
 
 mkViewRequest

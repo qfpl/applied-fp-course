@@ -46,7 +46,7 @@ main = do
             -- This outer 'do' is in the base IO monad and if we have a failure
             -- here we need to exit with an error code to ensure the test-suite
             -- knows to fail our tests.
-            -- either dieWith pure r
+            either dieWith pure r
 
       -- Run the tests with a DB topic flush between each spec
       hspec . with ( flushTopic >> app' ) $ do
