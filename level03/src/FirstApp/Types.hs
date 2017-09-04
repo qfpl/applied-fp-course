@@ -85,4 +85,4 @@ renderContentType
   :: ContentType
   -> ByteString
 renderContentType PlainText = "text/plain"
-renderContentType JSON      = "text/json"
+renderContentType JSON      = "application/json"

@@ -96,4 +96,4 @@ renderContentType
   -> ByteString
 -- renderContentType = error "renderContentType not implemented"
 renderContentType PlainText = "text/plain"
-renderContentType JSON      = "text/json"
+renderContentType JSON      = "application/json"
