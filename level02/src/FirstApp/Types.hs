@@ -41,7 +41,7 @@ data RqType = RqType
 data Error = Error
 
 -- Provide a type to list our response content types so we don't try to
--- do the wrong thing with what we meant to be used as text/JSON etc.
+-- do the wrong thing with what we meant to be used as text or JSON etc.
 data ContentType = ContentType
 
 -- The ContentType description for a header doesn't match our data definition
@@ -76,7 +76,7 @@ newtype CommentText = CommentText Text
 
 -- A benefit of `newtype` is that we can choose to *not* export the constructor
 -- and provide a function of our own. In our case, we're not interested in empty
--- `Text` values so we can eliminate them and immediately report an error.
+-- `Text` values so we will eliminate them and immediately report an error.
 mkTopic
   :: Text
   -> Either Error Topic

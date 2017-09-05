@@ -1,4 +1,4 @@
-# Advanced Functional Programming Course
+# Applied Functional Programming Course
 
 <img src="http://i.imgur.com/0h9dFhl.png" height="400" width="640" />
 
@@ -7,7 +7,7 @@
 * Have completed, or are capable of completing, the [Data61 FP Course](https://github.com/data61/fp-course).
 * Have a few months self-study to your name.
 * Want to know how to build larger applications with statically typed FP.
-* Are willing to accept that a web application is a sufficient choice, for now.
+* Are willing to accept that a web application is a sufficient choice.
 
 ### We:
 
@@ -41,16 +41,18 @@ $ cd <levelN>
 $ cabal sandbox init
 $ cabal configure
 $ cabal install --only-dependencies
+$ $EDITOR README.md
 ```
 The normal cabal build commands should then work as expected. We do recommend
 using cabal sandboxes as they provide a contained Haskell environment for a
-given project. Easy to clean up, and package versions won't conflict with any other
-sandboxed project you may be working on. Hence their name.
+given project. Easy to clean up, and package versions won't conflict with any
+other sandboxed project you may be working on. Hence their name.
 
 To use the Nix Shell:
 ```bash
 $ cd <levelN>
 $ nix-shell
+$ $EDITOR README.md
 ```
 Once that completes you will be in a ``nix-shell`` environment with all the
 tools required to build the application for that level. Note that the

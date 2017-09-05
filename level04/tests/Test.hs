@@ -22,5 +22,8 @@ main = do
       -- failure code to trip up anything that might be watching our run status.
       error "Config failure error handling not implemented"
 
-    Right cfg ->
-      error "tests not implemented"
+    Right cfg -> do
+      let app' = undefined
+      hspec . undefined $ do
+          describe undefined $ do
+            error "test undefined"

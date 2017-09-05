@@ -8,7 +8,7 @@ as a pair programmer. It will inform us when we've forgotten to handle a given
 path, tried to use information we don't have access to, or haven't validated our
 inputs sufficiently.
 
-First, to build this application we're going to need some requirements:
+To build this application we're going to need some requirements:
 
 ### Requirements
 We have a WebThing(TM) somewhere and we would like, for some
@@ -36,4 +36,4 @@ GET /<topic>/view
 GET /list
 ```
 
-The starting point for this Level is the ``src/FirstApp/Types.hs``.
+The starting point for this exercise is the ``src/FirstApp/Types.hs``.

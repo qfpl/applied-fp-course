@@ -30,11 +30,6 @@ import           Options.Applicative        (Parser, ParserInfo, eitherReader,
 
 import           Text.Read                  (readEither)
 
--- Similar to when we were considering what might go wrong with the RqType,
--- lets think about might go wrong when trying to gather our configuration
--- information.
-data ConfigError
-
 newtype Port = Port
   { getPort :: Int }
   deriving (Eq, Show)
@@ -47,6 +42,11 @@ newtype HelloMsg = HelloMsg
 -- - A customisable port number: `Port`
 -- - A changeable message for our users: `HelloMsg`
 data Conf = Conf
+
+-- Similar to when we were considering what might go wrong with the RqType,
+-- lets think about might go wrong when trying to gather our configuration
+-- information.
+data ConfigError
 
 -- Our application will be able to load configuration from both a file and
 -- command line input. We want to be able to use the command line to temporarily

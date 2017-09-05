@@ -62,9 +62,8 @@ resp400 =
 app
   :: a
   -> Application
-app cfg rq cb = mkRequest rq
-  >>= fmap handleRespErr . pure . handleRErr
-  >>= cb
+app cfg rq cb =
+  (handleRespErr . handleRErr <$> mkRequest rq) >>= cb
   where
     -- Does this seem clunky to you?
     handleRespErr =
@@ -80,7 +79,7 @@ handleRequest
   -> RqType
   -> Either Error Response
 handleRequest _cfg (AddRq _ _) =
-  Right . resp200 PlainText $ "App says: " <> undefined
+  Right $ resp200 PlainText ("App says: " <> undefined)
 handleRequest _ (ViewRq _) =
   Right $ resp200 PlainText "Susan was here"
 handleRequest _ ListRq =
@@ -110,7 +109,7 @@ mkAddRequest
   -> Either Error RqType
 mkAddRequest ti c = AddRq
   <$> mkTopic ti
-  <*> (mkCommentText . decodeUtf8 $ LBS.toStrict c)
+  <*> (mkCommentText . decodeUtf8 . LBS.toStrict) c
 
 mkViewRequest
   :: Text

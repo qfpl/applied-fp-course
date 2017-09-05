@@ -8,18 +8,18 @@ you to adding tests to your Haskell application. The setup of the Cabal file is
 already completed for you, but will be covered.
 
 As is to be expected, there are multiple testing frameworks and packages
-available but we will only cover one here. Chosen partly due to its possible
-familiarity.
-
-We will use the [HSpec] framework, with the [hspec-wai] package to make our
-lives a bit easier.
+available but we will only cover one here. We will use the [HSpec] framework,
+with the [hspec-wai] package to make our lives a bit easier.
 
 ### Tool Introduction: GHCID
 
 Additionally we'd like to introduce a command line tool that we find quite
 useful for Haskell development; [ghcid]. This is a very lightweight tool that
-works for any project with a functioning cabal setup. In an spare open terminal
-window, navigate to the project root of the Haskell project and run ``$ ghcid``.
+works for any project with a functioning cabal setup.
+
+If you would like to use it, consult its documentation for how to install it,
+and then in an spare open terminal window, navigate to the root of the Haskell
+project and run ``$ ghcid``.
 
 It will then attempt to build your project, if errors are found they will be
 displayed. But more importantly you can go back to editing files in the project
