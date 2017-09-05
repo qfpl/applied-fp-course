@@ -104,7 +104,7 @@ makeConfig pc = Conf
     -- sections. Sometimes the compiler might need a bit of help, or you would
     -- like to be explicit in your intentions.
     lastToEither e g =
-      maybe (Left e) Right . getLast $ g pc
+      (maybe (Left e) Right . getLast . g) pc
 
 parseOptions
   :: FilePath
@@ -135,7 +135,7 @@ parseJSONConfigFile fp = do
       -> Aeson.Object
       -> Last b
     fromObj k c obj =
-      Last $ c <$> Aeson.parseMaybe (Aeson..: k) obj
+      Last (c <$> Aeson.parseMaybe (Aeson..: k) obj)
 
     -- Use bracket to save ourselves from horrible exceptions, which are
     -- horrible.

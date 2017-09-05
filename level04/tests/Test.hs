@@ -24,6 +24,6 @@ main = do
 
     Right cfg -> do
       let app' = undefined
-      hspec . undefined $ do
+      hspec . undefined app' $ do
           describe undefined $ do
             error "test undefined"

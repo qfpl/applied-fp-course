@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# OPTIONS_GHC -fno-warn-unused-matches #-}
 module FirstApp.DB
   ( Table (..)
   , FirstAppDB (FirstAppDB)
@@ -48,9 +49,9 @@ closeDb =
 
 -- Due to the way our application is designed, we have a slight SQL injection
 -- risk because we pull the Table name from the Conf. Write a function that
--- attempts to mitigate that risk a bit, by handling replacement of a placeholder value
--- in a given Query. We should be able to write the query and pass it through this
--- function and everything is will be taken care of for us.
+-- attempts to mitigate that risk a bit, by handling replacement of a place-
+-- holder value in a given Query. We should be able to write the query and pass
+-- it through this function and everything is will be taken care of for us.
 
 -- This is not the way to do things in a large scale app, obviously.
 withTable
@@ -66,11 +67,11 @@ initDb
   :: FilePath
   -> Table
   -> IO ( Either SQLiteResponse FirstAppDB )
-initDb _fp tab =
+initDb fp tab =
   error "initDb not implemented"
   where
   -- Query has a IsString instance so you can write straight strings like this
-  -- and it will convert them into a Query type, use '?' as placeholders for
+  -- and it will convert them into a Query type, use '?' as place-holders for
   -- ORDER DEPENDENT interpolation.
     createTableQ = withTable tab
       "CREATE TABLE IF NOT EXISTS $$tablename$$ (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time INTEGER)"

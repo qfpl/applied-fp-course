@@ -73,12 +73,15 @@ instance ToJSON Comment where
              }
       -- Strip the prefix (which may fail if the prefix isn't present), fall
       -- back to the original label if need be, then camel-case the name.
+      modFieldLabel
+        :: String
+        -> String
       modFieldLabel = error "modFieldLabel not implemented"
 
 -- For safety we take our stored DbComment and try to construct a Comment that
 -- we would be okay with showing someone. However unlikely it may be, this is a
 -- nice method for separating out the back and front end of a web app and
--- providing greater guaranteees about data cleanliness.
+-- providing greater guarantees about data cleanliness.
 fromDbComment
   :: DbComment
   -> Either Error Comment

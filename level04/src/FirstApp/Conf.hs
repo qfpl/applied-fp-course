@@ -140,7 +140,7 @@ parseJSONConfigFile fp = do
       :: IO (Maybe Aeson.Object)
     readObject = bracketOnError
       (LBS.readFile fp)
-      (const ( pure Nothing ))
+      (pure . const Nothing)
       (pure . Aeson.decode)
 
 -- | Command Line Parsing
@@ -186,5 +186,4 @@ helloMsgParser =
              <> metavar "HELLOMSG"
              <> help "Message to respond to requests with."
   in
-    -- String -> ByteString -> HelloMsg -> Last HelloMsg... Phew.
     Last <$> optional (helloFromStr <$> strOption mods)

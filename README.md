@@ -65,7 +65,7 @@ different workflow you can still utilise the derivation.
 ##### Please note...
 
 These lessons are designed to be completed with an instructor as part of the
-Data61 Advanced Functional Programming Course. You are of course welcome to
+Data61 Applied Functional Programming Course. You are of course welcome to
 clone the repository and give it a try, but you may find the tasks more
 difficult. If you have any questions we can be contacted in the
 Freenode [#nicta-course IRC channel](https://freenode.net). You can use the

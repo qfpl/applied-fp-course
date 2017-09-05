@@ -11,7 +11,9 @@ As is to be expected, there are multiple testing frameworks and packages
 available but we will only cover one here. We will use the [HSpec] framework,
 with the [hspec-wai] package to make our lives a bit easier.
 
-### Tool Introduction: GHCID
+Start in ``tests/Test.hs``.
+
+#### Aside: Tool Introduction - ghcid
 
 Additionally we'd like to introduce a command line tool that we find quite
 useful for Haskell development; [ghcid]. This is a very lightweight tool that
@@ -29,8 +31,6 @@ messages or ``All Good`` if it cannot find any errors.
 ``ghcid`` provides extremely fast feedback, allowing for a nice development
 process with constant feedback about your changes. It is very useful in tandem
 with type holes. Give it a try!
-
-Start in ``tests/Test.hs``.
 
 [HSpec]: (http://hspec.github.io/)
 [hspec-wai]: (https://hackage.haskell.org/package/hspec-wai)

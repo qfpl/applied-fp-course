@@ -24,8 +24,8 @@ import           FirstApp.DB            (FirstAppDB)
 -- will add a general purpose logging function as well
 data Env = Env
   { envLoggingFn :: Text -> AppM ()
-  , envConfig :: Conf
-  , envDb :: FirstAppDB
+  , envConfig    :: Conf
+  , envDb        :: FirstAppDB
   }
 
 -- Lets crack on and define a newtype wrapper for our ReaderT, this will save us
@@ -37,15 +37,15 @@ newtype AppM a = AppM
   -- addition to the useful type system) means that it is harder to use a
   -- different ReaderT when we meant to use our own, or vice versa. In such a
   -- situation it is extremely unlikely the application would compile at all,
-  -- but the name differences alone make the confusion a little less likely.
+  -- but the name differences alone make the confusion less likely.
   --
   -- Because we're using a newtype, all of the instance definitions for ReaderT
   -- would normally not apply. However, because we've done nothing but create a
-  -- convenience wrapper for our ReaderT, there is an extension for Haskell that
-  -- allows it to extend all the existing instances to work without AppM.
+  -- convenience wrapper for our ReaderT, it is not difficult for GHC to
+  -- automatically derive instances on our behalf.
   --
-  -- Add the 'GeneralizedNewtypeDeriving' pragma to the top of the file, we will
-  -- be able to derive these instances automatically.
+  -- With the 'GeneralizedNewtypeDeriving' pragma at the top of the file, we
+  -- will be able to derive these instances automatically.
   { unAppM :: ReaderT Env IO a }
   deriving ( Functor
            , Applicative
@@ -54,20 +54,19 @@ newtype AppM a = AppM
            , MonadIO
            )
 
--- This a helper function that will take the requirements for our ReaderT, an
--- Env, and the (AppM a) that is the context/action to be run with the given Env.
+-- Below is a helper function that will take the requirements for our ReaderT, an
+-- Env, and the (AppM a) that is the action to be run with the given Env.
 --
--- First step is to unwrap our AppM, the newtype definition we wrote gives us
+-- Our AppM must first be 'unwrapped'. The newtype definition we wrote gives us
 -- that function:
 -- unAppM :: AppM a -> ReaderT Env IO a
 --
--- Then we run the ReaderT, which itself is a newtype to get access to the
--- action we're going to evaluate:
+-- Then we run the ReaderT, using:
 -- runReaderT :: ReaderT r m a -> r -> m a
 -- ~
 -- runReaderT :: ReaderT Env IO a -> Env -> IO a
 --
--- Combining them (runReaderT . unAppM) we are left with:
+-- Composing them (runReaderT . unAppM) we are left with:
 -- Env -> IO a
 --
 -- We have an Env so that leaves us with the:
