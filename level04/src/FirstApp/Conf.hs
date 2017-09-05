@@ -96,7 +96,7 @@ makeConfig pc = Conf
     -- sections. Sometimes the compiler might need a bit of help, or you would
     -- like to be explicit in your intentions.
     lastToEither e g =
-      maybe (Left e) Right . getLast $ g pc
+      (maybe (Left e) Right . getLast . g) pc
 
 parseOptions
   :: FilePath
@@ -135,7 +135,7 @@ parseJSONConfigFile fp = do
       ( fromJsonObjWithKey "port" Port cObj )
       ( fromJsonObjWithKey "helloMsg" helloFromStr cObj )
 
-     readObject
+    readObject
       :: IO (Maybe Aeson.Object)
     readObject = bracketOnError
       (LBS.readFile fp)

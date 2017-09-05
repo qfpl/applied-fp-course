@@ -114,7 +114,7 @@ makeConfig pc = Conf
     -- sections. Sometimes the compiler might need a bit of help, or you would
     -- like to be explicit in your intentions.
     lastToEither e g =
-      maybe (Left e) Right . getLast $ g pc
+      (maybe (Left e) Right . getLast . g) pc
 
 -- This is the function we'll actually export for building our configuration.
 -- Since it wraps all our efforts to read information from the command line, and
