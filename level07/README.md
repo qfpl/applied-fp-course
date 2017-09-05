@@ -2,6 +2,6 @@
 
 Handling those `Either` values everywhere is a bit awkward, this exercise
 introduces another monad transformer, ``ExceptT``. As well as the concept of a
-'transformer stack' and what benefits it provides.
+'transformer stack' and what benefits it can provide.
 
 Start again in ``src/FirstApp/AppM.hs``.
