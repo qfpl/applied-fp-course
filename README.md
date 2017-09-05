@@ -60,7 +60,7 @@ levels build on each other, so you can go to the highest level and enter a
 nix-shell there, you will then have all the required tools for every level.
 
 The ``shell.nix`` is provided separate from the ``default.nix`` so if you have a
-different workflow you can still utilise the derivation.
+different work-flow you can still utilise the derivation.
 
 ##### Please note...
 
