@@ -55,23 +55,23 @@ newtype AppM a = AppM
            , MonadIO
            )
 
--- Below is a helper function that will take the requirements for our ReaderT, an
--- Env, and the (AppM a) that is the action to be run with the given Env.
---
--- Our AppM must first be 'unwrapped'. The newtype definition we wrote gives us
+-- Below is a helper function that will take the requirements for our ReaderT,
+-- an Env, and the (AppM a) that is the action to be run with the given Env.
+
+-- Our AppM must first be 'unwrapped', the newtype definition we wrote gives us
 -- that function:
--- unAppM :: AppM a -> ReaderT Env IO a
+-- > unAppM :: AppM a -> ReaderT Env IO a
 --
 -- Then we run the ReaderT, using:
--- runReaderT :: ReaderT r m a -> r -> m a
+-- > runReaderT :: ReaderT r m a -> r -> m a
 -- ~
--- runReaderT :: ReaderT Env IO a -> Env -> IO a
+-- > runReaderT :: ReaderT Env IO a -> Env -> IO a
 --
 -- Composing them (runReaderT . unAppM) we are left with:
--- Env -> IO a
+-- > Env -> IO a
 --
 -- We have an Env so that leaves us with the:
--- IO a
+-- > IO a
 -- and we're done.
 runAppM
   :: Env
