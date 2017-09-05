@@ -110,12 +110,38 @@ parseOptions =
 -- need. The package we're using is the ``aeson`` package to parse some JSON and
 -- we'll pick the bits off the Object.
 
--- The documentation for this package will guide you in the right direction
+-- Complete the helper function that will be used to retrieve values off the
+-- JSON object.
+
+-- | fromJsonObjWithKey
+-- >>> fromJsonObjWithKey "foo" id (encode "{\"foo\":\"Susan\"}")
+-- Last (Just "Susan")
+-- >>> fromJsonObjWithKey "foo" id (encode "{\"bar\":33}")
+-- Last Nothing
+fromJsonObjWithKey
+  :: FromJSON a
+  => Text
+  -> (a -> b)
+  -> Aeson.Object
+  -> Last b
+fromJsonObjWithKey =
+  error "fromJsonObjWithKey not implemented"
+
+-- Construct the function that will take a FilePath, read it in and attempt to
+-- decode it as a valid JSON object, using the ``aeson`` package. Then pull
+-- specific keys off this object and construct our ``PartialConf``. Using the
+-- function we wrote above to assist in pulling items off the object.
 parseJSONConfigFile
   :: FilePath
   -> IO PartialConf
 parseJSONConfigFile =
   error "parseJSONConfigFile not implemented"
+  where
+    -- Use the ``bracketOnError`` function to guard against exceptions.
+    readObject
+      :: IO (Maybe Aeson.Object)
+    readObject =
+      error "readObject not implemented"
 
 -- | Command Line Parsing
 

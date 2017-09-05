@@ -108,6 +108,20 @@ parseOptions fp = do
 
 -- | File Parsing
 
+-- | fromJsonObjWithKey
+-- >>> fromJsonObjWithKey "foo" id (encode "{\"foo\":\"Susan\"}")
+-- Last (Just "Susan")
+-- >>> fromJsonObjWithKey "foo" id (encode "{\"bar\":33}")
+-- Last Nothing
+fromJsonObjWithKey
+  :: FromJSON a
+  => Text
+  -> (a -> b)
+  -> Aeson.Object
+  -> Last b
+fromJsonObjWithKey k c obj =
+  Last $ c <$> Aeson.parseMaybe (Aeson..: k) obj
+
 -- Additional Exercise: Rewrite this without using Do notation
 -- 'fmap' should be sufficient.
 parseJSONConfigFile
@@ -118,25 +132,10 @@ parseJSONConfigFile fp = do
   pure . fromMaybe mempty $ toPartialConf <$> fc
   where
     toPartialConf cObj = PartialConf
-      ( offObj "port" Port cObj )
-      ( offObj "helloMsg" helloFromStr cObj )
+      ( fromJsonObjWithKey "port" Port cObj )
+      ( fromJsonObjWithKey "helloMsg" helloFromStr cObj )
 
-    -- Parse out the keys from the object, maybe...
-    offObj
-      :: FromJSON a
-      => Text
-      -> (a -> b)
-      -> Aeson.Object
-      -> Last b
-    offObj k c obj =
-      -- Too weird ?
-      Last $ c <$> Aeson.parseMaybe (Aeson..: k) obj
-
-    -- Use bracket to save ourselves from horrible exceptions, which are
-    -- horrible.
-    --
-    -- Better ways to do this ?
-    readObject
+     readObject
       :: IO (Maybe Aeson.Object)
     readObject = bracketOnError
       (LBS.readFile fp)

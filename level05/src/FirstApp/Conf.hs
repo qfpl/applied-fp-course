@@ -116,6 +116,16 @@ parseOptions fp = do
 
 -- | File Parsing
 
+-- Parse out the keys from the object, maybe...
+fromJsonObjWithKey
+  :: FromJSON a
+  => Text
+  -> (a -> b)
+  -> Aeson.Object
+  -> Last b
+fromJsonObjWithKey k c obj =
+  Last (c <$> Aeson.parseMaybe (Aeson..: k) obj)
+
 parseJSONConfigFile
   :: FilePath
   -> IO PartialConf
@@ -124,23 +134,9 @@ parseJSONConfigFile fp = do
   pure . fromMaybe mempty $ toPartialConf <$> fc
   where
     toPartialConf cObj = PartialConf
-      ( fromObj "port" Port cObj )
-      ( fromObj "helloMsg" helloFromStr cObj )
-
-    -- Parse out the keys from the object, maybe...
-    fromObj
-      :: FromJSON a
-      => Text
-      -> (a -> b)
-      -> Aeson.Object
-      -> Last b
-    fromObj k c obj =
-      Last (c <$> Aeson.parseMaybe (Aeson..: k) obj)
-
-    -- Use bracket to save ourselves from horrible exceptions, which are
-    -- horrible.
-    --
-    -- Better ways to do this ?
+      ( fromJsonObjWithKey "port" Port cObj )
+      ( fromJsonObjWithKey "helloMsg" helloFromStr cObj )
+    -- Use bracket to save ourselves from horrible exceptions.
     readObject
       :: IO (Maybe Aeson.Object)
     readObject = bracketOnError

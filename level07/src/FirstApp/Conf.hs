@@ -129,9 +129,20 @@ parseOptions fp = do
 
 -- | File Parsing
 
--- Avoiding too many complications with selecting a configuration file package
--- from hackage. We'll use an encoding that you are probably familiar with, for
--- better or worse, and write a small parser to pull out the bits we need.
+-- | fromJsonObjWithKey
+-- >>> fromJsonObjWithKey "foo" id (encode "{\"foo\":\"Susan\"}")
+-- Last (Just "Susan")
+-- >>> fromJsonObjWithKey "foo" id (encode "{\"bar\":33}")
+-- Last Nothing
+fromJsonObjWithKey
+  :: FromJSON a
+  => Text
+  -> (a -> b)
+  -> Aeson.Object
+  -> Last b
+fromJsonObjWithKey k c obj =
+  Last (c <$> Aeson.parseMaybe (Aeson..: k) obj)
+
 parseJSONConfigFile
   :: FilePath
   -> IO PartialConf
@@ -140,32 +151,12 @@ parseJSONConfigFile fp = do
   pure . fromMaybe mempty $ toPartialConf <$> fc
   where
     toPartialConf cObj = PartialConf
-      ( fromObj "port" Port cObj )
-      ( fromObj "helloMsg" helloFromStr cObj )
+      ( fromJsonObjWithKey "port" Port cObj )
+      ( fromJsonObjWithKey "helloMsg" helloFromStr cObj )
       -- Pull the extra keys off the configuration file.
-      ( fromObj "tableName" Table cObj )
-      ( fromObj "dbFilePath" id cObj )
+      ( fromJsonObjWithKey "tableName" Table cObj )
+      ( fromJsonObjWithKey "dbFilePath" id cObj )
 
-    -- Parse out the keys from the object, maybe...
-    -- >>> fromObj "foo" id (encode "{\"foo\":\"Susan\"}")
-    -- Last (Just "Susan")
-    -- >>> fromObj "foo" id (encode "{\"bar\":33}")
-    -- Last Nothing
-    --
-    fromObj
-      :: FromJSON a
-      => Text
-      -> (a -> b)
-      -> Aeson.Object
-      -> Last b
-    fromObj k c obj =
-      -- Too weird ?
-      Last (c <$> Aeson.parseMaybe (Aeson..: k) obj)
-
-    -- Use bracket to save ourselves from horrible exceptions, which are
-    -- horrible.
-    --
-    -- Better ways to do this ?
     readObject
       :: IO (Maybe Aeson.Object)
     readObject = bracketOnError
