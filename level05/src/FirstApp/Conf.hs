@@ -5,7 +5,6 @@ module FirstApp.Conf
     , Port (getPort)
     , HelloMsg (getHelloMsg)
     , parseOptions
-    , mkMessage
     ) where
 
 import           Control.Exception          (bracketOnError)
@@ -54,15 +53,6 @@ helloFromStr
   -> HelloMsg
 helloFromStr =
   HelloMsg . fromString
-
-mkMessage
-  :: Conf
-  -> LBS.ByteString
-mkMessage =
-  mappend "App says: "
-  . getHelloMsg
-  . helloMsg
-
 
 data Conf = Conf
   { port       :: Port

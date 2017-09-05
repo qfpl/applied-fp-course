@@ -10,25 +10,17 @@ module FirstApp.Types
   , mkCommentText
   , getCommentText
   , renderContentType
-  )where
+  ) where
 
 import           Data.ByteString (ByteString)
 import           Data.Text       (Text)
 
--- In Haskell the `newtype` comes with zero runtime cost. It is purely used for
--- type-checking. So when you have a bare 'primitive' value, like an Int,
--- String, or even [a], you can wrap it up in a `newtype` for clarity.
-
--- The type system will check it for you, and the compiler will eliminate the
--- cost once it has passed.
 newtype Topic = Topic Text
   deriving Show
 
 newtype CommentText = CommentText Text
   deriving Show
 
--- Having specialised constructor functions for the newtypes allows you to set
--- restrictions for your newtype.
 nonEmptyText
   :: (Text -> a)
   -> Error

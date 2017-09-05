@@ -88,8 +88,6 @@ fromDbComment
 fromDbComment =
   error "fromDbComment not yet implemented"
 
--- Having specialised constructor functions for the newtypes allows you to set
--- restrictions for your newtype.
 nonEmptyText
   :: (Text -> a)
   -> Error

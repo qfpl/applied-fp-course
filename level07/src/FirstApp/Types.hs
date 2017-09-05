@@ -82,8 +82,6 @@ fromDbComment dbc =
       <*> (mkCommentText $ dbCommentComment dbc)
       <*> pure            (dbCommentTime dbc)
 
--- Having specialised constructor functions for the newtypes allows you to set
--- restrictions for your newtype.
 nonEmptyText
   :: (Text -> a)
   -> Error
