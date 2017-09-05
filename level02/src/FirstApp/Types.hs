@@ -35,35 +35,33 @@ data RqType = RqType
 -- it's useful to be able to be descriptive about what went wrong.
 
 -- Think about some of the basic things that can wrong with our Requests and
--- building the RqTypes, and create some values to represent that. For now we
--- don't need to worry about things like malformed requests or invalid headers
--- etc.
+-- constructing a ``RqType``, and create some values to represent that. For now
+-- we don't need to worry about things like malformed requests or invalid
+-- headers etc.
 data Error = Error
 
--- Provide a type to list our response content types so we don't try to
--- do the wrong thing with what we meant to be used as text or JSON etc.
+-- Provide a type to list our response content types so we don't try to do the
+-- wrong thing with what we meant to be used as text or JSON etc.
 data ContentType = ContentType
 
--- The ContentType description for a header doesn't match our data definition
--- so we write a little helper function to pattern match on our ContentType
--- value and provide the correct header value.
+
 renderContentType
   :: ContentType
   -> ByteString
 renderContentType =
   error "renderContentType not implemented"
 
--- In Haskell the `newtype` comes with zero runtime cost. It is purely used for
--- type-checking. So when you have a bare 'primitive' value, like an Int, String, or
--- even [a], you can wrap it up in a `newtype` for clarity.
+-- In Haskell the ``newtype`` is a wrapper of sorts that comes with zero runtime
+-- cost. It is purely used for type-checking. So when you have a bare primitive
+-- value, like an ``Int``, ``String``, or even ``[a]``, you can wrap it up in a
+-- ``newtype`` to give it a descriptive name to be more precise in your types.
 
--- The type system will check it for you, and the compiler will eliminate the cost.
+-- The type system will check it for you, and the compiler will eliminate the
+-- cost of the "wrapper". Also, having specialised constructor functions for the
+-- newtypes allows you to set extra restrictions, such as minimum values.
 
--- Having specialised constructor functions for the newtypes allows you to set
--- extra restrictions for your newtype.
-
--- Write two `newtype` definitions for `Topic` and `CommentText` that wrap a
--- `Text` value
+-- We've constructed the ``newtype`` definitions for ``Topic`` and
+-- ``CommentText`` below.
 
 -- Topic
 newtype Topic = Topic Text
@@ -74,9 +72,10 @@ newtype CommentText = CommentText Text
   deriving Show
 -- |
 
--- A benefit of `newtype` is that we can choose to *not* export the constructor
--- and provide a function of our own. In our case, we're not interested in empty
--- `Text` values so we will eliminate them and immediately report an error.
+-- We can choose to *not* export the constructor for a data type and instead
+-- provide a function of our own. In our case, we're not interested in empty
+-- `Text` values so we will eliminate them with a special constructor and return
+-- an error if an empty input is provided.
 mkTopic
   :: Text
   -> Either Error Topic

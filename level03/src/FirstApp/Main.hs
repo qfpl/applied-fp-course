@@ -20,9 +20,11 @@ import           FirstApp.Types
 
 runApp :: IO ()
 runApp = do
-  -- Load up the configuration by providing a FilePath for the JSON config file.
+  -- Load up the configuration by providing a ``FilePath`` for the JSON config
+  -- file.
   cfgE <- error "configuration not implemented"
-  -- Loading the configuration can fail, so we have to take that into account now.
+  -- Loading the configuration can fail, so we have to take that into account
+  -- now.
   case cfgE of
     Left err  -> undefined
     Right _cfg ->  run undefined undefined
@@ -72,8 +74,8 @@ app cfg rq cb =
     handleRErr =
       either Left ( handleRequest cfg )
 
--- Now we have some config, we can pull the helloMsg off it and use it in the
--- response.
+-- Now we have some config, we can pull the ``helloMsg`` off it and use it in
+-- the response.
 handleRequest
   :: a
   -> RqType

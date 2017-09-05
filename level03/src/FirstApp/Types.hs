@@ -21,8 +21,6 @@ newtype Topic = Topic Text
 newtype CommentText = CommentText Text
   deriving Show
 
--- Having specialised constructor functions for the newtypes allows you to set
--- restrictions for your newtype.
 mkTopic
   :: Text
   -> Either Error Topic
