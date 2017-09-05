@@ -48,8 +48,7 @@ closeDb =
 -- attempts to mitigate that somewhat by removing the need for repetitive string
 -- mangling when building our queries. We write the query and pass it through
 -- this function that requires the Table information and everything is taken
--- care of for us. This is probably not the way to do things in a large scale
--- app.
+-- care of for us. This is not the way to do things in a large scale program.
 withTable
   :: Table
   -> Query

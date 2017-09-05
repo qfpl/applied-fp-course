@@ -37,10 +37,10 @@ module FirstApp.DB.PostgreSQL where
 --   , dbTable :: Table
 --   }
 
--- -- Unlike the sqlite-simple package, the postgresql-simple package allows for
--- -- the specification of SQL identifiers for us in the Query construction. This
--- -- has the advantage of not needing to worry about manually interpolating the
--- -- table name into our queries. The package will safely handle this for us.
+-- Unlike the sqlite-simple package, the postgresql-simple package allows for
+-- the specification of SQL identifiers for us in the Query construction. This
+-- has the advantage of not needing to worry about manually interpolating the
+-- table name into our queries. The package will safely handle this for us.
 -- tableName
 --   :: FirstAppDB
 --   -> Identifier

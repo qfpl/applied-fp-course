@@ -62,7 +62,8 @@ withTable =
   error "withTable not yet implemented"
 
 -- Given a `FilePath` to our SQLite DB file, initialise the database and ensure
--- our Table is there by running a query to create it, if it doesn't exist already.
+-- our Table is there by running a query to create it, if it doesn't exist
+-- already.
 initDb
   :: FilePath
   -> Table
@@ -76,9 +77,10 @@ initDb fp tab =
     createTableQ = withTable tab
       "CREATE TABLE IF NOT EXISTS $$tablename$$ (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time INTEGER)"
 
--- Note that we don't store the Comment type in the DB, it is the type we build to
--- send to the outside world. We will be loading our `DbComment` type from the
--- FirstApp.DB.Types module before converting trying to convert it to a Comment.
+-- Note that we don't store the Comment type in the DB, it is the type we build
+-- to send to the outside world. We will be loading our `DbComment` type from
+-- the FirstApp.DB.Types module before converting trying to convert it to a
+-- Comment.
 getComments
   :: FirstAppDB
   -> Topic

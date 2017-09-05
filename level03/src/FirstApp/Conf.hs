@@ -38,14 +38,13 @@ newtype HelloMsg = HelloMsg
   { getHelloMsg :: ByteString }
   deriving (Eq, Show)
 
--- The Conf type will need:
+-- The ``Conf`` type will need:
 -- - A customisable port number: `Port`
 -- - A changeable message for our users: `HelloMsg`
 data Conf = Conf
 
--- Similar to when we were considering what might go wrong with the RqType,
--- lets think about might go wrong when trying to gather our configuration
--- information.
+-- Similar to when we were considering what might go wrong with the RqType, lets
+-- think about might go wrong when trying to gather our config information.
 data ConfigError
 
 -- Our application will be able to load configuration from both a file and
@@ -54,29 +53,29 @@ data ConfigError
 -- question will help us find which abstraction is correct for our needs...
 
 -- We want the CommandLine configuration to take precedence over the File
--- configuration, so if we think about combining each of our Conf records, we want
--- to be able to write something like this:
+-- configuration, so if we think about combining each of our ``Conf`` records,
+-- we want to be able to write something like this:
 
 -- defaults <> file <> commandLine
 
--- We can use the Monoid typeclass to handle combining the Conf records
--- together, and the Last newtype to wrap up our values to handle the desired precedence.
--- The Last newtype is a wrapper for Maybe that when used with its Monoid instance
--- will always preference the last Just value that it has:
+-- We can use the ``Monoid`` typeclass to handle combining the ``Conf`` records
+-- together, and the Last newtype to wrap up our values to handle the desired
+-- precedence. The Last newtype is a wrapper for Maybe that when used with its
+-- ``Monoid`` instance will always preference the last Just value that it has:
 
 -- Last (Just 3) <> Last (Just 1) = Last (Just 1)
 -- Last Nothing  <> Last (Just 1) = Last (Just 1)
 -- Last (Just 1) <> Last Nothing  = Last (Just 1)
 
--- To make this easier, we'll make a new type `PartialConf` that will have our Last
--- wrapped values. We can then define a Monoid instance for it and have our Conf be
--- a known good configuration.
+-- To make this easier, we'll make a new type `PartialConf` that will have our
+-- Last wrapped values. We can then define a ``Monoid`` instance for it and have
+-- our ``Conf`` be a known good configuration.
 data PartialConf
 
--- We now define our Monoid instance for PartialConf. Allowing us to define our
--- always empty configuration, which would always fail our requirements. More
--- interestingly, we define our mappend function to lean on the Monoid instance
--- for Last to always get the last value.
+-- We now define our ``Monoid`` instance for PartialConf. Allowing us to define
+-- our always empty configuration, which would always fail our requirements.
+-- More interestingly, we define our ``mappend`` function to lean on the
+-- ``Monoid`` instance for Last to always get the last value.
 instance Monoid PartialConf where
 
 -- Set some sane defaults that we can always rely on
@@ -86,7 +85,7 @@ defaultConf =
   error "defaultConf not implemented"
 
 -- We need something that will take our PartialConf and see if can finally build
--- a complete Conf record. Also we need to highlight any missing values by
+-- a complete ``Conf`` record. Also we need to highlight any missing values by
 -- providing the relevant error.
 makeConfig
   :: PartialConf
@@ -105,11 +104,11 @@ parseOptions =
 
 -- | File Parsing
 
--- We're trying to avoid complications when selecting a configuration file package
--- from Hackage. We'll use an encoding that you are probably familiar with, for
--- better or worse, and write a small parser to pull out the bits we need. The package
--- we're using is the 'aeson' package to parse some JSON and we'll pick the bits off
--- the Object.
+-- We're trying to avoid complications when selecting a configuration file
+-- package from Hackage. We'll use an encoding that you are probably familiar
+-- with, for better or worse, and write a small parser to pull out the bits we
+-- need. The package we're using is the ``aeson`` package to parse some JSON and
+-- we'll pick the bits off the Object.
 
 -- The documentation for this package will guide you in the right direction
 parseJSONConfigFile
@@ -120,13 +119,13 @@ parseJSONConfigFile =
 
 -- | Command Line Parsing
 
--- We will use the 'optparse-applicative' package to build our command line parser.
--- As this particular problem is fraught with silly dangers and we appreciate
--- someone else having eaten this gremlin on our behalf.
+-- We will use the ``optparse-applicative`` package to build our command line
+-- parser. As this particular problem is fraught with silly dangers and we
+-- appreciate someone else having eaten this gremlin on our behalf.
 
--- You'll need to use the documentation for optparse-applicative to help you write
--- these functions as we're relying on their API to produce the types we need. We've
--- provided some of the less interesting boilerplate for you.
+-- You'll need to use the documentation for ``optparse-applicative`` to help you
+-- write these functions as we're relying on their API to produce the types we
+-- need. We've provided some of the less interesting boilerplate for you.
 commandLineParser
   :: ParserInfo PartialConf
 commandLineParser =

@@ -72,8 +72,8 @@ app cfg rq cb =
     handleRErr =
       either Left ( handleRequest cfg )
 
--- Now we have some config, we can pull our configured helloMsg off it and use it
--- in the response.
+-- Now we have some config, we can pull the helloMsg off it and use it in the
+-- response.
 handleRequest
   :: a
   -> RqType
@@ -99,7 +99,7 @@ mkRequest rq =
     -- List the current topics
     ( ["list"], "GET" )    ->
       pure mkListRequest
-    -- Finally we don't care about any other requests so throw your hands in the air
+    -- Finally we don't care about any other requests so build an Error response
     _                      ->
       pure mkUnknownRouteErr
 

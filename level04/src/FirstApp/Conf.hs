@@ -145,7 +145,7 @@ parseJSONConfigFile fp = do
 
 -- | Command Line Parsing
 
--- We will use the optparse-applicative package to build our command line
+-- We will use the ``optparse-applicative`` package to build our command line
 -- parser, as this problem is fraught with silly dangers and we appreciate
 -- someone else having eaten this gremlin on our behalf.
 commandLineParser
