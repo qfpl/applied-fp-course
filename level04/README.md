@@ -14,6 +14,9 @@ with the [hspec-wai] package to make our lives a bit easier.
 
 Start in ``tests/Test.hs``.
 
+[HSpec]: (http://hspec.github.io/)
+[hspec-wai]: (https://hackage.haskell.org/package/hspec-wai)
+
 #### Aside: Tool Introduction - ghcid
 
 Additionally we'd like to introduce a command line tool that you may find useful
@@ -33,6 +36,4 @@ messages or ``All Good`` if it cannot find any errors.
 process with constant feedback about your changes. It is very useful in tandem
 with type holes. Give it a try!
 
-[HSpec]: (http://hspec.github.io/)
-[hspec-wai]: (https://hackage.haskell.org/package/hspec-wai)
 [ghcid]: (https://github.com/ndmitchell/ghcid)

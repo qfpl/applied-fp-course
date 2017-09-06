@@ -13,8 +13,8 @@ import           Database.SQLite.Simple.FromRow (FromRow (..), field)
 data DbComment = DbComment
   deriving Show
 
--- This typeclass instance comes from our DB package and tells the DB package
--- how to decode a single row from the database into a single representation of
--- our type. This technique of translating a result row to a type will differ
+-- This Typeclass comes from the `sqlite-simple` package and describes how to
+-- decode a single row from the database into a single representation of our
+-- type. This technique of translating a result row to a type will differ
 -- between different packages/databases.
 instance FromRow DbComment where

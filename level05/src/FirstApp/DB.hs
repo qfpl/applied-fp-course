@@ -29,8 +29,8 @@ import           FirstApp.Types
 -- ------------------------------------------------------------------------|
 
 -- We need to have a way to pass around the name of the Table we're going to us
--- for the comments in this application. We _could_ pass around a `Text` value.
--- What should we do instead?
+-- for the comments in this application. We _could_ pass around a `Text` value,
+-- but we can be better than that.
 newtype Table = Table Text
   deriving Show
 
@@ -47,13 +47,13 @@ closeDb
 closeDb =
   error "closeDb not implemented"
 
--- Due to the way our application is designed, we have a slight SQL injection
--- risk because we pull the `Table` from the `Conf`. Write a function that
--- attempts to mitigate that risk a bit, by handling replacement of a place-
--- holder value in a given Query. We should be able to write the query and pass
--- it through this function and everything is will be taken care of for us.
+-- Because our `Table` is as a configurable value, this application has a SQL
+-- injection vulnerability. Write a function that attempts to mitigate that
+-- risk, by handling replacement of a place-holder value in a given `Query`. We
+-- should be able to write the query and pass it through this function and
+-- everything is will be taken care of for us.
 
--- This is not the way to do things in a large scale app, obviously.
+-- This is _not_ the way to do things in a large scale app, obviously.
 withTable
   :: Table
   -> Query

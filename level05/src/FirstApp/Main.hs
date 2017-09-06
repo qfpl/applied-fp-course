@@ -122,9 +122,9 @@ handleRequest
 handleRequest _ _db (AddRq _ _) =
   fmap (const ( resp200 PlainText "Success" )) <$> undefined
 handleRequest _ _db (ViewRq _)  =
-  fmap undefined                     <$> undefined
+  fmap undefined <$> undefined
 handleRequest _ _db ListRq      =
-  fmap undefined                     <$> undefined
+  fmap undefined <$> undefined
 
 mkRequest
   :: Request
