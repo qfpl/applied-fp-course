@@ -141,8 +141,11 @@ parseJSONConfigFile =
     -- Use the ``bracketOnError`` function to guard against exceptions.
     readObject
       :: IO (Maybe Aeson.Object)
-    readObject =
-      error "readObject not implemented"
+    readObject = bracketOnError
+      undefined
+      undefined
+      undefined
+
 
 -- | Command Line Parsing
 
