@@ -131,6 +131,5 @@ data ContentType
 renderContentType
   :: ContentType
   -> ByteString
--- renderContentType = error "renderContentType not implemented"
 renderContentType PlainText = "text/plain"
 renderContentType JSON      = "application/json"

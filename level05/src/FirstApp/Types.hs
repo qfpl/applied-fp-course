@@ -38,12 +38,12 @@ newtype Topic = Topic Text
 newtype CommentText = CommentText Text
   deriving (Show, ToJSON)
 
--- This is the Comment record that we will be sending to users, it's a simple
--- record type, containing an Int, Topic, CommentText, and UTCTime. However
--- notice that we've also derived the Generic type class instance as well. This
--- saves us some effort when it comes to creating encoding/decoding instances.
--- Since our types are all simple types at the end of the day, we're able to let
--- GHC do the work.
+-- This is the `Comment` record that we will be sending to users, it's a simple
+-- record type, containing an `Int`, `Topic`, `CommentText`, and `UTCTime`.
+-- However notice that we've also derived the `Generic` type class instance as
+-- well. This saves us some effort when it comes to creating encoding/decoding
+-- instances. Since our types are all simple types at the end of the day, we're
+-- able to let GHC do the work.
 
 newtype CommentId = CommentId Int
   deriving (Eq, Show, ToJSON)
@@ -57,9 +57,9 @@ data Comment = Comment
   deriving ( Show, Generic )
 
 instance ToJSON Comment where
-  -- This is one place where we can take advantage of our Generic instance.
+  -- This is one place where we can take advantage of our `Generic` instance.
   -- Aeson already has the encoding functions written for anything that
-  -- implements the Generic typeclass. So we don't have to write our encoding,
+  -- implements the `Generic` typeclass. So we don't have to write our encoding,
   -- we ask Aeson to construct it for us.
   toEncoding = A.genericToEncoding opts
     where
@@ -78,9 +78,9 @@ instance ToJSON Comment where
         -> String
       modFieldLabel = error "modFieldLabel not implemented"
 
--- For safety we take our stored DbComment and try to construct a Comment that
--- we would be okay with showing someone. However unlikely it may be, this is a
--- nice method for separating out the back and front end of a web app and
+-- For safety we take our stored `DbComment` and try to construct a `Comment`
+-- that we would be okay with showing someone. However unlikely it may be, this
+-- is a nice method for separating out the back and front end of a web app and
 -- providing greater guarantees about data cleanliness.
 fromDbComment
   :: DbComment
@@ -129,16 +129,13 @@ data Error
   = UnknownRoute
   | EmptyCommentText
   | EmptyTopic
-  -- | DBError SQLiteResponse
+  -- We need another constructor for our DB error types.
   deriving Show
 
 data ContentType
   = PlainText
   | JSON
 
--- The ContentType description for a header doesn't match our data definition so
--- we write a little helper function to pattern match on our ContentType value
--- and provide the correct header value.
 renderContentType
   :: ContentType
   -> ByteString

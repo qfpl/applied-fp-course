@@ -126,7 +126,7 @@ parseJSONConfigFile fp = do
     toPartialConf cObj = PartialConf
       ( fromJsonObjWithKey "port" Port cObj )
       ( fromJsonObjWithKey "helloMsg" helloFromStr cObj )
-    -- Use bracket to save ourselves from horrible exceptions.
+
     readObject
       :: IO (Maybe Aeson.Object)
     readObject = bracketOnError

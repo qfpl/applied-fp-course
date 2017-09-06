@@ -1,7 +1,8 @@
 # Level 04
 
-We're going to add some tests to our application! Types are awesome, tests are
-pretty good. Types AND tests is pretty much perfect.
+In this exercise we're going to add some tests to our application. Because types
+are awesome, and tests are pretty good. But types AND tests is pretty much
+perfect.
 
 These tests will not be awe inspiring, this exercise is primarily to introduce
 you to adding tests to your Haskell application. The setup of the Cabal file is
@@ -15,9 +16,9 @@ Start in ``tests/Test.hs``.
 
 #### Aside: Tool Introduction - ghcid
 
-Additionally we'd like to introduce a command line tool that we find quite
-useful for Haskell development; [ghcid]. This is a very lightweight tool that
-works for any project with a functioning cabal setup.
+Additionally we'd like to introduce a command line tool that you may find useful
+for Haskell development; [ghcid]. This is a very lightweight tool that works for
+any project with a functioning cabal setup.
 
 If you would like to use it, consult its documentation for how to install it,
 and then in an spare open terminal window, navigate to the root of the Haskell

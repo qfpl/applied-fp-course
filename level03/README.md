@@ -8,3 +8,8 @@ packages. There may also be, depending on your level of interest, some external
 reading for later as well.
 
 Start in ``src/FirstApp/Conf.hs``.
+
+The packages we will use for this are:
+
+- [Aeson](http://hackage.haskell.org/package/aeson)
+- [Optparse Applicative](http://hackage.haskell.org/package/optparse-applicative)

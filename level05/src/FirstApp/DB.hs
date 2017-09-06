@@ -48,7 +48,7 @@ closeDb =
   error "closeDb not implemented"
 
 -- Due to the way our application is designed, we have a slight SQL injection
--- risk because we pull the Table name from the Conf. Write a function that
+-- risk because we pull the `Table` from the `Conf`. Write a function that
 -- attempts to mitigate that risk a bit, by handling replacement of a place-
 -- holder value in a given Query. We should be able to write the query and pass
 -- it through this function and everything is will be taken care of for us.
@@ -71,16 +71,16 @@ initDb
 initDb fp tab =
   error "initDb not implemented"
   where
-  -- Query has a IsString instance so you can write straight strings like this
-  -- and it will convert them into a Query type, use '?' as place-holders for
+  -- Query has a `IsString` instance so you can write straight strings like this
+  -- and it will convert them into a `Query` type, use '?' as place-holders for
   -- ORDER DEPENDENT interpolation.
     createTableQ = withTable tab
       "CREATE TABLE IF NOT EXISTS $$tablename$$ (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time INTEGER)"
 
--- Note that we don't store the Comment type in the DB, it is the type we build
+-- Note that we don't store the `Comment` in the DB, it is the type we build
 -- to send to the outside world. We will be loading our `DbComment` type from
 -- the FirstApp.DB.Types module before converting trying to convert it to a
--- Comment.
+-- `Comment`.
 getComments
   :: FirstAppDB
   -> Topic

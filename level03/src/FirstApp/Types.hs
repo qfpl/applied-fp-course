@@ -74,9 +74,6 @@ data ContentType
   = PlainText
   | JSON
 
--- The ContentType description for a header doesn't match our data definition so
--- we write a little helper function to pattern match on our ContentType value
--- and provide the correct header value.
 renderContentType
   :: ContentType
   -> ByteString

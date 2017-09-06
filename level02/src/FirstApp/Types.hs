@@ -44,7 +44,9 @@ data Error = Error
 -- wrong thing with what we meant to be used as text or JSON etc.
 data ContentType = ContentType
 
-
+-- The ``ContentType`` constructors don't match what is required for the header
+-- information, so write a function that will take our ``ContentType`` and
+-- produce the correct value for the header.
 renderContentType
   :: ContentType
   -> ByteString

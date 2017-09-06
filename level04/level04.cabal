@@ -94,6 +94,9 @@ executable level04
   -- Base language which the package is written in.
   default-language:    Haskell2010
 
+-- This is the declaration of a test-suite for your application. You may have
+-- multiple test suites in a single application, provided they are named
+-- differently.
 test-suite level04-tests
    default-language:    Haskell2010
    type:                exitcode-stdio-1.0

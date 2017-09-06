@@ -17,7 +17,6 @@ module FirstApp.DB.PostgreSQL where
 
 -- import           FirstApp.Types
 
--- -- newtype all the things!!
 -- newtype Table = Table
 --   { getTableName :: Text }
 --   deriving Show
