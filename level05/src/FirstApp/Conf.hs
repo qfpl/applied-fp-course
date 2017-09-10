@@ -5,6 +5,7 @@ module FirstApp.Conf
     , Port (getPort)
     , HelloMsg (getHelloMsg)
     , parseOptions
+    , confPortToWai
     ) where
 
 import           Control.Exception          (bracketOnError)
@@ -12,6 +13,7 @@ import           Control.Exception          (bracketOnError)
 import           Data.Maybe                 (fromMaybe)
 import           Data.Monoid                (Last (..), Monoid (..), (<>))
 import           Data.String                (fromString)
+import           GHC.Word                   (Word16)
 
 import           Data.ByteString.Lazy       (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as LBS
@@ -41,7 +43,7 @@ data ConfigError
   deriving Show
 
 newtype Port = Port
-  { getPort :: Int }
+  { getPort :: Word16 }
   deriving Show
 
 newtype HelloMsg = HelloMsg
@@ -55,13 +57,19 @@ helloFromStr =
   HelloMsg . fromString
 
 data Conf = Conf
-  { port       :: Port
-  , helloMsg   :: HelloMsg
+  { port     :: Port
+  , helloMsg :: HelloMsg
   }
 
+confPortToWai
+  :: Conf
+  -> Int
+confPortToWai =
+  fromIntegral . getPort . port
+
 data PartialConf = PartialConf
-  { pcPort       :: Last Port
-  , pcHelloMsg   :: Last HelloMsg
+  { pcPort     :: Last Port
+  , pcHelloMsg :: Last HelloMsg
   }
 
 -- Note that the types won't be able to completely save you here, if you mess up

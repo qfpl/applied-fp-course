@@ -5,9 +5,12 @@ module FirstApp.Conf
     , HelloMsg (getHelloMsg)
     , parseOptions
     , mkMessage
+    , confPortToWai
     ) where
 
 import           Control.Exception          (bracketOnError)
+
+import           GHC.Word                   (Word16)
 
 import           Data.Maybe                 (fromMaybe)
 import           Data.Monoid                (Last (..), Monoid (..), (<>))
@@ -38,7 +41,7 @@ data ConfigError
   deriving Show
 
 newtype Port = Port
-  { getPort :: Int }
+  { getPort :: Word16 }
   deriving Show
 
 newtype HelloMsg = HelloMsg
@@ -63,6 +66,12 @@ data Conf = Conf
   { port     :: Port
   , helloMsg :: HelloMsg
   }
+
+confPortToWai
+  :: Conf
+  -> Int
+confPortToWai =
+  fromIntegral . getPort . port
 
 data PartialConf = PartialConf
   { pcPort     :: Last Port

@@ -49,14 +49,11 @@ runApp = do
   appE <- prepareAppReqs
   either print runWithDbConn appE
   where
-    getPort' =
-      Conf.getPort . Conf.port . envConfig
-
     runWithDbConn env =
       appWithDb env >> DB.closeDb (envDb env)
 
     appWithDb env =
-      run ( getPort' env) (app env)
+      run ( Conf.confPortToWai $ envConfig env ) (app env)
 
 prepareAppReqs
   :: IO (Either StartUpError Env)

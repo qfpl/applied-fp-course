@@ -5,6 +5,7 @@ module FirstApp.Conf
     , Port (getPort)
     , HelloMsg (getHelloMsg)
     , parseOptions
+    , confPortToWai
     ) where
 
 import           Control.Exception          (bracketOnError)
@@ -12,6 +13,7 @@ import           Control.Exception          (bracketOnError)
 import           Data.Maybe                 (fromMaybe)
 import           Data.Monoid                (Last (..), Monoid (..), (<>))
 import           Data.String                (fromString)
+import           GHC.Word                   (Word16)
 
 import           Data.ByteString.Lazy       (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as LBS
@@ -31,7 +33,7 @@ import           Options.Applicative        (Parser, ParserInfo, eitherReader,
 
 import           Text.Read                  (readEither)
 
-import           FirstApp.DB.Types                (Table (..))
+import           FirstApp.DB.Types          (Table (..))
 
 data ConfigError
   = MissingPort
@@ -41,7 +43,7 @@ data ConfigError
   deriving Show
 
 newtype Port = Port
-  { getPort :: Int }
+  { getPort :: Word16 }
   deriving Show
 
 newtype HelloMsg = HelloMsg
@@ -60,6 +62,12 @@ data Conf = Conf
   , tableName  :: Table
   , dbFilePath :: FilePath
   }
+
+confPortToWai
+  :: Conf
+  -> Int
+confPortToWai =
+  fromIntegral . getPort . port
 
 data PartialConf = PartialConf
   { pcPort       :: Last Port

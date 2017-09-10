@@ -5,9 +5,12 @@ module FirstApp.Conf
     , Port (getPort)
     , HelloMsg (getHelloMsg)
     , parseOptions
+    , confPortToWai
     ) where
 
 import           Control.Exception          (bracketOnError)
+
+import           GHC.Word                   (Word16)
 
 import           Data.Maybe                 (fromMaybe)
 import           Data.Monoid                (Last (..), Monoid (..), (<>))
@@ -31,7 +34,7 @@ import           Options.Applicative        (Parser, ParserInfo, eitherReader,
 import           Text.Read                  (readEither)
 
 newtype Port = Port
-  { getPort :: Int }
+  { getPort :: Word16 }
   deriving (Eq, Show)
 
 newtype HelloMsg = HelloMsg
@@ -42,6 +45,16 @@ newtype HelloMsg = HelloMsg
 -- - A customisable port number: ``Port``
 -- - A changeable message for our users: ``HelloMsg``
 data Conf = Conf
+
+-- We're storing our Port as a Word16 to be more precise and prevent invalid
+-- values from being used in our application. However Wai is not so stringent.
+-- To accommodate this and make our lives a bit easier, we will write this
+-- helper function to take ``Conf`` value and convert it to an ``Int``.
+confPortToWai
+  :: Conf
+  -> Int
+confPortToWai =
+  error "portToInt not implemented"
 
 -- Similar to when we were considering what might go wrong with the RqType, lets
 -- think about might go wrong when trying to gather our config information.

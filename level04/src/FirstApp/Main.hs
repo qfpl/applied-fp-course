@@ -22,7 +22,7 @@ runApp = do
   cfgE <- Conf.parseOptions "appconfig.json"
   case cfgE of
     Left err  -> print err
-    Right cfg -> run ( Conf.getPort $ Conf.port cfg ) ( app cfg )
+    Right cfg -> run ( Conf.confPortToWai cfg ) ( app cfg )
 
 -- | Some helper functions to make our lives a little more DRY.
 mkResponse

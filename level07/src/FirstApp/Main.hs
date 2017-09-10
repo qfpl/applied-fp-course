@@ -52,7 +52,7 @@ runApp = do
       appWithDb env >> DB.closeDb (envDb env)
 
     appWithDb env =
-      run ( Conf.getPort . Conf.port $ envConfig env ) (app env)
+      run ( Conf.confPortToWai $ envConfig env ) (app env)
 
 -- Monad transformers can be used without needing to write the newtype. Recall
 -- that the constructor for ExceptT has a type of :: m (Either e a). So if you

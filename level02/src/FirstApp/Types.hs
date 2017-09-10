@@ -34,10 +34,8 @@ data RqType = RqType
 -- types reflect when errors can be introduced into our program. Additionally
 -- it's useful to be able to be descriptive about what went wrong.
 
--- Think about some of the basic things that can wrong with our Requests and
--- constructing a ``RqType``, and create some values to represent that. For now
--- we don't need to worry about things like malformed requests or invalid
--- headers etc.
+-- Leave this type empty for now, and we'll fill in the error constructors we
+-- need as we progress through the application.
 data Error = Error
 
 -- Provide a type to list our response content types so we don't try to do the
