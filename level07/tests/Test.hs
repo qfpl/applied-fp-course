@@ -55,7 +55,7 @@ main = do
         -- AddRq Spec
         describe "POST /topic/add" $ do
           it "Should return 200 with well formed request" $ do
-            pOST "Fred" `shouldRespondWith` "Success"
+            pOST "Is super tasty." `shouldRespondWith` "Success"
 
           it "Should 400 on empty input" $
             pOST "" `shouldRespondWith` 400
@@ -63,11 +63,11 @@ main = do
         -- ViewRq Spec
         describe "GET /topic/view" $ do
           it "Should return 200 with content" $ do
-            _ <- pOST "Fred"
+            _ <- pOST "Is super tasty."
             get ( "/" <> testTopic <> "/view" ) `shouldRespondWith` 200
 
         -- ListRq Spec
         describe "GET /list" $ do
           it "Should return 200 with content" $ do
-            _ <- pOST "Fred"
+            _ <- pOST "Is super tasty."
             get "/list" `shouldRespondWith` "[\"fudge\"]"

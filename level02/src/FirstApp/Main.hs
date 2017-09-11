@@ -117,10 +117,14 @@ mkRequest =
 --
 -- Reduction of concerns such that each section of the application only deals
 -- with a small piece is one of the benefits of developing in this way.
+--
+-- For now, return a made-up value for each of the responses as we don't have
+-- any persistent storage. Plain text responses that contain "X not implemented
+-- yet" should be sufficient.
 handleRequest
   :: RqType
   -> Either Error Response
-handleRequest _ =
+handleRequest =
   error "handleRequest not implemented"
 
 -- Reimplement this function using the new functions and the ``RqType``

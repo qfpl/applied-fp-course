@@ -50,11 +50,11 @@ main = do
         -- ViewRq Spec
         describe "GET /topic/view" $ do
           it "Should return 200 with content" $ do
-            post "/fudge/add" "Fred"
+            post "/fudge/add" "Is super tasty."
             get "/fudge/view" `shouldRespondWith` 200
 
         -- ListRq Spec
         describe "GET /list" $ do
           it "Should return 200 with content" $ do
-            post "/fudge/add" "Fred"
+            post "/fudge/add" "Is super tasty."
             get "/list" `shouldRespondWith` "[\"fudge\"]"

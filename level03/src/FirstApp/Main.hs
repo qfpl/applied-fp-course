@@ -83,9 +83,9 @@ handleRequest
 handleRequest _cfg (AddRq _ _) =
   Right $ resp200 PlainText ("App says: " <> undefined)
 handleRequest _ (ViewRq _) =
-  Right $ resp200 PlainText "Susan was here"
+  Right $ resp200 PlainText "View Request not implemented"
 handleRequest _ ListRq =
-  Right $ resp200 PlainText "[ \"Fred was here\", \"Susan was here\" ]"
+  Right $ resp200 PlainText "List Request not implemented"
 
 mkRequest
   :: Request
