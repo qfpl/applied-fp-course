@@ -25,11 +25,9 @@ import           FirstApp.Types           (ContentType (PlainText), Error (Empty
 
 runApp :: IO ()
 runApp = do
-  -- Load up the configuration by providing a ``FilePath`` for the JSON config
-  -- file.
+  -- Load up the configuration by providing a ``FilePath`` for the JSON config file.
   cfgE <- error "configuration not implemented"
-  -- Loading the configuration can fail, so we have to take that into account
-  -- now.
+  -- Loading the configuration can fail, so we have to take that into account now.
   case cfgE of
     Left err   -> undefined
     Right _cfg ->  run undefined undefined
@@ -108,7 +106,7 @@ mkRequest rq =
       pure mkListRequest
     -- Finally we don't care about any other requests so build an Error response
     _                      ->
-      pure mkUnknownRouteErr
+      pure ( Left UnknownRoute )
 
 mkAddRequest
   :: Text
@@ -128,11 +126,6 @@ mkListRequest
   :: Either Error RqType
 mkListRequest =
   Right ListRq
-
-mkUnknownRouteErr
-  :: Either Error RqType
-mkUnknownRouteErr =
-  Left UnknownRoute
 
 mkErrorResponse
   :: Error

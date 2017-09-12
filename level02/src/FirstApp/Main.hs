@@ -54,10 +54,8 @@ resp400 =
   error "resp400 not implemented"
 -- |
 
--- These next few functions will take the raw request information and turn it
--- into one of our data types. This means we draw a line about where the unruly
--- outside world must end, and where the well-typed world of our application
--- begins.
+-- These next few functions will take raw request information and construct one
+-- of our types.
 mkAddRequest
   :: Text
   -> LBS.ByteString
@@ -65,32 +63,20 @@ mkAddRequest
 mkAddRequest =
   error "mkAddRequest not implemented"
 
--- This has other benefits, we're able isolate our validation requirements into
--- the smallest chunks we can manage. This allows for fantastic reuse and it
--- also means that validation is not spread across the application. It is kept
--- at the borders.
+-- This has a number of benefits, we're able to isolate our validation
+-- requirements into smaller components that are simpler to maintain and verify.
+-- It also allows for greater reuse and it also means that validation is not
+-- duplicated across the application, maybe incorrectly.
 mkViewRequest
   :: Text
   -> Either Error RqType
 mkViewRequest =
   error "mkViewRequest not implemented"
 
--- Even though it may seem too trivial or even pointless to write functions such
--- as these it allows for much greater consistency across the application.
-
--- Some of these are straight forward data constructors, but by doing it this
--- way we don't have any snowflakes littered about the code. It also enhances
--- our ability to spot larger patterns in our application, which are
--- opportunities for abstraction.
 mkListRequest
   :: Either Error RqType
 mkListRequest =
   error "mkListRequest not implemented"
-
-mkUnknownRouteErr
-  :: Either Error a
-mkUnknownRouteErr =
-  error "mkUnknownRouteErr not implemented"
 
 mkErrorResponse
   :: Error
@@ -98,19 +84,15 @@ mkErrorResponse
 mkErrorResponse =
   error "mkErrorResponse not implemented"
 
--- Lets use our ``RqType`` helpers to now write a function that will take the
--- input ``Request`` from the Wai library and turn it into something our
--- application cares about.
+-- Use our ``RqType`` helpers to write a function that will take the input
+-- ``Request`` from the Wai library and turn it into something our application
+-- cares about.
 mkRequest
   :: Request
   -> IO ( Either Error RqType )
 mkRequest =
   error "mkRequest not implemented"
 
--- In this next function, notice how we're only accepting our predefined request
--- types that have the required information already validated and prepared for
--- use in the handling of the request.
---
 -- If we find that we need more information to handle a request, or we have a
 -- new type of request that we'd like to handle then we update the ``RqType``
 -- structure and the compiler will let us know which parts of our application
@@ -128,8 +110,8 @@ handleRequest
 handleRequest =
   error "handleRequest not implemented"
 
--- Reimplement this function using the new functions and the ``RqType``
--- constructors as a guide.
+-- Reimplement this function using the new functions and ``RqType`` constructors
+-- as a guide.
 app
   :: Application
 app =

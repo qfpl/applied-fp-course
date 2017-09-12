@@ -34,7 +34,7 @@ import           Options.Applicative        (Parser, ParserInfo, eitherReader,
 
 import           Text.Read                  (readEither)
 
-import           FirstApp.DB.Types          (Table (Table, getTableName))
+import           FirstApp.DB.Types          (Table (Table))
 
 -- Doctest setup section
 -- $setup
@@ -88,9 +88,9 @@ instance Monoid PartialConf where
 
   mappend a b = PartialConf
     -- Compiler tells us about the little things we might have forgotten.
-    { pcPort      = pcPort a <> pcPort b
-    , pcHelloMsg  = pcHelloMsg a <> pcHelloMsg b
-    , pcTableName = pcTableName a <> pcTableName b
+    { pcPort       = pcPort a <> pcPort b
+    , pcHelloMsg   = pcHelloMsg a <> pcHelloMsg b
+    , pcTableName  = pcTableName a <> pcTableName b
     , pcDbFilePath = pcDbFilePath a <> pcDbFilePath b
     }
 

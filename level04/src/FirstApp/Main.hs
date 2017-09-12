@@ -102,7 +102,7 @@ mkRequest rq =
       pure mkListRequest
     -- Finally we don't care about any other requests so throw your hands in the air
     _                      ->
-      pure mkUnknownRouteErr
+      pure ( Left UnknownRoute )
 
 mkAddRequest
   :: Text
@@ -122,11 +122,6 @@ mkListRequest
   :: Either Error RqType
 mkListRequest =
   Right ListRq
-
-mkUnknownRouteErr
-  :: Either Error RqType
-mkUnknownRouteErr =
-  Left UnknownRoute
 
 mkErrorResponse
   :: Error
