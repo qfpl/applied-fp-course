@@ -21,15 +21,19 @@ import qualified Data.Text                          as Text
 import           Data.Time                          (getCurrentTime)
 
 import           Database.SQLite.Simple             (Connection, FromRow,
-                                                     Query (..), ToRow)
+                                                     Query (fromQuery), ToRow)
 import qualified Database.SQLite.Simple             as Sql
 
 import qualified Database.SQLite.SimpleErrors       as Sql
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import           FirstApp.DB.Types
-import           FirstApp.Error                     (Error (..))
-import           FirstApp.Types
+import           FirstApp.DB.Types                  (FirstAppDB (FirstAppDB, dbConn),
+                                                     Table (getTableName))
+import           FirstApp.Error                     (Error (DBError))
+import           FirstApp.Types                     (Comment, CommentText,
+                                                     Topic, fromDbComment,
+                                                     getCommentText, getTopic,
+                                                     mkTopic)
 
 import           FirstApp.AppM                      (AppM, envDb, throwL)
 

@@ -2,7 +2,9 @@
 {-# OPTIONS_GHC -fno-warn-unused-matches #-}
 module FirstApp.Main (runApp, app) where
 
-import           Network.Wai
+import           Network.Wai              (Application, Request, Response,
+                                           pathInfo, requestMethod, responseLBS,
+                                           strictRequestBody)
 import           Network.Wai.Handler.Warp (run)
 
 import           Network.HTTP.Types       (Status, hContentType, status200,
@@ -16,7 +18,10 @@ import           Data.Monoid              ((<>))
 import           Data.Text                (Text)
 import           Data.Text.Encoding       (decodeUtf8)
 
-import           FirstApp.Types
+import           FirstApp.Types           (ContentType (PlainText), Error (EmptyCommentText, EmptyTopic, UnknownRoute),
+                                           RqType (AddRq, ListRq, ViewRq),
+                                           mkCommentText, mkTopic,
+                                           renderContentType)
 
 runApp :: IO ()
 runApp = do
@@ -26,7 +31,7 @@ runApp = do
   -- Loading the configuration can fail, so we have to take that into account
   -- now.
   case cfgE of
-    Left err  -> undefined
+    Left err   -> undefined
     Right _cfg ->  run undefined undefined
 
 -- | Some helper functions to make our lives a little more DRY.

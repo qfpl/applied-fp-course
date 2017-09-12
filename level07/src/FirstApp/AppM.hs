@@ -1,7 +1,8 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module FirstApp.AppM where
 
-import           Control.Monad.Except   (ExceptT, MonadError, runExceptT, throwError)
+import           Control.Monad.Except   (ExceptT, MonadError, runExceptT,
+                                         throwError)
 import           Control.Monad.IO.Class (MonadIO)
 import           Control.Monad.Reader   (MonadReader, ReaderT, runReaderT)
 

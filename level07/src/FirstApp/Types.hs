@@ -23,14 +23,16 @@ import           Data.Text         (Text)
 import           Data.List         (stripPrefix)
 import           Data.Maybe        (fromMaybe)
 
-import           Data.Aeson        (ToJSON (..))
+import           Data.Aeson        (ToJSON (toJSON))
 import qualified Data.Aeson        as A
 import qualified Data.Aeson.Types  as A
 
 import           Data.Time         (UTCTime)
 
-import           FirstApp.DB.Types (DbComment (..))
-import           FirstApp.Error    (Error (..))
+import           FirstApp.DB.Types (DbComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
+
+-- The Error type has been moved to a separate module to avoid an import cycle.
+import           FirstApp.Error    (Error (EmptyCommentText, EmptyTopic))
 
 newtype CommentId = CommentId Int
   deriving (Show, ToJSON)

@@ -4,7 +4,7 @@ module FirstApp.DB.Types where
 import           Data.Text                      (Text)
 import           Data.Time                      (UTCTime)
 
-import           Database.SQLite.Simple.FromRow (FromRow (..), field)
+import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
 
 -- To try to avoid leaking various types and expected functionality around the
 -- application, we create a stand alone type that will represent the data we

@@ -9,7 +9,8 @@ import qualified Data.ByteString.Lazy.Char8 as LBS
 
 import           Data.Aeson                 (ToJSON)
 import qualified Data.Aeson                 as A
-import           FirstApp.Types
+import           FirstApp.Types             (ContentType (JSON),
+                                             renderContentType)
 
 mkResponse
   :: Status

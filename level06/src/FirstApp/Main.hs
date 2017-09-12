@@ -11,11 +11,15 @@ import           Control.Monad                      (join)
 import           Control.Monad.IO.Class             (liftIO)
 import           Control.Monad.Reader               (asks)
 
-import           Network.Wai
+import           Network.Wai                        (Application, Request,
+                                                     Response, pathInfo,
+                                                     requestMethod,
+                                                     strictRequestBody)
 import           Network.Wai.Handler.Warp           (run)
 
 import           Data.Bifunctor                     (first)
-import           Data.Either                        (Either (..), either)
+import           Data.Either                        (Either (Left, Right),
+                                                     either)
 
 import           Data.Text                          (Text)
 import qualified Data.Text                          as Text
@@ -32,9 +36,12 @@ import qualified FirstApp.Conf                      as Conf
 import qualified FirstApp.DB                        as DB
 
 import qualified FirstApp.Responses                 as Res
-import           FirstApp.Types
+import           FirstApp.Types                     (ContentType (PlainText),
+                                                     Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute),
+                                                     RqType (AddRq, ListRq, ViewRq),
+                                                     mkCommentText, mkTopic)
 
-import           FirstApp.AppM
+import           FirstApp.AppM                      (AppM, Env (Env, envConfig, envDb, envLoggingFn))
 
 -- Our start-up is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a

@@ -9,7 +9,10 @@ import           Control.Applicative                (liftA2)
 import           Control.Exception                  (bracket)
 import           Control.Monad                      (join)
 
-import           Network.Wai
+import           Network.Wai                        (Application, Request,
+                                                     Response, pathInfo,
+                                                     requestMethod, responseLBS,
+                                                     strictRequestBody)
 import           Network.Wai.Handler.Warp           (run)
 
 import           Network.HTTP.Types                 (Status, hContentType,
@@ -18,7 +21,8 @@ import           Network.HTTP.Types                 (Status, hContentType,
 
 import qualified Data.ByteString.Lazy.Char8         as LBS
 
-import           Data.Either                        (Either (..), either)
+import           Data.Either                        (Either (Left, Right),
+                                                     either)
 
 import           Data.Semigroup                     ((<>))
 import           Data.Text                          (Text)
@@ -31,7 +35,11 @@ import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import qualified FirstApp.Conf                      as Conf
 import qualified FirstApp.DB                        as DB
-import           FirstApp.Types
+import           FirstApp.Types                     (ContentType (JSON, PlainText),
+                                                     Error (EmptyCommentText, EmptyTopic, UnknownRoute),
+                                                     RqType (AddRq, ListRq, ViewRq),
+                                                     mkCommentText, mkTopic,
+                                                     renderContentType)
 
 -- Our start-up is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a

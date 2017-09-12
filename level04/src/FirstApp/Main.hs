@@ -1,7 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 module FirstApp.Main (runApp, app) where
 
-import           Network.Wai
+import           Network.Wai              (Application, Request, Response,
+                                           pathInfo, requestMethod, responseLBS,
+                                           strictRequestBody)
 import           Network.Wai.Handler.Warp (run)
 
 import           Network.HTTP.Types       (Status, hContentType, status200,
@@ -15,7 +17,11 @@ import           Data.Text                (Text)
 import           Data.Text.Encoding       (decodeUtf8)
 
 import qualified FirstApp.Conf            as Conf
-import           FirstApp.Types
+import           FirstApp.Types           (ContentType (PlainText),
+                                           Error (EmptyCommentText, EmptyTopic, UnknownRoute),
+                                           RqType (AddRq, ListRq, ViewRq),
+                                           mkCommentText, mkTopic,
+                                           renderContentType)
 
 runApp :: IO ()
 runApp = do

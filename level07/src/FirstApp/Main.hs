@@ -9,11 +9,15 @@ import           Control.Monad.Except               (ExceptT (ExceptT),
                                                      runExceptT)
 import           Control.Monad.IO.Class             (liftIO)
 
-import           Network.Wai
+import           Network.Wai                        (Application, Request,
+                                                     Response, pathInfo,
+                                                     requestMethod,
+                                                     strictRequestBody)
 import           Network.Wai.Handler.Warp           (run)
 
 import           Data.Bifunctor                     (first)
-import           Data.Either                        (Either (..), either)
+import           Data.Either                        (Either (Left, Right),
+                                                     either)
 
 import           Data.Text                          (Text)
 import qualified Data.Text                          as Text
@@ -29,10 +33,14 @@ import           System.IO                          (stderr)
 import qualified FirstApp.Conf                      as Conf
 import qualified FirstApp.DB                        as DB
 
-import           FirstApp.AppM
-import           FirstApp.Error                     (Error (..))
+import           FirstApp.Error                     (Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute))
 import qualified FirstApp.Responses                 as Res
-import           FirstApp.Types
+import           FirstApp.Types                     (RqType (AddRq, ListRq, ViewRq),
+                                                     mkCommentText, mkTopic)
+
+import           FirstApp.AppM                      (AppM,
+                                                     Env (Env, envConfig, envDb),
+                                                     runAppM, throwL)
 
 -- Our start-up process is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a

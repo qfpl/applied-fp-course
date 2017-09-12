@@ -15,13 +15,18 @@ import qualified Data.Text                          as Text
 
 import           Data.Time                          (getCurrentTime)
 
-import           Database.SQLite.Simple             (Connection, Query (..))
+import           Database.SQLite.Simple             (Connection,
+                                                     Query (fromQuery))
 import qualified Database.SQLite.Simple             as Sql
 
 import qualified Database.SQLite.SimpleErrors       as Sql
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import           FirstApp.Types
+import           FirstApp.Types                     (Comment, CommentText,
+                                                     Error (DBError), Topic,
+                                                     fromDbComment,
+                                                     getCommentText, getTopic,
+                                                     mkTopic)
 
 newtype Table = Table
   { getTableName :: Text }

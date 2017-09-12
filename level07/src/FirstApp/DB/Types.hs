@@ -5,7 +5,7 @@ import           Data.Time                      (UTCTime)
 import           Data.Text                      (Text)
 
 import           Database.SQLite.Simple         (Connection)
-import           Database.SQLite.Simple.FromRow (FromRow (..), field)
+import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
 
 newtype Table = Table
   { getTableName :: Text }

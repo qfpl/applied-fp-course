@@ -60,6 +60,7 @@ library
                        -fno-warn-unused-do-bind
                        -fno-warn-unused-imports
                        -fno-warn-type-defaults
+                       -fwarn-missing-import-lists
                        -ferror-spans
 
   -- Other library packages from which modules are imported.

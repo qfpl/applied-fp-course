@@ -16,21 +16,21 @@ module FirstApp.Types
   , fromDbComment
   ) where
 
-import           GHC.Generics                       (Generic)
+import           GHC.Generics      (Generic)
 
-import           Data.ByteString                    (ByteString)
-import           Data.Text                          (Text)
+import           Data.ByteString   (ByteString)
+import           Data.Text         (Text)
 
-import           Data.List                          (stripPrefix)
-import           Data.Maybe                         (fromMaybe)
+import           Data.List         (stripPrefix)
+import           Data.Maybe        (fromMaybe)
 
-import           Data.Aeson                         (ToJSON (..))
-import qualified Data.Aeson                         as A
-import qualified Data.Aeson.Types                   as A
+import           Data.Aeson        (ToJSON (toJSON))
+import qualified Data.Aeson        as A
+import qualified Data.Aeson.Types  as A
 
-import           Data.Time                          (UTCTime)
+import           Data.Time         (UTCTime)
 
-import FirstApp.DB.Types (DbComment (..))
+import           FirstApp.DB.Types (DbComment)
 
 newtype Topic = Topic Text
   deriving (Show, ToJSON)
@@ -50,9 +50,9 @@ newtype CommentId = CommentId Int
 
 data Comment = Comment
   { commentId :: CommentId
-  , topic :: Topic
-  , body :: CommentText
-  , time :: UTCTime
+  , topic     :: Topic
+  , body      :: CommentText
+  , time      :: UTCTime
   }
   deriving ( Show, Generic )
 

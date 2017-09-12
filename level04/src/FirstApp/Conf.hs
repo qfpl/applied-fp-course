@@ -13,7 +13,8 @@ import           Control.Exception          (catch)
 import           GHC.Word                   (Word16)
 
 import           Data.Bifunctor             (first)
-import           Data.Monoid                (Last (..), Monoid (..), (<>))
+import           Data.Monoid                (Last (Last, getLast),
+                                             Monoid (mappend, mempty), (<>))
 import           Data.String                (fromString)
 
 import           Data.ByteString.Lazy       (ByteString)

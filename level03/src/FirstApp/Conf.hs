@@ -12,7 +12,8 @@ import           Control.Exception          (catch)
 
 import           GHC.Word                   (Word16)
 
-import           Data.Monoid                (Last (..), Monoid (..), (<>))
+import           Data.Monoid                (Last (Last, getLast),
+                                             Monoid (mappend, mempty), (<>))
 import           Data.String                (fromString)
 
 import           Data.ByteString.Lazy       (ByteString)
@@ -96,7 +97,9 @@ data PartialConf
 -- on the ``Monoid`` instance for Last to always get the last value.
 instance Monoid PartialConf where
 
--- Set some sane defaults that we can always rely on
+-- For the purposes of this application we will encode some default values to
+-- ensure that our application continues to function in the event of missing
+-- configuration values from either the file or command line inputs.
 defaultConf
   :: PartialConf
 defaultConf =

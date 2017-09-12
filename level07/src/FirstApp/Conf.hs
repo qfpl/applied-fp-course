@@ -11,7 +11,8 @@ module FirstApp.Conf
 import           Control.Exception          (catch)
 
 import           Data.Bifunctor             (first)
-import           Data.Monoid                (Last (..), Monoid (..), (<>))
+import           Data.Monoid                (Last (Last, getLast),
+                                             Monoid (mappend, mempty), (<>))
 import           Data.String                (fromString)
 import           GHC.Word                   (Word16)
 
@@ -33,7 +34,7 @@ import           Options.Applicative        (Parser, ParserInfo, eitherReader,
 
 import           Text.Read                  (readEither)
 
-import           FirstApp.DB.Types          (Table (..))
+import           FirstApp.DB.Types          (Table (Table, getTableName))
 
 -- Doctest setup section
 -- $setup
