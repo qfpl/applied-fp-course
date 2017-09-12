@@ -1,4 +1,4 @@
-{ mkDerivation, base, wai, warp, http-types, aeson, optparse-applicative,
+{ mkDerivation, base, wai, warp, http-types, aeson, optparse-applicative, doctest,
   hspec, hspec-wai, mtl, sqlite-simple, sqlite-simple-errors
   , stdenv
 }:
@@ -10,7 +10,7 @@ mkDerivation {
   isExecutable = true;
   executableHaskellDepends = [
     base wai warp http-types optparse-applicative aeson
-    hspec hspec-wai mtl sqlite-simple sqlite-simple-errors
+    doctest hspec hspec-wai mtl sqlite-simple sqlite-simple-errors
   ];
   description = "Simplest of web apps";
   license = stdenv.lib.licenses.bsd3;

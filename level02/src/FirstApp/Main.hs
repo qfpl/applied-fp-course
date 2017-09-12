@@ -17,9 +17,9 @@ import           Data.Text.Encoding       (decodeUtf8)
 import           FirstApp.Types
 
 
--- ---------------------------------------------|
---  Don't start here, go to FirstApp.Types! :)  |
--- ---------------------------------------------|
+-- --------------------------------------------
+-- - Don't start here, go to FirstApp.Types!  -
+-- --------------------------------------------
 
 -- | Some helper functions to make our lives a little more DRY.
 mkResponse
@@ -95,7 +95,6 @@ mkErrorResponse
   -> Response
 mkErrorResponse =
   error "mkErrorResponse not implemented"
-
 
 -- Lets use our ``RqType`` helpers to now write a function that will take the
 -- input ``Request`` from the Wai library and turn it into something our

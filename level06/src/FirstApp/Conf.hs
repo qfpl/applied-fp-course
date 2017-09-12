@@ -8,12 +8,12 @@ module FirstApp.Conf
     , confPortToWai
     ) where
 
-import           Control.Exception          (bracketOnError)
+import           Control.Exception          (catch)
 
-import           GHC.Word                   (Word16)
-import           Data.Maybe                 (fromMaybe)
+import           Data.Bifunctor             (first)
 import           Data.Monoid                (Last (..), Monoid (..), (<>))
 import           Data.String                (fromString)
+import           GHC.Word                   (Word16)
 
 import           Data.ByteString.Lazy       (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as LBS
@@ -35,10 +35,16 @@ import           Text.Read                  (readEither)
 
 import           FirstApp.DB                (Table (..))
 
+-- Doctest setup section
+-- $setup
+-- >>> :set -XOverloadedStrings
+
 data ConfigError
   = MissingPort
   | MissingHelloMsg
   | MissingTableName
+  | JSONFileReadError IOError
+  | JSONDecodeError String
   | MissingDbFilePath
   deriving Show
 
@@ -121,18 +127,23 @@ makeConfig pc = Conf
 parseOptions
   :: FilePath
   -> IO (Either ConfigError Conf)
-parseOptions fp = do
-  fileConf <- parseJSONConfigFile fp
-  cmdLine  <- execParser commandLineParser
-  pure $ makeConfig (defaultConf <> fileConf <> cmdLine)
+parseOptions fp =
+  let mkCfg cli file = makeConfig (defaultConf <> file <> cli)
+  in do
+    cli' <- execParser commandLineParser
+    ( >>= mkCfg cli' ) <$> parseJSONConfigFile fp
 
 -- | File Parsing
 
 -- | fromJsonObjWithKey
--- >>> fromJsonObjWithKey "foo" id (encode "{\"foo\":\"Susan\"}")
--- Last (Just "Susan")
--- >>> fromJsonObjWithKey "foo" id (encode "{\"bar\":33}")
--- Last Nothing
+-- >>> let (Just obj) = ( Aeson.decode "{\"foo\":\"Susan\"}" ) :: Maybe Aeson.Object
+--
+-- >>> fromJsonObjWithKey "foo" (id :: Text -> Text) obj
+-- Last {getLast = Just "Susan"}
+--
+-- >>> fromJsonObjWithKey "foo" id obj
+-- Last {getLast = Nothing}
+--
 fromJsonObjWithKey
   :: FromJSON a
   => Text
@@ -142,12 +153,37 @@ fromJsonObjWithKey
 fromJsonObjWithKey k c obj =
   Last $ c <$> Aeson.parseMaybe (Aeson..: k) obj
 
+-- | decodeObj
+-- >>> decodeObj ""
+-- Left (JSONDecodeError "Error in $: not enough input")
+--
+-- >>> decodeObj "{\"bar\":33}"
+-- Right (fromList [("bar",Number 33.0)])
+--
+decodeObj
+  :: ByteString
+  -> Either ConfigError Aeson.Object
+decodeObj =
+  first JSONDecodeError . Aeson.eitherDecode
+
+-- | readObject
+-- >>> readObject "badFileName.no"
+-- Left (JSONFileReadError badFileName.no: openBinaryFile: does not exist (No such file or directory))
+--
+-- >>> readObject "test.json"
+-- Right "{\"foo\":33}\n"
+--
+readObject
+  :: FilePath
+  -> IO (Either ConfigError ByteString)
+readObject fp =
+  (Right <$> LBS.readFile fp) `catch` (pure . Left . JSONFileReadError)
+
 parseJSONConfigFile
   :: FilePath
-  -> IO PartialConf
-parseJSONConfigFile fp = do
-  fc <- readObject
-  pure . fromMaybe mempty $ toPartialConf <$> fc
+  -> IO ( Either ConfigError PartialConf )
+parseJSONConfigFile fp =
+  (>>= fmap toPartialConf . decodeObj) <$> readObject fp
   where
     toPartialConf cObj = PartialConf
       ( fromJsonObjWithKey "port" Port cObj )
@@ -155,13 +191,6 @@ parseJSONConfigFile fp = do
       -- Pull the extra keys off the configuration file.
       ( fromJsonObjWithKey "tableName" Table cObj )
       ( fromJsonObjWithKey "dbFilePath" id cObj )
-
-    readObject
-      :: IO (Maybe Aeson.Object)
-    readObject = bracketOnError
-      (LBS.readFile fp)
-      (const ( pure Nothing ))
-      (pure . Aeson.decode)
 
 -- | Command Line Parsing
 

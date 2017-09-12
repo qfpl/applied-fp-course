@@ -8,11 +8,10 @@ module FirstApp.Conf
     , confPortToWai
     ) where
 
-import           Control.Exception          (bracketOnError)
+import           Control.Exception          (catch)
 
 import           GHC.Word                   (Word16)
 
-import           Data.Maybe                 (fromMaybe)
 import           Data.Monoid                (Last (..), Monoid (..), (<>))
 import           Data.String                (fromString)
 
@@ -32,6 +31,10 @@ import           Options.Applicative        (Parser, ParserInfo, eitherReader,
                                              strOption)
 
 import           Text.Read                  (readEither)
+
+-- Doctest setup section
+-- $setup
+-- >>> :set -XOverloadedStrings
 
 newtype Port = Port
   { getPort :: Word16 }
@@ -56,9 +59,10 @@ confPortToWai
 confPortToWai =
   error "portToInt not implemented"
 
--- Similar to when we were considering what might go wrong with the RqType, lets
--- think about might go wrong when trying to gather our config information.
-data ConfigError
+-- Similar to when we were considering our application types, leave this empty
+-- for now and add to it as you go.
+data ConfigError = ConfigError
+  deriving Show
 
 -- Our application will be able to load configuration from both a file and
 -- command line input. We want to be able to use the command line to temporarily
@@ -128,10 +132,14 @@ parseOptions =
 -- JSON object.
 
 -- | fromJsonObjWithKey
--- >>> fromJsonObjWithKey "foo" id (encode "{\"foo\":\"Susan\"}")
--- Last (Just "Susan")
--- >>> fromJsonObjWithKey "foo" id (encode "{\"bar\":33}")
--- Last Nothing
+-- >>> let (Just obj) = ( Aeson.decode "{\"foo\":\"Susan\"}" ) :: Maybe Aeson.Object
+--
+-- >>> fromJsonObjWithKey "foo" (id :: Text -> Text) obj
+-- Last {getLast = Just "Susan"}
+--
+-- >>> fromJsonObjWithKey "foo" id obj
+-- Last {getLast = Nothing}
+--
 fromJsonObjWithKey
   :: FromJSON a
   => Text
@@ -140,6 +148,36 @@ fromJsonObjWithKey
   -> Last b
 fromJsonObjWithKey =
   error "fromJsonObjWithKey not implemented"
+
+-- | Update these tests when you've completed this function.
+--
+-- | decodeObj
+-- >>> decodeObj ""
+-- Left (undefined "Error in $: not enough input")
+--
+-- >>> decodeObj "{\"bar\":33}"
+-- Right (fromList [("bar",Number 33.0)])
+--
+decodeObj
+  :: ByteString
+  -> Either ConfigError Aeson.Object
+decodeObj =
+  undefined
+
+-- | Update these tests when you've completed this function.
+--
+-- | readObject
+-- >>> readObject "badFileName.no"
+-- Left (undefined badFileName.no: openBinaryFile: does not exist (No such file or directory))
+--
+-- >>> readObject "test.json"
+-- Right "{\"foo\":33}\n"
+--
+readObject
+  :: FilePath
+  -> IO ( Either ConfigError ByteString )
+readObject =
+  undefined
 
 -- Construct the function that will take a ``FilePath``, read it in and attempt
 -- to decode it as a valid JSON object, using the ``aeson`` package. Then pull
@@ -150,15 +188,6 @@ parseJSONConfigFile
   -> IO PartialConf
 parseJSONConfigFile =
   error "parseJSONConfigFile not implemented"
-  where
-    -- Use the ``bracketOnError`` function to guard against exceptions.
-    readObject
-      :: IO (Maybe Aeson.Object)
-    readObject = bracketOnError
-      undefined
-      undefined
-      undefined
-
 
 -- | Command Line Parsing
 
