@@ -22,7 +22,7 @@ synopsis:            Simplest of web apps
 license:             BSD3
 
 -- The file containing the license text.
-license-file:        LICENSE
+license-file:        LICENCE
 
 -- The package author(s).
 author:              QFPL @ Data61
