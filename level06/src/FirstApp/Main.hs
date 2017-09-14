@@ -127,7 +127,7 @@ handleRequest rqType = do
   -- &
   -- asks :: MonadReader r m => (r -> a) -> m a
   --
-  -- We will use asks here as we're only after the FirstAppDB, so...
+  -- We will use ``asks`` here as we only want the FirstAppDB, so...
   -- > envDb      :: Env -> FirstAppDB
   -- > AppM       :: ReaderT Env IO a
   -- > asks       :: (Env -> a) -> AppM a
@@ -169,7 +169,7 @@ mkAddRequest
   -> Either Error RqType
 mkAddRequest ti c = AddRq
   <$> mkTopic ti
-  <*> (mkCommentText . decodeUtf8 $ LBS.toStrict c)
+  <*> (mkCommentText . decodeUtf8 . LBS.toStrict) c
 
 mkViewRequest
   :: Text

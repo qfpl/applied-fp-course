@@ -119,6 +119,10 @@ makeConfig pc = Conf
     -- You don't need to provide type signatures for most functions in where/let
     -- sections. Sometimes the compiler might need a bit of help, or you would
     -- like to be explicit in your intentions.
+    lastToEither
+      :: ConfigError
+      -> (PartialConf -> Last b)
+      -> Either ConfigError b
     lastToEither e g =
       (maybe (Left e) Right . getLast . g) pc
 

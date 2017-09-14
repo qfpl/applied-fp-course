@@ -74,7 +74,7 @@ prepareAppReqs
 prepareAppReqs = do
   cfg <- initConf
   db <- initDB cfg
-  pure (Right $ Env cfg db)
+  pure $ Right ( Env cfg db )
   where
     toStartUpErr =
       error "toStartUpErr not reimplemented"
@@ -103,7 +103,7 @@ app env rq cb = do
       mkRequest rq >>= handleRequest
 
     handleError e = do
-      _ <- logToErr $ Text.pack (show e)
+      _ <- ( logToErr . Text.pack . show ) e
       pure $ mkErrorResponse e
 
 -- This function has changed quite a bit since we changed our DB functions to be
@@ -146,7 +146,7 @@ mkAddRequest
   -> Either Error RqType
 mkAddRequest ti c = AddRq
   <$> mkTopic ti
-  <*> (mkCommentText . decodeUtf8 $ LBS.toStrict c)
+  <*> (mkCommentText . decodeUtf8 . LBS.toStrict) c
 
 mkViewRequest
   :: Text

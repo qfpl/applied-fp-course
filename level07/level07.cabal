@@ -78,7 +78,6 @@ library
                      , sqlite-simple == 0.4.*
                      , sqlite-simple-errors == 0.6.*
 
-
   -- Directories containing source files.
   hs-source-dirs:      src
 
