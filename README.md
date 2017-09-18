@@ -31,9 +31,9 @@ with the general flow of the course, or work through the exercises in the
 projects provided.
 
 Each level is a self-contained Haskell application, containing incomplete, or as
-yet undefined, data types and functions. There is a cabal file and Nix
-configuration files for each level, so you can use either cabal sandboxes or a
-``nix-shell``, depending on your preference.
+yet undefined, data types and functions. There is a Cabal and Nix file for each
+level, so you can use either cabal sandboxes or a ``nix-shell``, depending on
+your preference.
 
 To use a sandbox:
 ```bash
@@ -46,7 +46,7 @@ $ $EDITOR README.md
 The normal cabal build commands should then work as expected. We do recommend
 using cabal sandboxes as they provide a contained Haskell environment for a
 given project. Easy to clean up, and package versions won't conflict with any
-other sandboxed project you may be working on. Hence their name.
+other sandboxed project you may be working on.
 
 To use the Nix Shell:
 ```bash
@@ -59,8 +59,8 @@ tools required to build the application for that level. Note that the
 levels build on each other, so you can go to the highest level and enter a
 nix-shell there, you will then have all the required tools for every level.
 
-The ``shell.nix`` is provided separate from the ``default.nix`` so if you have a
-different work-flow you can still utilise the derivation.
+The ``shell.nix`` is not provided, so if you have a different work-flow you can
+utilise the derivation from the respective ``levelN.nix``.
 
 ##### Please note...
 
