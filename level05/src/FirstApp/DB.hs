@@ -49,10 +49,9 @@ closeDb =
   error "closeDb not implemented"
 
 -- Because our `Table` is as a configurable value, this application has a SQL
--- injection vulnerability. Write a function that attempts to mitigate that
--- risk, by handling replacement of a place-holder value in a given `Query`. We
--- should be able to write the query and pass it through this function and
--- everything is will be taken care of for us.
+-- injection vulnerability. That being said, in order to leverage this weakness,
+-- your appconfig.json file must be compromised and your app restarted. If that
+-- is capable of happening courtesy of a hostile actor, there are larger issues.
 
 -- This is _not_ the way to do things in a large scale app, obviously.
 withTable

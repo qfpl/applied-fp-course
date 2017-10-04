@@ -43,13 +43,10 @@ closeDb
 closeDb =
   Sql.close . dbConn
 
--- Due to the way our application is designed, we have a slight SQL injection
--- risk because we pull the table name from the config or input arguments. This
--- attempts to mitigate that somewhat by removing the need for repetitive string
--- mangling when building our queries. We write the query and pass it through
--- this function that requires the Table information and everything is taken
--- care of for us. This is probably not the way to do things in a large scale
--- app.
+-- Because our `Table` is as a configurable value, this application has a SQL
+-- injection vulnerability. That being said, in order to leverage this weakness,
+-- your appconfig.json file must be compromised and your app restarted. If that
+-- is capable of happening courtesy of a hostile actor, there are larger issues.
 withTable
   :: Table
   -> Query
