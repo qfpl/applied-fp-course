@@ -25,7 +25,7 @@ import           Data.Text       (Text)
 
 -- To that end, we will create the following constructors for our RqType:
 
--- AddRq : Which needs to the target topic, and the body of the comment.
+-- AddRq : Which needs the target topic, and the body of the comment.
 -- ViewRq : Which needs the topic being requested.
 -- ListRq : Which doesn't need anything and lists all of the current topics.
 data RqType = RqType
