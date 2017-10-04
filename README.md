@@ -8,8 +8,9 @@ This is a brand new course, so there are going to be rough edges. We invite you 
 pull requests if you find errors or have suggestions on how to improve it.
 
 This course is designed to be run in a class room with instructors, but we would like to make it
-suitable for self-study as well. Although this will ratchet up the difficulty a bit, we also invite
-suggestions on improving the course as a stand alone element.
+suitable for self-study as well. Although undertaking this course outside of the workshops will
+increase the difficulty somewhat, we do not discourage it and invite suggestions on how to make the
+course more approachable.
 
 If you do attempt this on your own and find yourself completely lost, then you may come find us on
 IRC on [Freenode](https://freenode.net/) in #qfpl or #fp-course.
