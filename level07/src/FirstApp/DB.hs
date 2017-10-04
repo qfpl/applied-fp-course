@@ -1,5 +1,4 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE OverloadedStrings #-}
 module FirstApp.DB
   ( Table (..)
   , FirstAppDB (FirstAppDB)
