@@ -39,3 +39,11 @@ messages or ``All Good`` if it cannot find any errors.
 process with constant feedback about your changes. It is very useful in tandem
 with type holes. Give it a try!
 
+``ghcid`` can also help out when you're writing your tests. Since normally the
+source and other packages that are listed in a `test-suite` configuration
+section in the Cabal file are not loaded. You can manually tell ``ghcid`` to
+load and examine these files with the following command:
+
+```shell
+$ ghcid -c "cabal repl level0N-tests"'
+```

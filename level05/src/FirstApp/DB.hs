@@ -53,7 +53,15 @@ closeDb =
 -- your appconfig.json file must be compromised and your app restarted. If that
 -- is capable of happening courtesy of a hostile actor, there are larger issues.
 
--- This is _not_ the way to do things in a large scale app, obviously.
+-- Complete the withTable function so that the placeholder '$$tablename$$' is
+-- found and replaced in the provided Query.
+-- | withTable
+-- >>> withTable (Table "tbl_nm") "SELECT * FROM $$tablename$$"
+-- "SELECT * FROM tbl_nm"
+-- >>> withTable (Table "tbl_nm") "SELECT * FROM foo"
+-- "SELECT * FROM foo"
+-- >>> withTable (Table "tbl_nm") ""
+-- ""
 withTable
   :: Table
   -> Query

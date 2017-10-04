@@ -27,7 +27,7 @@ import qualified Database.SQLite.SimpleErrors       as Sql
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import           FirstApp.DB.Types                  (FirstAppDB (FirstAppDB, dbConn),
-                                                     Table (getTableName))
+                                                     Table (Table, getTableName))
 import           FirstApp.Error                     (Error (DBError))
 import           FirstApp.Types                     (Comment, CommentText,
                                                      Topic, fromDbComment,
@@ -35,6 +35,10 @@ import           FirstApp.Types                     (Comment, CommentText,
                                                      mkTopic)
 
 import           FirstApp.AppM                      (AppM, envDb, throwL)
+
+-- Doctest setup section
+-- $setup
+-- >>> :set -XOverloadedStrings
 
 -- Quick helper to pull the connection and close it down.
 closeDb
@@ -47,6 +51,16 @@ closeDb =
 -- injection vulnerability. That being said, in order to leverage this weakness,
 -- your appconfig.json file must be compromised and your app restarted. If that
 -- is capable of happening courtesy of a hostile actor, there are larger issues.
+
+-- Complete the withTable function so that the placeholder '$$tablename$$' is
+-- found and replaced in the provided Query.
+-- | withTable
+-- >>> withTable (Table "tbl_nm") "SELECT * FROM $$tablename$$"
+-- "SELECT * FROM tbl_nm"
+-- >>> withTable (Table "tbl_nm") "SELECT * FROM foo"
+-- "SELECT * FROM foo"
+-- >>> withTable (Table "tbl_nm") ""
+-- ""
 withTable
   :: Table
   -> Query

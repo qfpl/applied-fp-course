@@ -6,4 +6,5 @@ main :: IO ()
 main = doctest
   [ "-isrc"
   , "src/FirstApp/Conf.hs"
+  , "src/FirstApp/DB.hs"
   ]

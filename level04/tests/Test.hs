@@ -23,7 +23,26 @@ main = do
       error "Config failure error handling not implemented"
 
     Right cfg -> do
+      -- We need to setup our Application.
       let app' = undefined
+
+      -- What function in the Hspec or Hspec.Wai package do we need to use here
+      -- so that Hspec can manage the running of our Wai Application?
       hspec . undefined app' $ do
-          describe undefined $ do
-            error "test undefined"
+
+          -- Here is an example test for the 'ListRq' route.
+          -- Start with a general description of what we're going to test.
+          describe "List Route" $ do
+            -- Individual test cases provide more precise information regarding
+            -- what they are going to test.
+            it "Should return a 'not implemented' message and 200 status" $
+              -- Using the functions from ``Test.Hspec.Wai`` this actions a GET request
+              -- on the "/list" route, and using an infix function, compares the result of
+              -- that request to our expected result.
+
+              -- There String literal here is being converted by the use of the
+              -- ``IsString`` typeclass into a response type that Hspec.Wai can
+              -- use. Check the documentation for more examples, but when given
+              -- a string literal, it will assume that is the expected body of
+              -- the request and also check for a 200 response code.
+              get "/list" `shouldRespondWith` "List Request not implemented"
