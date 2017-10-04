@@ -16,8 +16,11 @@ Start in ``tests/Test.hs``.
 
 [HSpec]: (http://hspec.github.io/)
 [hspec-wai]: (https://hackage.haskell.org/package/hspec-wai)
+[doctest]: (https://hackage.haskell.org/package/doctest)
 
 #### Aside: Tool Introduction - ghcid
+
+[ghcid]: (https://github.com/ndmitchell/ghcid)
 
 Additionally we'd like to introduce a command line tool that you may find useful
 for Haskell development; [ghcid]. This is a very lightweight tool that works for
@@ -36,4 +39,3 @@ messages or ``All Good`` if it cannot find any errors.
 process with constant feedback about your changes. It is very useful in tandem
 with type holes. Give it a try!
 
-[ghcid]: (https://github.com/ndmitchell/ghcid)
