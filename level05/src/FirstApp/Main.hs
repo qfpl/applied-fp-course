@@ -6,7 +6,6 @@ module FirstApp.Main
   ) where
 
 import           Control.Applicative                (liftA2)
-import           Control.Exception                  (bracket)
 import           Control.Monad                      (join)
 
 import           Network.Wai                        (Application, Request,

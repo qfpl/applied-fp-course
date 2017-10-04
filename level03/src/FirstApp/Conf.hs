@@ -152,8 +152,11 @@ fromJsonObjWithKey
 fromJsonObjWithKey =
   error "fromJsonObjWithKey not implemented"
 
--- | Update these tests when you've completed this function.
---
+-- |----
+-- | You will need to update these tests when you've completed the following functions!
+-- | The 'undefined' in these tests needs to be replaced with their respective Error constructors.
+-- |----
+
 -- | decodeObj
 -- >>> decodeObj ""
 -- Left (undefined "Error in $: not enough input")
@@ -165,7 +168,7 @@ decodeObj
   :: ByteString
   -> Either ConfigError Aeson.Object
 decodeObj =
-  undefined
+  error "decodeObj not implemented"
 
 -- | Update these tests when you've completed this function.
 --
@@ -180,7 +183,7 @@ readObject
   :: FilePath
   -> IO ( Either ConfigError ByteString )
 readObject =
-  undefined
+  error "readObject not implemented"
 
 -- Construct the function that will take a ``FilePath``, read it in and attempt
 -- to decode it as a valid JSON object, using the ``aeson`` package. Then pull
