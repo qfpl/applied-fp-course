@@ -25,7 +25,7 @@ import           Data.Text       (Text)
 
 -- To that end, we will create the following types:
 
--- AddRq : Which needs to the target topic, and the body of the comment.
+-- AddRq : Which needs the target topic, and the body of the comment.
 -- ViewRq : Which needs the topic being requested.
 -- ListRq : Which lists all of the current topics.
 data RqType = RqType
