@@ -89,11 +89,18 @@ initDb fp tab =
 -- to send to the outside world. We will be loading our `DbComment` type from
 -- the FirstApp.DB.Types module before converting trying to convert it to a
 -- `Comment`.
+--
+-- To go from a DbComment to a Comment, we need to use ``fromDbComment`` that is
+-- defined in FirstApp.Types.
 getComments
   :: FirstAppDB
   -> Topic
   -> IO (Either Error [Comment])
 getComments =
+  -- There are several possible implementations of this function. Paritcularly
+  -- there may be a trade-off between deciding to throw an Error if a DbComment
+  -- cannot be converted to a Comment, or simply ignoring any DbComment that is
+  -- not valid.
   error "getComments not implemented"
 
 addCommentToTopic

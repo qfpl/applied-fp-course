@@ -16,6 +16,9 @@ For reference, the packages we will use to talk to our database are:
 You will also need the [SQLite](https://www.sqlite.org/) database application
 installed and available on your system.
 
+Also we will not necessarily provide all of the required imports any more, there
+may be other things you have to bring into scope.
+
 Start in ``src/FirstApp/DB/Types.hs``, before moving to ``src/FirstApp/DB.hs``.
 
 NB: The PostgreSQL example module is in ``src/FirstApp/DB/PostgreSQL.hs``.

@@ -51,11 +51,11 @@ data StartUpError
 runApp :: IO ()
 runApp = do
   appE <- prepareAppReqs
-  undefined appE
+  error "runApp needs re-implementing"
 
 prepareAppReqs
   :: IO (Either StartUpError (Conf.Conf,DB.FirstAppDB))
-prepareAppReqs = do
+prepareAppReqs =
   error "prepareAppReqs not implemented"
 
 -- | Some helper functions to make our lives a little more DRY.
