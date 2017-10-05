@@ -49,8 +49,7 @@ data StartUpError
   deriving Show
 
 runApp :: IO ()
-runApp = do
-  appE <- prepareAppReqs
+runApp =
   error "runApp needs re-implementing"
 
 prepareAppReqs
@@ -110,7 +109,7 @@ app
   -> Application
 app cfg db rq cb = do
   rq' <- mkRequest rq
-  resp <- fmap handleRespErr $ handleRErr rq'
+  resp <- handleRespErr <$> handleRErr rq'
   cb resp
   where
     -- Does this seem clunky to you?
@@ -127,11 +126,11 @@ handleRequest
   -> RqType
   -> IO (Either Error Response)
 handleRequest _ _db (AddRq _ _) =
-  fmap (const ( resp200 PlainText "Success" )) <$> undefined
+  fmap (const ( resp200 PlainText "Success" )) <$> error "AddRq handler not implemented"
 handleRequest _ _db (ViewRq _)  =
-  fmap undefined <$> undefined
+  error "ViewRq handler not implemented"
 handleRequest _ _db ListRq      =
-  fmap undefined <$> undefined
+  error "ListRq handler not implemented"
 
 mkRequest
   :: Request
