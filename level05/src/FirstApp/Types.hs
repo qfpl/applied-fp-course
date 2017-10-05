@@ -49,12 +49,28 @@ newtype CommentId = CommentId Int
   deriving (Eq, Show, ToJSON)
 
 data Comment = Comment
-  { commentId :: CommentId
-  , topic     :: Topic
-  , body      :: CommentText
-  , time      :: UTCTime
+  { commentId    :: CommentId
+  , commentTopic :: Topic
+  , commentBody  :: CommentText
+  , commentTime  :: UTCTime
   }
   deriving ( Show, Generic )
+
+-- Strip the prefix (which may fail if the prefix isn't present), fall
+-- back to the original label if need be, then camel-case the name.
+
+-- | modFieldLabel
+-- >>> modFieldLabel "commentId"
+-- "id"
+-- >>> modFieldLabel "topic"
+-- "topic"
+-- >>> modFieldLabel ""
+-- ""
+modFieldLabel
+  :: String
+  -> String
+modFieldLabel =
+  error "modFieldLabel not implemented"
 
 instance ToJSON Comment where
   -- This is one place where we can take advantage of our `Generic` instance.
@@ -65,18 +81,12 @@ instance ToJSON Comment where
     where
       -- These options let us make some minor adjustments to how Aeson treats
       -- our type. Our only adjustment is to alter the field names a little, to
-      -- remove the 'comment' prefix and camel case what is left of the name.
-      -- This accepts any 'String -> String' function but it's good to keep the
-      -- modifications simple.
+      -- remove the 'comment' prefix and use an Aeson function to handle the
+      -- rest of the name. This accepts any 'String -> String' function but it's
+      -- wise to keep the modifications simple.
       opts = A.defaultOptions
              { A.fieldLabelModifier = modFieldLabel
              }
-      -- Strip the prefix (which may fail if the prefix isn't present), fall
-      -- back to the original label if need be, then camel-case the name.
-      modFieldLabel
-        :: String
-        -> String
-      modFieldLabel = error "modFieldLabel not implemented"
 
 -- For safety we take our stored `DbComment` and try to construct a `Comment`
 -- that we would be okay with showing someone. However unlikely it may be, this

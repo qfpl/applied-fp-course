@@ -51,6 +51,24 @@ data Comment = Comment
   -- Generic has been added to our deriving list.
   deriving ( Show, Generic )
 
+-- Strip the prefix (which may fail if the prefix isn't present), fall
+-- back to the original label if need be, then camel-case the name.
+
+-- | modFieldLabel
+-- >>> modFieldLabel "commentId"
+-- "id"
+-- >>> modFieldLabel "topic"
+-- "topic"
+-- >>> modFieldLabel ""
+-- ""
+modFieldLabel
+  :: String
+  -> String
+modFieldLabel l =
+  A.camelTo2 '_'
+  . fromMaybe l
+  $ stripPrefix "comment" l
+
 instance ToJSON Comment where
   -- This is one place where we can take advantage of our Generic instance. Aeson
   -- already has the encoding functions written for anything that implements the
@@ -60,18 +78,12 @@ instance ToJSON Comment where
     where
       -- These options let us make some minor adjustments to how Aeson treats
       -- our type. Our only adjustment is to alter the field names a little, to
-      -- remove the 'comment' prefix and camel case what is left of the name.
-      -- This accepts any 'String -> String' function but it's good to keep the
-      -- modifications simple.
+      -- remove the 'comment' prefix and use an Aeson function to handle the
+      -- rest of the name. This accepts any 'String -> String' function but it's
+      -- wise to keep the modifications simple.
       opts = A.defaultOptions
              { A.fieldLabelModifier = modFieldLabel
              }
-
-      -- Strip the prefix (which may fail if the prefix isn't present), fall
-      -- back to the original label if need be, then camel-case the name.
-      modFieldLabel l =
-        A.camelTo2 '_' . fromMaybe l
-        $ stripPrefix "comment" l
 
 -- For safety we take our stored DbComment and try to construct a Comment that
 -- we would be okay with showing someone. However unlikely it may be, this is a
