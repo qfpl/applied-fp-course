@@ -47,7 +47,7 @@ closeDb
 closeDb =
   Sql.close . dbConn
 
--- Because our `Table` is as a configurable value, this application has a SQL
+-- Because our `Table` is a configurable value, this application has a SQL
 -- injection vulnerability. That being said, in order to leverage this weakness,
 -- your appconfig.json file must be compromised and your app restarted. If that
 -- is capable of happening courtesy of a hostile actor, there are larger issues.
@@ -93,9 +93,9 @@ initDb fp tab = Sql.runDBAction $ do
   _ <- Sql.execute_ con createTableQ
   pure $ FirstAppDB con tab
   where
-  -- Query has a IsString instance so you can write straight strings like this
-  -- and it will convert them into a Query type, use '?' as placeholders for
-  -- ORDER DEPENDENT interpolation.
+  -- Query has an `IsString` instance so string literals like this can be
+  -- converted into a `Query` type when the `OverloadedStrings` language
+  -- extension is enabled.
     createTableQ = withTable tab
       "CREATE TABLE IF NOT EXISTS $$tablename$$ (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time INTEGER)"
 

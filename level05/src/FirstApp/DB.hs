@@ -48,7 +48,7 @@ closeDb
 closeDb =
   error "closeDb not implemented"
 
--- Because our `Table` is as a configurable value, this application has a SQL
+-- Because our `Table` is a configurable value, this application has a SQL
 -- injection vulnerability. That being said, in order to leverage this weakness,
 -- your appconfig.json file must be compromised and your app restarted. If that
 -- is capable of happening courtesy of a hostile actor, there are larger issues.
@@ -79,9 +79,9 @@ initDb
 initDb fp tab =
   error "initDb not implemented"
   where
-  -- Query has a `IsString` instance so you can write straight strings like this
-  -- and it will convert them into a `Query` type, use '?' as place-holders for
-  -- ORDER DEPENDENT interpolation.
+  -- Query has an `IsString` instance so string literals like this can be
+  -- converted into a `Query` type when the `OverloadedStrings` language
+  -- extension is enabled.
     createTableQ = withTable tab
       "CREATE TABLE IF NOT EXISTS $$tablename$$ (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time INTEGER)"
 
@@ -92,6 +92,9 @@ initDb fp tab =
 --
 -- To go from a DbComment to a Comment, we need to use ``fromDbComment`` that is
 -- defined in FirstApp.Types.
+--
+-- HINT: You can use '?' or named place-holders as query parameters. Have a look
+-- at the section on parameter substitution in sqlite-simple's documentation.
 getComments
   :: FirstAppDB
   -> Topic
