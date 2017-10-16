@@ -20,7 +20,6 @@ import           FirstApp.Types           (ContentType, Error, RqType,
                                            mkCommentText, mkTopic,
                                            renderContentType)
 
-
 -- --------------------------------------------
 -- - Don't start here, go to FirstApp.Types!  -
 -- --------------------------------------------
@@ -54,7 +53,6 @@ resp400
   -> Response
 resp400 =
   error "resp400 not implemented"
--- |
 
 -- These next few functions will take raw request information and construct one
 -- of our types.

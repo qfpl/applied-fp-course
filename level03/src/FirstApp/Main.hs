@@ -65,7 +65,7 @@ resp400 =
 
 -- Now that we have our configuration, pass it where it needs to go.
 app
-  :: a
+  :: Conf.Conf
   -> Application
 app cfg rq cb =
   (handleRespErr . handleRErr <$> mkRequest rq) >>= cb
@@ -80,7 +80,7 @@ app cfg rq cb =
 -- Now we have some config, we can pull the ``helloMsg`` off it and use it in
 -- the response.
 handleRequest
-  :: a
+  :: Conf.Conf
   -> RqType
   -> Either Error Response
 handleRequest _cfg (AddRq _ _) =
