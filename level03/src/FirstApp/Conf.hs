@@ -191,7 +191,7 @@ readObject =
 -- function we wrote above to assist in pulling items off the object.
 parseJSONConfigFile
   :: FilePath
-  -> IO PartialConf
+  -> IO ( Either ConfigError PartialConf )
 parseJSONConfigFile =
   error "parseJSONConfigFile not implemented"
 
