@@ -1,4 +1,5 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# OPTIONS_GHC -fno-warn-dodgy-exports #-}
 module FirstApp.Types
   ( Topic
   , CommentText
@@ -23,24 +24,23 @@ import           Data.Text       (Text)
 -- - View a topic and its comments
 -- - List the current topics
 
--- To that end, we will create the following constructors for our RqType:
+-- To that end, create the following constructors for our RqType:
 
 -- AddRq : Which needs the target topic, and the body of the comment.
 -- ViewRq : Which needs the topic being requested.
 -- ListRq : Which doesn't need anything and lists all of the current topics.
-data RqType = RqType
+data RqType
 
 -- Not everything goes according to plan, but it's important that our types
 -- reflect when errors can be introduced into our program. Additionally it's
 -- useful to be able to be descriptive about what went wrong.
 
--- Leave this type empty for now, and we'll fill in the error constructors we
--- need as we progress through the application.
-data Error = Error
+-- Fill in the error constructors as you need them.
+data Error
 
--- Provide a type to list our response content types so we don't try to do the
--- wrong thing with what we meant to be used as text or JSON etc.
-data ContentType = ContentType
+-- Provide the constructors for a sum type to specify the `ContentType` Header,
+-- to be used when we build our Response type.
+data ContentType
 
 -- The ``ContentType`` constructors don't match what is required for the header
 -- information, so write a function that will take our ``ContentType`` and

@@ -67,7 +67,7 @@ library
   -- Base language which the package is written in.
   default-language:    Haskell2010
 
-executable level01
+executable level01-exe
   -- .hs or .lhs file containing the Main module.
   main-is:             Main.hs
 

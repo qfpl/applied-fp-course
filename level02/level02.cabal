@@ -72,7 +72,7 @@ library
   default-language:    Haskell2010
 
 
-executable level02
+executable level02-exe
   -- .hs or .lhs file containing the Main module.
   main-is:             Main.hs
 
