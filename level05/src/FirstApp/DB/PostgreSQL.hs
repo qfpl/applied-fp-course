@@ -68,7 +68,7 @@ module FirstApp.DB.PostgreSQL where
 --              }
 --   -- Initialise the connection to the DB...
 --   -- - What could go wrong here?
---   -- - What haven't we be told in the types?
+--   -- - What haven't we been told in the types?
 --   con <- PG.connect info
 --   -- Initialise our one table, if it's not there already
 --   _ <- PG.execute con createTableQ (PG.Only . Identifier $ getTableName tab)
