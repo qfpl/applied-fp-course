@@ -91,6 +91,8 @@ mkRequest
   :: Request
   -> IO ( Either Error RqType )
 mkRequest =
+  -- Remembering your pattern-matching skills will let you implement the entire
+  -- specification in this function.
   error "mkRequest not implemented"
 
 -- If we find that we need more information to handle a request, or we have a

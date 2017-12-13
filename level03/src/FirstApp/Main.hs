@@ -18,6 +18,7 @@ import           Data.Monoid              ((<>))
 import           Data.Text                (Text)
 import           Data.Text.Encoding       (decodeUtf8)
 
+import qualified FirstApp.Conf            as Conf
 import           FirstApp.Types           (ContentType (PlainText), Error (EmptyCommentText, EmptyTopic, UnknownRoute),
                                            RqType (AddRq, ListRq, ViewRq),
                                            mkCommentText, mkTopic,

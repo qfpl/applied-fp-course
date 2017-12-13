@@ -81,7 +81,7 @@ These lessons are designed to be completed with an instructor as part of the
 Data61 Applied Functional Programming Course. You are of course welcome to
 clone the repository and give it a try, but you may find the tasks more
 difficult. If you have any questions we can be contacted in the
-Freenode [#nicta-course IRC channel](https://freenode.net). You can use the
+Freenode [#qfpl or #fp-course IRC channel](https://freenode.net). You can use the
 free [WebChat client](https://webchat.freenode.net).
 
 #### Subsequent lessons may contain spoilers, don't cheat yourself out of the experience!
