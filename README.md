@@ -39,10 +39,6 @@ IRC on [Freenode](https://freenode.net/) in #qfpl or #fp-course.
 
 ### Setup build tools:
 
-You're welcome to setup your own project with ``$ cabal init`` and follow along
-with the general flow of the course, or work through the exercises in the
-projects provided.
-
 Each level is a self-contained Haskell application, containing incomplete, or as
 yet undefined, data types and functions. There is a Cabal and Nix file for each
 level, so you can use either cabal sandboxes or a ``nix-shell``, depending on
@@ -52,8 +48,8 @@ To use a sandbox:
 ```bash
 $ cd <levelN>
 $ cabal sandbox init
-$ cabal configure
 $ cabal install --only-dependencies
+$ cabal build
 $ $EDITOR README.md
 ```
 The normal cabal build commands should then work as expected. We do recommend
@@ -65,6 +61,7 @@ To use the Nix Shell:
 ```bash
 $ cd <levelN>
 $ nix-shell
+$ cabal build
 $ $EDITOR README.md
 ```
 Once that completes you will be in a ``nix-shell`` environment with all the

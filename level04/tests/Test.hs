@@ -28,8 +28,7 @@ main = do
 
       -- What function in the Hspec or Hspec.Wai package do we need to use here
       -- so that Hspec can manage the running of our Wai Application?
-      hspec . undefined app' $ do
-
+      hspec . with app' $ do
           -- Here is an example test for the 'ListRq' route.
           -- Start with a general description of what we're going to test.
           describe "List Route" $ do
