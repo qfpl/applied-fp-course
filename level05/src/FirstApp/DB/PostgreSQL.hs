@@ -17,11 +17,6 @@ import qualified Database.PostgreSQL.Simple       as PG
 
 import           FirstApp.Types
 
--- newtype all the things!!
-newtype Table = Table
-  { getTableName :: Text }
-  deriving Show
-
 -- This is a bit more configuration available to the PostgreSQL package so we
 -- have a bit more work to do.
 newtype DbName = DbName
@@ -34,18 +29,7 @@ newtype UserName = UserName
 
 data FirstAppDB = FirstAppDB
   { dbConn  :: Connection
-  , dbTable :: Table
   }
-
--- Unlike the sqlite-simple package, the postgresql-simple package allows for
--- the specification of SQL identifiers for us in the Query construction. This
--- has the advantage of not needing to worry about manually interpolating the
--- table name into our queries. The package will safely handle this for us.
-tableName
-  :: FirstAppDB
-  -> Identifier
-tableName =
-  Identifier . getTableName . dbTable
 
 closeDb
   :: FirstAppDB
@@ -72,7 +56,7 @@ initDb un dbN tab = do
   -- - What haven't we been told in the types?
   con <- PG.connect info
   -- Initialise our one table, if it's not there already
-  _ <- PG.execute con createTableQ (PG.Only . Identifier $ getTableName tab)
+  _ <- PG.execute_ con createTableQ
   -- Wrap it up and hand it back.
   pure $ FirstAppDB con tab
 
@@ -82,10 +66,10 @@ createTableQ =
   -- Query has a IsString instance so you can write straight strings like this
   -- and it will convert them into a Query type, use '?' as placeholders for
   -- ORDER DEPENDENT interpolation.
-  "CREATE TABLE IF NOT EXISTS ? (id SERIAL PRIMARY KEY, topic TEXT, comment TEXT, time TIMESTAMPTZ)"
+  "CREATE TABLE IF NOT EXISTS comments (id SERIAL PRIMARY KEY, topic TEXT, comment TEXT, time TIMESTAMPTZ)"
   -- Another way to express this query if you prefer being able to use line
   -- breaks is to use the QuasiQuotes extension and write the following:
-  -- [sql| CREATE TABLE IF NOT EXISTS ? (
+  -- [sql| CREATE TABLE IF NOT EXISTS comments (
   --       id SERIAL PRIMARY KEY,
   --       topic TEXT,
   --       comment TEXT,
@@ -99,13 +83,13 @@ getComments
   -> IO (Either Error [Comment])
 getComments db t = do
   -- Write the query with an icky string and remember your placeholders!
-  let q = "SELECT id,topic,comment,time FROM ? WHERE topic = ?"
+  let q = "SELECT id,topic,comment,time FROM comments WHERE topic = ?"
   -- Run the query against our DB using our connection.
   -- To build the replacements for the query placeholders, this package uses
   -- tuples. Remember that the '?' are order dependent so if you get your input
   -- parameters in the wrong order, the types won't save you here. More on that
   -- sort of goodness later.
-  res <- PG.query (dbConn db) q (tableName db, getTopic t)
+  res <- PG.query (dbConn db) q (PG.Only $ getTopic t)
   -- To be doubly and triply sure we've no garbage in our response, we take care
   -- to convert our DB storage type into something we're going to share with the
   -- outside world. Checking again for things like empty Topic or CommentText
@@ -124,11 +108,11 @@ addCommentToTopic db t c = do
   nowish <- getCurrentTime
   -- Note the triple, matching the number of values we're trying to insert, plus
   -- one for the table name.
-  let q = "INSERT INTO ? (topic,comment,time) VALUES (?,?,?)"
+  let q = "INSERT INTO comments (topic,comment,time) VALUES (?,?,?)"
   -- We use the PG.execute function this time as we don't care about anything
   -- that is returned. The execute function will still return the number of rows
   -- affected by the query, which in our case should always be 1.
-  res <- PG.execute (dbConn db) q (tableName db, getTopic t, getCommentText c, nowish)
+  res <- PG.execute (dbConn db) q (getTopic t, getCommentText c, nowish)
   -- An alternative is to write a returning query to get the Id of the DbComment
   -- we've created. We're being pretty lazy right now so check we've
   -- affected a single row and move on.
@@ -139,6 +123,6 @@ getTopics
   :: FirstAppDB
   -> IO (Either Error [Topic])
 getTopics db = do
-  let q = "SELECT DISTINCT topic FROM ?"
-  res <- PG.query (dbConn db) q (PG.Only $ tableName db)
+  let q = "SELECT DISTINCT topic FROM comments"
+  res <- PG.query_ (dbConn db) q
   pure $ traverse ( mkTopic . PG.fromOnly ) res
