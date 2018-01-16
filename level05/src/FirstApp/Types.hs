@@ -174,9 +174,10 @@ renderContentType JSON      = "application/json"
 -- Config Types
 -----------------
 
--- This is an alternative way of defining a `newtype`. You define it as a simple
--- record and this lets you specify an unwrapping function at the same time. Which
--- technique you choose is a matter for your specific needs and preference.
+-- This is an alternative way of defining a `newtype`. You define it as a record
+-- with a single field, this provides the unwrapping function for free. When
+-- defined using the other method, you must use pattern-matching or write a dedicated
+-- function in order to get the value out.
 --
 newtype Port = Port
   { getPort :: Word16 }
