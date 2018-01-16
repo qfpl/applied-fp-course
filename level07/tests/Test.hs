@@ -1,29 +1,31 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import           Data.Monoid    ((<>))
+import           Data.Monoid          ((<>))
 
-import           Data.String    (IsString)
+import           Data.String          (IsString)
 
 import           Test.Hspec
 import           Test.Hspec.Wai
 
-import qualified System.Exit    as Exit
+import qualified System.Exit          as Exit
 
-import qualified FirstApp.AppM  as AppM
-import qualified FirstApp.DB    as DB
-import qualified FirstApp.Main  as Main
-import qualified FirstApp.Types as Types
+import qualified FirstApp.AppM        as AppM
+import qualified FirstApp.DB          as DB
+import qualified FirstApp.Main        as Main
+import qualified FirstApp.Types       as Types
 
 main :: IO ()
 main = do
-  let dieWith m = print m >> Exit.exitFailure
+  let
+    dieWith :: Show a => a -> IO ()
+    dieWith m = print m >> Exit.exitFailure
 
-      -- This helps keep the string polymorphic so we can use it in both
-      -- ByteString and Text forms in this file, without having to run encoding
-      -- functions. The compiler takes care of it for us.
-      testTopic :: IsString s => s
-      testTopic = "fudge"
+    -- This helps keep the string polymorphic so we can use it in both
+    -- ByteString and Text forms in this file, without having to run encoding
+    -- functions. The compiler takes care of it for us.
+    testTopic :: IsString s => s
+    testTopic = "fudge"
 
   reqsE <- Main.prepareAppReqs
   case reqsE of
@@ -33,19 +35,11 @@ main = do
     Right env -> do
       let app' = pure ( Main.app env )
 
-          -- Keeping in line with the changes to our application to use a AppM,
-          -- and now wrapping our DB layer in the AppM as well. This function
-          -- needs an overhaul.
-          flushTopic = do
-            -- To lift our AppM into the base IO, we run it as would if it were
-            -- a normal AppM, returning our IO ( Either ) result.
-            r <- AppM.runAppM env $
-              -- This inner 'do' is running as if it were an AppM, including all of the nice error handling etc.
-              AppM.throwL (Types.mkTopic testTopic) >>= DB.deleteTopic
-            -- This outer 'do' is in the base IO monad and if we have a failure
-            -- here we need to exit with an error code to ensure the test-suite
-            -- knows to fail our tests.
-            either dieWith pure r
+          flushTopic :: IO ()
+          flushTopic = (either dieWith pure =<<)
+            . AppM.runAppM env $ do
+                t <- AppM.throwL $ Types.mkTopic "fudge"
+                DB.deleteTopic t
 
       -- Run the tests with a DB topic flush between each spec
       hspec . with ( flushTopic >> app' ) $ do
@@ -54,20 +48,20 @@ main = do
 
         -- AddRq Spec
         describe "POST /topic/add" $ do
-          it "Should return 200 with well formed request" $ do
+          it "Should return 200 with well formed request" $
             pOST "Is super tasty." `shouldRespondWith` "Success"
 
           it "Should 400 on empty input" $
             pOST "" `shouldRespondWith` 400
 
         -- ViewRq Spec
-        describe "GET /topic/view" $ do
+        describe "GET /topic/view" $
           it "Should return 200 with content" $ do
             _ <- pOST "Is super tasty."
             get ( "/" <> testTopic <> "/view" ) `shouldRespondWith` 200
 
         -- ListRq Spec
-        describe "GET /list" $ do
+        describe "GET /list" $
           it "Should return 200 with content" $ do
             _ <- pOST "Is super tasty."
             get "/list" `shouldRespondWith` "[\"fudge\"]"

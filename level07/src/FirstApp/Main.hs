@@ -30,23 +30,26 @@ import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import           System.IO                          (stderr)
 
-import qualified FirstApp.Conf                      as Conf
 import qualified FirstApp.DB                        as DB
 
+import qualified FirstApp.Conf                      as Conf
 import           FirstApp.Error                     (Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute))
 import qualified FirstApp.Responses                 as Res
-import           FirstApp.Types                     (RqType (AddRq, ListRq, ViewRq),
+import           FirstApp.Types                     (Conf (..),
+                                                     ConfigError (..),
+                                                     RqType (AddRq, ListRq, ViewRq),
+                                                     confPortToWai,
                                                      mkCommentText, mkTopic)
 
 import           FirstApp.AppM                      (AppM,
-                                                     Env (Env, envConfig, envDb),
+                                                     Env (Env, envConfig, envDB),
                                                      runAppM, throwL)
 
 -- Our start-up process is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
 -- single type so that we can deal with the entire start-up process as a whole.
 data StartUpError
-  = ConfErr Conf.ConfigError
+  = ConfErr ConfigError
   | DbInitErr SQLiteResponse
   deriving Show
 
@@ -57,10 +60,10 @@ runApp = do
   either print runWithDbConn appE
   where
     runWithDbConn env =
-      appWithDb env >> DB.closeDb (envDb env)
+      appWithDb env >> DB.closeDB (envDB env)
 
     appWithDb env =
-      run ( Conf.confPortToWai $ envConfig env ) (app env)
+      run ( confPortToWai $ envConfig env ) (app env)
 
 -- Monad transformers can be used without needing to write the newtype. Recall
 -- that the constructor for ExceptT has a type of :: m (Either e a). So if you
@@ -71,23 +74,24 @@ runApp = do
 -- final Either value.
 prepareAppReqs
   :: IO (Either StartUpError Env)
-prepareAppReqs = do
-  cfg <- initConf
-  db <- initDB cfg
-  pure $ Right ( Env cfg db )
+prepareAppReqs =
+  error "Copy your completed 'prepareAppReqs' and refactor to match the new type signature"
   where
-    toStartUpErr =
-      error "toStartUpErr not reimplemented"
+    logToErr :: Text -> AppM ()
+    logToErr = liftIO . hPutStrLn stderr
+
+    toStartUpErr :: (a -> StartUpError) -> IO (Either a c) -> ExceptT StartUpError IO c
+    toStartUpErr = error "toStartUpErr not reimplemented"
 
     -- Take our possibly failing configuration/db functions with their unique
     -- error types and turn them into a consistently typed ExceptT. We can then
     -- use them in a `do` block as if the Either isn't there. Extracting the
     -- final result before returning.
-    initConf = toStartUpErr ConfErr $
-      Conf.parseOptions "appconfig.json"
+    initConf :: ExceptT StartUpError IO Conf
+    initConf = toStartUpErr ConfErr $ Conf.parseOptions "appconfig.json"
 
-    initDB cfg = toStartUpErr DbInitErr $
-      DB.initDb (Conf.dbFilePath cfg) (Conf.tableName cfg)
+    initDB :: Conf -> ExceptT StartUpError IO DB.FirstAppDB
+    initDB cfg = toStartUpErr DbInitErr $ DB.initDB (dbFilePath cfg)
 
 app
   :: Env
@@ -97,14 +101,14 @@ app env rq cb = do
   resp <- either handleError pure e
   cb resp
   where
+    logToErr :: Text -> IO ()
     logToErr = liftIO . hPutStrLn stderr
 
-    requestToResponse = runAppM env $
-      mkRequest rq >>= handleRequest
+    requestToResponse :: IO (Either Error Response)
+    requestToResponse = runAppM env $ mkRequest rq >>= handleRequest
 
-    handleError e = do
-      _ <- ( logToErr . Text.pack . show ) e
-      pure $ mkErrorResponse e
+    handleError :: Error -> IO Response
+    handleError e = mkErrorResponse e <$ ( logToErr . Text.pack . show ) e
 
 -- This function has changed quite a bit since we changed our DB functions to be
 -- part of AppM. We no longer have to deal with the extra layer of the returned
@@ -170,4 +174,3 @@ mkErrorResponse EmptyTopic       =
   Res.resp400 "Empty Topic"
 mkErrorResponse ( DBError _ )    =
   Res.resp500 "OH NOES"
-

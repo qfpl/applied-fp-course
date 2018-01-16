@@ -1,4 +1,3 @@
-{-# OPTIONS_GHC -fno-warn-missing-methods #-}
 module FirstApp.DB.Types where
 
 import           Data.Text                      (Text)
@@ -10,14 +9,22 @@ import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
 -- application, we create a stand alone type that will represent the data we
 -- store in the database. In this instance, it is the raw types that make up a
 -- comment.
---
--- Complete in the DbComment type below so it is a record type that matches the
--- Comment type, but without the newtype wrappers for each value.
 data DbComment = DbComment
+  { dbCommentId      :: Int
+  , dbCommentTopic   :: Text
+  , dbCommentComment :: Text
+  , dbCommentTime    :: UTCTime
+  }
   deriving Show
 
--- This Typeclass comes from the `sqlite-simple` package and describes how to
--- decode a single row from the database into a single representation of our
--- type. This technique of translating a result row to a type will differ
+-- This type class instance comes from our DB package and tells the DB package
+-- how to decode a single row from the database into a single representation of
+-- our type. This technique of translating a result row to a type will differ
 -- between different packages/databases.
 instance FromRow DbComment where
+  fromRow = DbComment
+            -- field :: FromField a => RowParser a
+            <$> field
+            <*> field
+            <*> field
+            <*> field

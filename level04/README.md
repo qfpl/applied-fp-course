@@ -1,49 +1,31 @@
 # Level 04
 
-In this exercise we're going to add some tests to our application. Because types
-are awesome, and tests are pretty good. But types AND tests is pretty much
-perfect.
+We need a place to store our Comments/Topics, so we're going to add a database
+to our application, specifically the SQLite database. We've chosen SQLite
+because it was the simplest to have up and running for the purposes of the
+course.
 
-These tests will not be awe inspiring, this exercise is primarily to introduce
-you to adding tests to your Haskell application. The setup of the Cabal file is
-already completed for you, but will be covered.
+There is an example module included for using PostgreSQL, however the course
+will focus on the SQLite implementation.
 
-As is to be expected, there are multiple testing frameworks and packages
-available but we will only cover one here. We will use the [HSpec] framework,
-with the [hspec-wai] package to make our lives a bit easier.
+For reference, the packages we will use to talk to our database are:
 
-Start in ``tests/Test.hs``.
+- [sqlite-simple](https://hackage.haskell.org/package/sqlite-simple)
+- [sqlite-simple-errors](https://hackage.haskell.org/package/sqlite-simple-errors)
 
-[HSpec]: (http://hspec.github.io/)
-[hspec-wai]: (https://hackage.haskell.org/package/hspec-wai)
-[doctest]: (https://hackage.haskell.org/package/doctest)
+You will also need the [SQLite](https://www.sqlite.org/) database application
+installed and available on your system.
 
-#### Aside: Tool Introduction - ghcid
+Also we will not necessarily provide all of the required imports any more, there
+may be other things you have to bring into scope.
 
-[ghcid]: (https://github.com/ndmitchell/ghcid)
+The steps for this level:
+1) ``src/FirstApp/DB/Types.hs``
+2) ``src/FirstApp/Types.hs``
+3) ``src/FirstApp/DB.hs``
+4) ``src/FirstApp/Main.hs``
 
-Additionally we'd like to introduce a command line tool that you may find useful
-for Haskell development; [ghcid]. This is a very lightweight tool that works for
-any project with a functioning cabal setup.
+For the sake of simplicity, any configuration requirements will be hardcoded in
+``FirstApp/Conf.hs`` for now. We will return to that in the next level.
 
-If you would like to use it, consult its documentation for how to install it,
-and then in an spare open terminal window, navigate to the root of the Haskell
-project and run ``$ ghcid``.
-
-It will then attempt to build your project, if errors are found they will be
-displayed. But more importantly you can go back to editing files in the project
-and ``ghcid`` will refresh in the background. Providing you with new error
-messages or ``All Good`` if it cannot find any errors.
-
-``ghcid`` provides extremely fast feedback, allowing for a nice development
-process with constant feedback about your changes. It is very useful in tandem
-with type holes. Give it a try!
-
-``ghcid`` can also help out when you're writing your tests. Since normally the
-source and other packages that are listed in a `test-suite` configuration
-section in the Cabal file are not loaded. You can manually tell ``ghcid`` to
-load and examine these files with the following command:
-
-```shell
-$ ghcid -c "cabal repl level0N-tests"'
-```
+NB: The PostgreSQL example module is in ``src/FirstApp/DB/PostgreSQL.hs``.

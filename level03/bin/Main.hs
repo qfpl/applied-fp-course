@@ -1,6 +1,6 @@
 module Main where
 
-import qualified FirstApp.Main as Main
+import qualified FirstApp.Main as M
 
 main :: IO ()
-main = Main.runApp
+main = M.runApp

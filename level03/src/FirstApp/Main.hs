@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# OPTIONS_GHC -fno-warn-unused-matches #-}
 module FirstApp.Main (runApp, app) where
 
 import           Network.Wai              (Application, Request, Response,
@@ -13,25 +12,17 @@ import           Network.HTTP.Types       (Status, hContentType, status200,
 import qualified Data.ByteString.Lazy     as LBS
 
 import           Data.Either              (either)
-import           Data.Monoid              ((<>))
 
 import           Data.Text                (Text)
 import           Data.Text.Encoding       (decodeUtf8)
 
-import qualified FirstApp.Conf            as Conf
 import           FirstApp.Types           (ContentType (PlainText), Error (EmptyCommentText, EmptyTopic, UnknownRoute),
                                            RqType (AddRq, ListRq, ViewRq),
                                            mkCommentText, mkTopic,
                                            renderContentType)
 
 runApp :: IO ()
-runApp = do
-  -- Load up the configuration by providing a ``FilePath`` for the JSON config file.
-  cfgE <- error "configuration not implemented"
-  -- Loading the configuration can fail, so we have to take that into account now.
-  case cfgE of
-    Left err   -> undefined
-    Right _cfg ->  run undefined undefined
+runApp = run 3000 app
 
 -- | Some helper functions to make our lives a little more DRY.
 mkResponse
@@ -39,8 +30,8 @@ mkResponse
   -> ContentType
   -> LBS.ByteString
   -> Response
-mkResponse sts ct msg =
-  responseLBS sts [(hContentType, renderContentType ct)] msg
+mkResponse sts ct =
+  responseLBS sts [(hContentType, renderContentType ct)]
 
 resp200
   :: ContentType
@@ -64,31 +55,26 @@ resp400 =
   mkResponse status400
 -- |
 
--- Now that we have our configuration, pass it where it needs to go.
-app
-  :: Conf.Conf
-  -> Application
-app cfg rq cb =
-  (handleRespErr . handleRErr <$> mkRequest rq) >>= cb
+app :: Application
+app rq cb = mkRequest rq
+  >>= fmap handleRespErr . pure . handleRErr
+  >>= cb
   where
     -- Does this seem clunky to you?
-    handleRespErr =
-      either mkErrorResponse id
+    handleRespErr :: Either Error Response -> Response
+    handleRespErr = either mkErrorResponse id
     -- Because it is clunky, and we have a better solution, later.
-    handleRErr =
-      either Left ( handleRequest cfg )
+    handleRErr :: Either Error RqType -> Either Error Response
+    handleRErr = either Left handleRequest
 
--- Now we have some config, we can pull the ``helloMsg`` off it and use it in
--- the response.
 handleRequest
-  :: Conf.Conf
-  -> RqType
+  :: RqType
   -> Either Error Response
-handleRequest _cfg (AddRq _ _) =
-  Right $ resp200 PlainText ("App says: " <> undefined)
-handleRequest _ (ViewRq _) =
+handleRequest (AddRq _ _) =
+  Right $ resp200 PlainText "Hello there!"
+handleRequest (ViewRq _) =
   Right $ resp200 PlainText "View Request not implemented"
-handleRequest _ ListRq =
+handleRequest ListRq =
   Right $ resp200 PlainText "List Request not implemented"
 
 mkRequest
@@ -105,7 +91,7 @@ mkRequest rq =
     -- List the current topics
     ( ["list"], "GET" )    ->
       pure mkListRequest
-    -- Finally we don't care about any other requests so build an Error response
+    -- Finally we don't care about any other requests so throw your hands in the air
     _                      ->
       pure ( Left UnknownRoute )
 
@@ -137,4 +123,3 @@ mkErrorResponse EmptyCommentText =
   resp400 PlainText "Empty Comment"
 mkErrorResponse EmptyTopic =
   resp400 PlainText "Empty Topic"
-

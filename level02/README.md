@@ -8,13 +8,16 @@ as a pair programmer. It will inform us when we've forgotten to handle a given
 path, tried to use information we don't have access to, or haven't validated our
 inputs sufficiently.
 
-To build this application we're going to need some requirements:
+To build this REST application we're going to need some requirements:
 
 ### Requirements
 We have a WebThing(TM) somewhere and we would like, for some unknown reason, to
 be able to add comments to various topics on this WebThing(TM).
 
 ### "Spec"
+
+This will be a REST only application, there won't be any HTML involved.
+
 Let's pretend we've completed a dozen specification meetings with our Project
 Manager, resulting in the specification below:
 
@@ -36,3 +39,30 @@ GET /list
 ```
 
 The starting point for this exercise is the ``src/FirstApp/Types.hs``.
+
+### Running the program:
+
+```bash
+# Using cabal
+$ cabal exec level02-exe
+
+# Using stack
+$ stack exec level02-exe
+```
+
+### Accessing the program:
+
+Using ``curl``:
+```bash
+# Running a POST
+
+# Valid request
+$ curl -XPOST -v localhost:<port>/puppies/add -d "Puppies are awesome."
+
+# Invalid request (should trigger an error in the program)
+$ curl -XPOST -v localhost:<port>/puppies/add
+
+# Running a GET
+$ curl -XGET -v localhost:<port>/puppies/view
+$ curl -XGET -v localhost:<port>/list
+```

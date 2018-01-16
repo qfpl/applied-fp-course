@@ -45,6 +45,10 @@ extra-source-files:  ChangeLog.md
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >=1.10
 
+tested-with:         GHC==8.2.2
+                   , GHC==8.0.2
+                   , GHC==7.10.3
+
 library
   exposed-modules:     FirstApp.Main
 
@@ -56,7 +60,7 @@ library
                        -ferror-spans
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.9 && <4.10
+  build-depends:       base >=4.7 && <4.11
                      , wai == 3.2.*
                      , warp == 3.2.*
                      , http-types == 0.9.*
@@ -78,7 +82,7 @@ executable level01-exe
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.9 && <4.10
+  build-depends:       base >=4.7 && <4.11
                      , level01
 
   -- Directories containing source files.

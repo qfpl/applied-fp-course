@@ -6,13 +6,16 @@ import           Control.Monad.Except   (ExceptT, MonadError, runExceptT,
 import           Control.Monad.IO.Class (MonadIO)
 import           Control.Monad.Reader   (MonadReader, ReaderT, runReaderT)
 
-import           FirstApp.Conf          (Conf)
+import           Data.Text              (Text)
+
 import           FirstApp.DB.Types      (FirstAppDB)
 import           FirstApp.Error         (Error)
+import           FirstApp.Types         (Conf)
 
 data Env = Env
-  { envConfig :: Conf
-  , envDb     :: FirstAppDB
+  { envLoggingFn :: Text -> AppM ()
+  , envConfig    :: Conf
+  , envDB        :: FirstAppDB
   }
 
 -- We're going to add a very nice piece to our application, in the form of

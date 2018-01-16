@@ -17,7 +17,6 @@ newtype Table = Table
 -- things in different ways.
 data FirstAppDB = FirstAppDB
   { dbConn  :: Connection
-  , dbTable :: Table
   }
 
 -- To try to avoid leaking various types and expected functionality around the

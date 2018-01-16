@@ -6,8 +6,7 @@ import           Control.Monad.Reader   (MonadReader, ReaderT, runReaderT)
 
 import           Data.Text              (Text)
 
-import           FirstApp.Conf          (Conf)
-import           FirstApp.DB            (FirstAppDB)
+import           FirstApp.Types         (Conf, FirstAppDB)
 
 -- a ReaderT is a function from some 'r' to some 'm a' : (r -> m a). Whereby
 -- the 'r' is accessible to all functions that run in the context of that 'm'.
@@ -25,28 +24,29 @@ import           FirstApp.DB            (FirstAppDB)
 data Env = Env
   { envLoggingFn :: Text -> AppM ()
   , envConfig    :: Conf
-  , envDb        :: FirstAppDB
+  , envDB        :: FirstAppDB
   }
 
 -- Lets crack on and define a newtype wrapper for our ReaderT, this will save us
 -- having to write out the full ReaderT definition for every function that uses
 -- it.
+
+-- Our ReaderT will only contain the Env, and our base monad will be IO, leave
+-- the return type polymorphic so that it will work regardless of what is
+-- being returned from the functions that will use it. Using a newtype (in
+-- addition to the useful type system) means that it is harder to use a
+-- different ReaderT when we meant to use our own, or vice versa. In such a
+-- situation it is extremely unlikely the application would compile at all,
+-- but the name differences alone make the confusion less likely.
+
+-- Because we're using a newtype, all of the instance definitions for ReaderT
+-- would normally not apply. However, because we've done nothing but create a
+-- convenience wrapper for our ReaderT, it is not difficult for GHC to
+-- automatically derive instances on our behalf.
+
+-- With the 'GeneralizedNewtypeDeriving' pragma at the top of the file, we
+-- will be able to derive these instances automatically.
 newtype AppM a = AppM
-  -- Our ReaderT will only contain the Env, and our base monad will be IO, leave
-  -- the return type polymorphic so that it will work regardless of what is
-  -- being returned from the functions that will use it. Using a newtype (in
-  -- addition to the useful type system) means that it is harder to use a
-  -- different ReaderT when we meant to use our own, or vice versa. In such a
-  -- situation it is extremely unlikely the application would compile at all,
-  -- but the name differences alone make the confusion less likely.
-
-  -- Because we're using a newtype, all of the instance definitions for ReaderT
-  -- would normally not apply. However, because we've done nothing but create a
-  -- convenience wrapper for our ReaderT, it is not difficult for GHC to
-  -- automatically derive instances on our behalf.
-
-  -- With the 'GeneralizedNewtypeDeriving' pragma at the top of the file, we
-  -- will be able to derive these instances automatically.
   { unAppM :: ReaderT Env IO a }
   deriving ( Functor
            , Applicative
@@ -79,3 +79,5 @@ runAppM
   -> IO a
 runAppM =
   error "runAppM not implemented"
+
+-- Move on to ``src/FirstApp/DB.hs`` after this

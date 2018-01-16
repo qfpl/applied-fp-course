@@ -1,6 +1,6 @@
 { mkDerivation, aeson, base, bytestring, doctest, hspec, hspec-wai
-, http-types, optparse-applicative, stdenv, text, wai, wai-extra
-, warp
+, http-types, mtl, optparse-applicative, sqlite-simple, semigroups
+, sqlite-simple-errors, stdenv, text, time, wai, wai-extra, warp
 }:
 mkDerivation {
   pname = "level04";
@@ -9,7 +9,8 @@ mkDerivation {
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    aeson base bytestring http-types optparse-applicative text wai warp
+    aeson base bytestring http-types mtl optparse-applicative
+    sqlite-simple sqlite-simple-errors text time wai warp semigroups
   ];
   executableHaskellDepends = [ base ];
   testHaskellDepends = [

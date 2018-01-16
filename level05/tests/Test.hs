@@ -8,7 +8,6 @@ import           Test.Hspec.Wai
 
 import qualified System.Exit    as Exit
 
-import qualified FirstApp.Conf  as Conf
 import qualified FirstApp.DB    as DB
 import qualified FirstApp.Main  as Main
 import qualified FirstApp.Types as Types
@@ -22,7 +21,7 @@ main = do
 
     Left err -> dieWith err
 
-    Right (cfg,db) -> do
+    Right ( cfg, db ) -> do
       let app' = pure ( Main.app cfg db )
 
           flushTopic =
@@ -31,8 +30,7 @@ main = do
             -- Purge all of the comments for this topic for our tests
             traverse ( DB.deleteTopic db )
             -- We don't export the constructor so even for known values we have
-            -- to play by the rules. There is no - "Oh just this one time.", do
-            -- it right.
+            -- to play by the rules. There is no - "Oh just this one time.", do it right.
             $ Types.mkTopic "fudge"
 
       -- Run the tests with a DB topic flush between each spec

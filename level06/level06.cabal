@@ -45,9 +45,15 @@ extra-source-files:  ChangeLog.md
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >=1.10
 
+tested-with:         GHC==8.2.2
+                   , GHC==8.0.2
+                   , GHC==7.10.3
+
 library
   -- Modules included in this executable, other than Main.
   exposed-modules:     FirstApp.Conf
+                     , FirstApp.Conf.CommandLine
+                     , FirstApp.Conf.File
                      , FirstApp.Responses
                      , FirstApp.Types
                      , FirstApp.AppM
@@ -60,11 +66,10 @@ library
                        -fno-warn-unused-do-bind
                        -fno-warn-unused-imports
                        -fno-warn-type-defaults
-                       -fwarn-missing-import-lists
                        -ferror-spans
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.9 && <4.10
+  build-depends:       base >=4.7 && <4.11
                      , wai == 3.2.*
                      , warp == 3.2.*
                      , http-types == 0.9.*
@@ -73,9 +78,11 @@ library
                      , optparse-applicative == 0.13.*
                      , aeson == 1.*
                      , mtl == 2.2.*
-                     , time == 1.6.*
+                     , time >= 1.4 && <= 1.9
                      , sqlite-simple == 0.4.*
                      , sqlite-simple-errors == 0.6.*
+                     , semigroups >= 0.18
+                     , transformers >= 0.4
 
 
   -- Directories containing source files.
@@ -95,7 +102,7 @@ executable level06-exe
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.9 && <4.10
+  build-depends:       base >=4.7 && <4.11
                      , level06
 
   -- Base language which the package is written in.
@@ -106,7 +113,7 @@ test-suite level06-tests
   type:                exitcode-stdio-1.0
   hs-source-dirs:      tests
   main-is:             Test.hs
-  build-depends:       base >= 4.9 && <=4.10
+  build-depends:       base >= 4.7 && <=4.11
                      , level06
                      , wai == 3.2.*
                      , wai-extra == 3.0.*
@@ -122,4 +129,4 @@ test-suite doctests
   main-is:             doctests.hs
   hs-source-dirs:      tests
   build-depends:       base
-                     , doctest == 0.11.*
+                     , doctest >= 0.11 && < 0.14

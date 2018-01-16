@@ -1,5 +1,7 @@
 # Applied Functional Programming Course
 
+[![Build Status](https://travis-ci.org/qfpl/applied-fp-course.svg?branch=feedback-driven-development)](https://travis-ci.org/qfpl/applied-fp-course)
+
 <img src="https://i.imgur.com/0h9dFhl.png" height="400" width="640" />
 
 ## * Beta Release *
