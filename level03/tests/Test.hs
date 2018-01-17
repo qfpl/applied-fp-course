@@ -44,5 +44,4 @@ main = do
       -- 2) The '<topic>/view' route will respond correctly when given a topic
       -- 3) The '<topic>/view' route will respond with an error when given an empty topic
       -- 4) A gibberish route will return a 404
-      -- 5) The '<topic>/add' route will respond with the message from the config (the `mkMessage` function from FirstApp.Conf will help)
 
