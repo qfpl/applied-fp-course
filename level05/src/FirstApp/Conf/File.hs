@@ -72,10 +72,10 @@ decodeObj =
 --
 -- | readObject
 -- >>> readObject "badFileName.no"
--- Left (undefined badFileName.no: openBinaryFile: does not exist (No such file or directory))
+-- Left (undefined "badFileName.no: openBinaryFile: does not exist (No such file or directory)")
 --
 -- >>> readObject "test.json"
--- Right "{\"foo\":33}\n"
+-- Right "{\n  \"foo\": 33\n}\n"
 --
 readObject
   :: FilePath
