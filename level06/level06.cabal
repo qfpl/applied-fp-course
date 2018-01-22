@@ -54,11 +54,11 @@ library
   exposed-modules:     FirstApp.Conf
                      , FirstApp.Conf.CommandLine
                      , FirstApp.Conf.File
-                     , FirstApp.Responses
                      , FirstApp.Types
-                     , FirstApp.AppM
-                     , FirstApp.DB
+                     , FirstApp.Responses
                      , FirstApp.DB.Types
+                     , FirstApp.DB
+                     , FirstApp.AppM
                      , FirstApp.Main
 
   ghc-options:         -Wall

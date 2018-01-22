@@ -14,9 +14,12 @@ import           Control.Exception          (try)
 import           Data.Aeson                 (FromJSON, Object, (.:))
 
 import qualified Data.Aeson                 as Aeson
+import qualified Data.Aeson.Types           as Aeson
 
-import           FirstApp.Types             (ConfigError (JSONDecodeError,ConfigFileReadError),
-                                             PartialConf (PartialConf))
+import           FirstApp.Types             (ConfigError (ConfigFileReadError, JSONDecodeError),
+                                             DBFilePath (..),
+                                             PartialConf (PartialConf),
+                                             Port (..))
 -- Doctest setup section
 -- $setup
 -- >>> :set -XOverloadedStrings
@@ -90,11 +93,11 @@ parseJSONConfigFile
   :: FilePath
   -> IO ( Either ConfigError PartialConf )
 parseJSONConfigFile fp =
-  fmap toPartialConf . ( decodeObj =<< ) <$> readObject fp
+  fmap toPartialConf . ( decodeObj =<< ) <$> readConfFile fp
   where
     toPartialConf
       :: Aeson.Object
       -> PartialConf
     toPartialConf cObj = PartialConf
       ( fromJsonObjWithKey "port" Port cObj )
-      ( fromJsonObjWithKey "helloMsg" helloFromStr cObj )
+      ( fromJsonObjWithKey "dbFilePath" DBFilePath cObj )
