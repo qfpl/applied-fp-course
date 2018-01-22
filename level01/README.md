@@ -12,19 +12,19 @@ response and the message "Hello, World!".
 [Hackage]: (https://hackage.haskell.org/)
 [Wai]: (https://hackage.haskell.org/package/wai)
 
-## Running the program:
+## Running the program
 
 To run the application when you are finished:
 
 ```bash
 # With Cabal
-$ cabal exec level01-exe
+$ cabal run level01-exe
 
 # With Stack
 $ stack exec level01-exe
 ```
 
-## Accessing the program:
+## Accessing the program
 
 ```bash
 # Using curl

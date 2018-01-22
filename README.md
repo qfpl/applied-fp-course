@@ -29,13 +29,13 @@ IRC on [Freenode](https://freenode.net/) in #qfpl or #fp-course.
 * Have constructed a sequence of goals of increasing difficulty.
 * Have provided a framework within which to apply these goals.
 * Have included relevant components of larger applications:
-  - Package dependencies
-  - Project configuration
-  - Application testing & building
-  - Encoding / Decoding messages (JSON & Binary)
-  - Persistent storage integration
-  - App state & configuration management
-  - Error handling & reporting
+  * Package dependencies
+  * Project configuration
+  * Application testing & building
+  * Encoding / Decoding messages (JSON & Binary)
+  * Persistent storage integration
+  * App state & configuration management
+  * Error handling & reporting
 * Will utilise both type & test driven development techniques.
 * Will explain architectural and design trade-offs when appropriate.
 

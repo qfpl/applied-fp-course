@@ -70,18 +70,17 @@ decodeObj =
 
 -- | Update these tests when you've completed this function.
 --
--- | readObject
--- >>> readObject "badFileName.no"
+-- | readConfFile
+-- >>> readConfFile "badFileName.no"
 -- Left (undefined "badFileName.no: openBinaryFile: does not exist (No such file or directory)")
---
--- >>> readObject "test.json"
+-- >>> readConfFile "test.json"
 -- Right "{\n  \"foo\": 33\n}\n"
 --
-readObject
+readConfFile
   :: FilePath
   -> IO ( Either ConfigError ByteString )
-readObject =
-  error "readObject not implemented"
+readConfFile =
+  error "readConfFile not implemented"
 
 -- Construct the function that will take a ``FilePath``, read it in and attempt
 -- to decode it as a valid JSON object, using the ``aeson`` package. Then pull

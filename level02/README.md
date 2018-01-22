@@ -44,7 +44,7 @@ The starting point for this exercise is the ``src/FirstApp/Types.hs``.
 
 ```bash
 # Using cabal
-$ cabal exec level02-exe
+$ cabal run level02-exe
 
 # Using stack
 $ stack exec level02-exe

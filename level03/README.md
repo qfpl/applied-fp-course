@@ -12,6 +12,22 @@ As is to be expected, there are multiple testing frameworks and packages
 available but we will only cover one here. We will use the [HSpec] framework,
 with the [hspec-wai] package to make our lives a bit easier.
 
+### NB: Including Test Library Dependencies
+
+For a cabal sandbox:
+
+```shell
+$ cabal sandbox init
+$ cabal install --only-dependencies --enable-tests
+$ cabal configure --enable-tests
+```
+
+For a stack environment:
+
+```shell
+$ stack build --test
+```
+
 Start in ``tests/Test.hs``.
 
 [HSpec]: (http://hspec.github.io/)
@@ -45,12 +61,21 @@ section in the Cabal file are not loaded. You can manually tell ``ghcid`` to
 load and examine these files with the following command:
 
 ```bash
+$ ghcid -c "cabal repl level03"
+
+# Or for using ghcid to check your tests
 $ ghcid -c "cabal repl level03-tests"
+
+# A note for sandboxed ghcid, you may need to provide an
+# explicit path to the binary:
+$ .cabal-sandbox/bin/ghcid -c "cabal repl level03-tests"
 ```
 
 It should work with ``stack`` as well:
-```base
+```bash
 $ ghcid -c "stack repl level03-tests"
 ```
 
-Please read the ``ghcid``documentation for installation and usage instructions.
+Please read the ``ghcid``documentation for installation and usage
+instructions. The [FAQ](https://github.com/ndmitchell/ghcid#faq) provides
+some useful tips.

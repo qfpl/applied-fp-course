@@ -11,11 +11,11 @@ import           Data.Monoid                (Last (Last))
 
 import           Control.Exception          (try)
 
-import           Data.Aeson                 (FromJSON, Object)
+import           Data.Aeson                 (FromJSON, Object, (.:))
 
 import qualified Data.Aeson                 as Aeson
 
-import           FirstApp.Types             (ConfigError,
+import           FirstApp.Types             (ConfigError (JSONDecodeError,ConfigFileReadError),
                                              PartialConf (PartialConf))
 -- Doctest setup section
 -- $setup
@@ -47,8 +47,8 @@ fromJsonObjWithKey
   -> (a -> b)
   -> Object
   -> Last b
-fromJsonObjWithKey =
-  error "fromJsonObjWithKey not implemented"
+fromJsonObjWithKey k c o =
+  Last $ c <$> Aeson.parseMaybe (.: k) o
 
 -- |----
 -- | You will need to update these tests when you've completed the following functions!
@@ -66,22 +66,21 @@ decodeObj
   :: ByteString
   -> Either ConfigError Object
 decodeObj =
-  error "decodeObj not implemented"
+  first JSONDecodeError . Aeson.eitherDecode
 
 -- | Update these tests when you've completed this function.
 --
--- | readObject
--- >>> readObject "badFileName.no"
--- Left (undefined badFileName.no: openBinaryFile: does not exist (No such file or directory))
+-- | readConfFile
+-- >>> readConfFile "badFileName.no"
+-- Left (undefined "badFileName.no: openBinaryFile: does not exist (No such file or directory)")
+-- >>> readConfFile "test.json"
+-- Right "{\n  \"foo\": 33\n}\n"
 --
--- >>> readObject "test.json"
--- Right "{\"foo\":33}\n"
---
-readObject
+readConfFile
   :: FilePath
   -> IO ( Either ConfigError ByteString )
-readObject =
-  error "readObject not implemented"
+readConfFile fp =
+  first ConfigFileReadError <$> try (LBS.readFile fp)
 
 -- Construct the function that will take a ``FilePath``, read it in and attempt
 -- to decode it as a valid JSON object, using the ``aeson`` package. Then pull
@@ -90,5 +89,12 @@ readObject =
 parseJSONConfigFile
   :: FilePath
   -> IO ( Either ConfigError PartialConf )
-parseJSONConfigFile =
-  error "parseJSONConfigFile not implemented"
+parseJSONConfigFile fp =
+  fmap toPartialConf . ( decodeObj =<< ) <$> readObject fp
+  where
+    toPartialConf
+      :: Aeson.Object
+      -> PartialConf
+    toPartialConf cObj = PartialConf
+      ( fromJsonObjWithKey "port" Port cObj )
+      ( fromJsonObjWithKey "helloMsg" helloFromStr cObj )

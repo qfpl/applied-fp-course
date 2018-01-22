@@ -79,3 +79,18 @@ Integration of 'classy mtl' style application design.
 * Build intuition for `AsFoo` & `HasFoo`
 * `mtl` classes are a start, but how do we make this easier?
 * Describe `CanFoo` and introduce `ConstraintKinds`
+
+## Suggestions
+
+* Lens
+* Mocking / Free
+* Dealing with callbacks (more info needed)
+* Streaming / Iteratees (safe resource handling)
+* ST / Safe Mutation techniques
+* Classy MTL
+* Generic / Meta programming
+* Daemons
+* Ermagerd reel librees!
+* Concurrency packages/techniques (book recommendation) - STM
+* Property Based Testing (Hedgehog, advanced testing)
+* Stats

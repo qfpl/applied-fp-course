@@ -23,6 +23,8 @@ module FirstApp.Types
   , confPortToWai
   ) where
 
+import System.IO.Error (IOError)
+
 import           GHC.Generics                       (Generic)
 import           GHC.Word                           (Word16)
 
@@ -206,6 +208,8 @@ confPortToWai =
 data ConfigError
   = MissingPort
   | MissingDBFilePath
+  | JSONDecodeError String
+  | ConfigFileReadError IOError
   deriving Show
 
 -- Our application will be able to load configuration from both a file and

@@ -46,8 +46,8 @@ data StartUpError
 
 runApp :: IO ()
 runApp = do
-  -- Load up the configuration by providing a ``FilePath`` for the JSON config file.
-  cfgE <- error "configuration not implemented"
+  -- Load our configuration
+  cfgE <- prepareAppReqs
   -- Loading the configuration can fail, so we have to take that into account now.
   case cfgE of
     Left err   -> undefined

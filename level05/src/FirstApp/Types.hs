@@ -110,6 +110,7 @@ fromDbComment dbc =
       <$> (mkTopic       $ dbCommentTopic dbc)
       <*> (mkCommentText $ dbCommentComment dbc)
       <*> (pure          $ dbCommentTime dbc)
+
 mkTopic
   :: Text
   -> Either Error Topic
@@ -200,7 +201,7 @@ confPortToWai
   :: Conf
   -> Int
 confPortToWai =
-  error "portToInt not implemented"
+  error "confPortToWai not implemented"
 
 -- Similar to when we were considering our application types, leave this empty
 -- for now and add to it as you go.

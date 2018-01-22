@@ -2,8 +2,8 @@
 {-# OPTIONS_GHC -fno-warn-unused-matches #-}
 module FirstApp.DB
   ( FirstAppDB (FirstAppDB)
-  , initDb
-  , closeDb
+  , initDB
+  , closeDB
   , addCommentToTopic
   , getComments
   , getTopics
@@ -35,19 +35,19 @@ import           FirstApp.Types                     (Comment, CommentText,
 data FirstAppDB = FirstAppDB
 
 -- Quick helper to pull the connection and close it down.
-closeDb
+closeDB
   :: FirstAppDB
   -> IO ()
-closeDb =
+closeDB =
   error "closeDb not implemented"
 
 -- Given a `FilePath` to our SQLite DB file, initialise the database and ensure
 -- our Table is there by running a query to create it, if it doesn't exist
 -- already.
-initDb
+initDB
   :: FilePath
   -> IO ( Either SQLiteResponse FirstAppDB )
-initDb fp =
+initDB fp =
   error "initDb not implemented"
   where
   -- Query has an `IsString` instance so string literals like this can be
