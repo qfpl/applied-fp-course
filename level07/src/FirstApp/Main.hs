@@ -43,7 +43,7 @@ import           FirstApp.Types                     (Conf (..),
 
 import           FirstApp.AppM                      (AppM,
                                                      Env (Env, envConfig, envDB),
-                                                     runAppM, throwL)
+                                                     runAppM, throwLeft)
 
 -- Our start-up process is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
@@ -130,7 +130,7 @@ mkRequest
   :: Request
   -> AppM RqType
 mkRequest rq =
-  throwL =<< case ( pathInfo rq, requestMethod rq ) of
+  throwLeft =<< case ( pathInfo rq, requestMethod rq ) of
   -- Commenting on a given topic
   ( [t, "add"], "POST" ) ->
     liftIO $ mkAddRequest t <$> strictRequestBody rq

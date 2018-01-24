@@ -1,16 +1,19 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE InstanceSigs          #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 module FirstApp.AppM where
 
-import           Control.Monad.Except   (ExceptT, MonadError, runExceptT,
-                                         throwError)
-import           Control.Monad.IO.Class (MonadIO)
-import           Control.Monad.Reader   (MonadReader, ReaderT, runReaderT)
+import           Control.Monad.Except   (MonadError (..))
+import           Control.Monad.IO.Class (MonadIO (..))
+import           Control.Monad.Reader   (MonadReader (..))
 
 import           Data.Text              (Text)
 
 import           FirstApp.DB.Types      (FirstAppDB)
 import           FirstApp.Error         (Error)
 import           FirstApp.Types         (Conf)
+
+import           Data.Bifunctor         (first)
 
 data Env = Env
   { envLoggingFn :: Text -> AppM ()
@@ -20,21 +23,14 @@ data Env = Env
 
 -- We're going to add a very nice piece to our application, in the form of
 -- "automating" away our explicit error handling without losing the valuable
--- type level information that things may go awry.
+-- type level information or the functionality of correctly handling the error
+-- values.
 --
--- To do this we will expand the capabilities of our AppM with another monad
--- transformer, ExceptT. This is an error handling monad that will immediately
--- halt and return when an error is 'thrown'. Note that this does not prevent us
--- from returning 'Either' values when we need to.
+-- To do this we will expand the capabilities of our AppM by including the
+-- Either type in our definition. We will also rework our Monad instance to stop
+-- processing when it encounters a Left value.
 --
--- ExceptT e m a ~ m (Either e a)
---
--- Notice that ExceptT is parametrised over the `e` in same way that our
--- ReaderT is parametrised over the `r`.
---
--- ReaderT r m a ~ r -> m a
---
--- This transformer operates in the same manner as the Functor/Applicative/Monad
+-- This will work in the same manner as the Functor/Applicative/Monad
 -- instances for Either, with functions being applied to the Right value and
 -- everything been ignored if a Left value is encountered, returning that Left
 -- value.
@@ -44,10 +40,6 @@ data Env = Env
 --
 -- (Left e)  >>= f = Left e
 -- (Right a) >>= f = f a
---
--- The ExceptT takes this capability and extends it to functions that return a
--- type of `m (Either e a)`. Which is in fact the type of the ExceptT
--- constructor!
 --
 -- This means when we have a function doing this sort of shuffling:
 --
@@ -59,65 +51,60 @@ data Env = Env
 --     mightFail :: IO (Either Error Int)
 --     alsoMightFail :: Int -> IO (Either Error Value)
 --
--- We can wrap our functions with ExceptT and we can work directly with the
+-- We can wrap our functions with AppM and we can work directly with the
 -- values we expect to appear on the happy path, knowing that if the sad path is
--- encountered, the structure of the monad will automatically handle it for us.
--- We then `runExceptT` similar to how we `runReaderT` and the final value is an
--- `Either e a` that we can handle once, instead of at each and every place an
--- error may occur:
---
--- foo :: ExceptT Error IO Value
--- foo = do
---  a <- mightFail'
---  alsoMightFail' a
---  where
---    mightFail' :: ExceptT Error IO Int
---    mightFail' = ExceptT mightFail
---
---    alsoMightFail' :: Int -> ExceptT Error IO Value
---    alsoMightFail' = ExceptT . alsoMightFail
---
--- ( runExceptT foo ) :: IO (Either Error Value)
---
--- But how to extend our AppM ?
---
--- We could change to use the ExceptT over IO, but we would lose the
--- functionality provided by the ReaderT.
---
--- Recall that the type of the ReaderT r m a ~ r -> m a
---
--- ReaderT is a monad transformer over or for some base `m`, our initial use
--- case was to transform over `IO` as our base.
---
--- This polymorphism allows us to 'stack' our monad transformers, effectively
--- combining the functionality of the different transformer types into a single
--- monad.
---
--- But ExceptT has an `m` type variable, so what do we put there?
---
-newtype AppM a = AppM
-  { unAppM :: ReaderT Env (ExceptT Error IO) a }
-  deriving ( Functor
-           , Applicative
-           , Monad
-           , MonadIO
-           , MonadReader Env
-           -- This is a new instance we've derived because we want to be able to
-           -- `throwError` our own Error type.
-           , MonadError Error
-           )
+-- encountered, the structure of our AppM will automatically handle it for us.
 
--- Now that we've two transformers in our 'stack', we have to 'run' them in order
--- to effect the computations and produce our result in our base monad. When
--- you're running monad transformers you have to unpack them in order. Since our outer
--- transformer is a ReaderT, we have to run that first. Followed by running
--- the ExceptT to retrieve our `IO (Either Error a)`.
+newtype AppM a = AppM (Env -> IO (Either Error a))
+
 runAppM
-  :: Env
-  -> AppM a
+  :: AppM a
+  -> Env
   -> IO (Either Error a)
-runAppM =
-  error "runAppM not reimplemented"
+runAppM (AppM m) =
+  m
+
+-- Copy over your previously completed definitions, or re-implement them for
+-- practice.
+
+instance Functor AppM where
+  fmap :: (a -> b) -> AppM a -> AppM b
+  fmap = error "fmap for AppM not implemented"
+
+instance Applicative AppM where
+  pure :: a -> AppM a
+  pure  = error "pure for AppM not implemented"
+
+  (<*>) :: AppM (a -> b) -> AppM a -> AppM b
+  (<*>) = error "ap for AppM not implemented"
+
+instance Monad AppM where
+  return :: a -> AppM a
+  return = error "return for AppM not implemented"
+
+  (>>=) :: AppM a -> (a -> AppM b) -> AppM b
+  (>>=)  = error "bind for AppM not implemented"
+
+instance MonadIO AppM where
+  liftIO :: IO a -> AppM a
+  liftIO = error "liftIO for AppM not implemented"
+
+instance MonadReader Env AppM where
+  ask :: AppM Env
+  ask = error "ask for AppM not implemented"
+
+  local :: (Env -> Env) -> AppM a -> AppM a
+  local = error "local for AppM not implemented"
+
+  reader :: (Env -> a) -> AppM a
+  reader = error "reader for AppM not implemented"
+
+instance MonadError Error AppM where
+  throwError :: Error -> AppM a
+  throwError = error "throwError for AppM not implemented"
+
+  catchError :: AppM a -> (Error -> AppM a) -> AppM a
+  catchError = error "catchError for AppM not implemented"
 
 -- This is a helper function that will `lift` an Either value into our new AppM
 -- by applying `throwError` to the Left value, and using `pure` to lift the
@@ -126,8 +113,8 @@ runAppM =
 -- throwError :: MonadError e m => e -> m a
 -- pure :: Applicative m => a -> m a
 --
-throwL
+throwLeft
   :: Either Error a
   -> AppM a
-throwL =
-  error "throwL not implemented"
+throwLeft =
+  error "throwLeft not implemented"

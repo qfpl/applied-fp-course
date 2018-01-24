@@ -1,19 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import           Data.Monoid          ((<>))
+import           Data.Monoid    ((<>))
 
-import           Data.String          (IsString)
+import           Data.String    (IsString)
 
 import           Test.Hspec
 import           Test.Hspec.Wai
 
-import qualified System.Exit          as Exit
+import qualified System.Exit    as Exit
 
-import qualified FirstApp.AppM        as AppM
-import qualified FirstApp.DB          as DB
-import qualified FirstApp.Main        as Main
-import qualified FirstApp.Types       as Types
+import qualified FirstApp.AppM  as AppM
+import qualified FirstApp.DB    as DB
+import qualified FirstApp.Main  as Main
+import qualified FirstApp.Types as Types
 
 main :: IO ()
 main = do
@@ -38,7 +38,7 @@ main = do
           flushTopic :: IO ()
           flushTopic = (either dieWith pure =<<)
             . AppM.runAppM env $ do
-                t <- AppM.throwL $ Types.mkTopic "fudge"
+                t <- AppM.throwLeft $ Types.mkTopic "fudge"
                 DB.deleteTopic t
 
       -- Run the tests with a DB topic flush between each spec
