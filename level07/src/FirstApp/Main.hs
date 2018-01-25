@@ -105,7 +105,7 @@ app env rq cb = do
     logToErr = liftIO . hPutStrLn stderr
 
     requestToResponse :: IO (Either Error Response)
-    requestToResponse = runAppM env $ mkRequest rq >>= handleRequest
+    requestToResponse = runAppM ( mkRequest rq >>= handleRequest ) env
 
     handleError :: Error -> IO Response
     handleError e = mkErrorResponse e <$ ( logToErr . Text.pack . show ) e
