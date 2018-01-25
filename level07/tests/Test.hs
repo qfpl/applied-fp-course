@@ -37,9 +37,9 @@ main = do
 
           flushTopic :: IO ()
           flushTopic = (either dieWith pure =<<)
-            . AppM.runAppM env $ do
+            $ AppM.runAppM ( do
                 t <- AppM.throwLeft $ Types.mkTopic "fudge"
-                DB.deleteTopic t
+                DB.deleteTopic t ) env
 
       -- Run the tests with a DB topic flush between each spec
       hspec . with ( flushTopic >> app' ) $ do
