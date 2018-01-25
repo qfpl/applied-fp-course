@@ -21,11 +21,15 @@ data Env = Env
   }
 
 -- It would be nice to remove the need to pass around our Env to every function
--- that needs it, wouldn't it be great to have our functions run where we could
+-- that needs it. Wouldn't it be great to have our functions run where we could
 -- simply ask for the current Env?
 --
 -- We can create this by wrapping a function in a newtype like so:
 newtype AppM a = AppM ( Env -> IO a )
+-- This means that any function where we want to use the Env will now return
+-- this data structure. Which is a function that needs an Env. We can then write
+-- a `Monad` instance for this type that we use to pass the Env from function to
+-- function.
 
 runAppM
   :: AppM a
@@ -40,7 +44,7 @@ instance Functor AppM where
 
 instance Applicative AppM where
   pure :: a -> AppM a
-  pure  = error "pure for AppM not implemented"
+  pure = error "pure for AppM not implemented"
 
   (<*>) :: AppM (a -> b) -> AppM a -> AppM b
   (<*>) = error "ap for AppM not implemented"
@@ -50,7 +54,7 @@ instance Monad AppM where
   return = error "return for AppM not implemented"
 
   (>>=) :: AppM a -> (a -> AppM b) -> AppM b
-  (>>=)  = error "bind for AppM not implemented"
+  (>>=) = error "bind for AppM not implemented"
 
 instance MonadReader Env AppM where
   ask :: AppM Env

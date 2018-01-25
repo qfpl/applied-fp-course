@@ -57,6 +57,8 @@ data Env = Env
 
 newtype AppM a = AppM (Env -> IO (Either Error a))
 
+-- The runAppM function only needs to change the final return type as it has an
+-- 'Either Error' and not just the 'a'.
 runAppM
   :: AppM a
   -> Env
@@ -64,8 +66,7 @@ runAppM
 runAppM (AppM m) =
   m
 
--- Copy over your previously completed definitions, or re-implement them for
--- practice.
+-- Copy over your previously completed definitions, or re-implement them for practice.
 
 instance Functor AppM where
   fmap :: (a -> b) -> AppM a -> AppM b
