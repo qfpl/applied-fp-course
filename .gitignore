@@ -19,5 +19,5 @@ cabal.sandbox.config
 cabal.project.local
 .HTF/
 .ghc.environment.*
-level0*/firstapp_db.db
+level0*/*app_db.db
 level0*/result

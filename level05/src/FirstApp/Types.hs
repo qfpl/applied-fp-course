@@ -38,7 +38,7 @@ import           Data.List                          (stripPrefix)
 import           Data.Maybe                         (fromMaybe)
 import           Data.Time                          (UTCTime)
 
-import           Data.Aeson                         (ToJSON)
+import           Data.Aeson                         (FromJSON (..), ToJSON)
 import qualified Data.Aeson                         as A
 import qualified Data.Aeson.Types                   as A
 
