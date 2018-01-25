@@ -1,9 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import           Control.Monad  (void, join)
+import           Control.Monad  (join, void)
 
-import Data.Bifunctor (first)
+import           Data.Bifunctor (first)
 
 import           Test.Hspec
 import           Test.Hspec.Wai
@@ -29,9 +29,10 @@ main = do
       let app' = pure ( Main.app env )
 
           flushTopic :: IO ()
-          flushTopic = AppM.runAppM env $ do
+          flushTopic = AppM.runAppM (do
             r <- traverse DB.deleteTopic ( Types.mkTopic "fudge" )
             either ( liftIO . dieWith ) pure $ join r
+            ) env
 
       -- Run the tests with a DB topic flush between each spec
       hspec . with ( flushTopic >> app' ) $ do
