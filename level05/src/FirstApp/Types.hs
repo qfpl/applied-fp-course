@@ -248,3 +248,15 @@ instance Monoid PartialConf where
     { pcPort       = error "pcPort mappend not implemented"
     , pcDBFilePath = error "pcDBFilePath mappend not implemented"
     }
+
+-- When it comes to reading the configuration options from the command-line, we
+-- use the 'optparse-applicative' package. This part of the exercise has already
+-- been completed for you, feel free to have a look through the 'CommandLine'
+-- module and see how it works.
+--
+-- For reading the configuration from the file, we're going to use the aeson
+-- library to handle the parsing and decoding for us. In order to do this, we
+-- have to tell aeson how to go about converting the JSON into our PartialConf
+-- data structure.
+instance FromJSON PartialConf where
+  parseJSON = error "parseJSON for PartialConf not implemented yet."
