@@ -65,13 +65,13 @@ runApp = do
     appWithDb env =
       run ( confPortToWai $ envConfig env ) (app env)
 
--- Monad transformers can be used without needing to write the newtype. Recall
--- that the constructor for ExceptT has a type of :: m (Either e a). So if you
--- have multiple functions that match that pattern and you don't want to have to
+-- Monad transformers can be used without needing to write the newtype. The
+-- constructor for ExceptT has a type of :: m (Either e a). So if you have
+-- multiple functions that match that pattern and you don't want to have to
 -- thread the error handling needle yourself. You can apply the constructor to
 -- the functions and work directly on the values, knowing that the error
--- handling will work as expected. Then you `runExceptT` and produce the
--- final Either value.
+-- handling will work as expected. Then you `runExceptT` and produce the final
+-- Either value.
 prepareAppReqs
   :: IO (Either StartUpError Env)
 prepareAppReqs =
