@@ -9,4 +9,4 @@ data Error
   | EmptyCommentText
   | EmptyTopic
   | DBError SQLiteResponse
-  deriving Show
+  deriving ( Eq, Show )

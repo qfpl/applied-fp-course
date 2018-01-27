@@ -1,6 +1,7 @@
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE InstanceSigs          #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE DeriveFunctor #-}
 module FirstApp.AppM where
 
 import           Control.Monad.Except   (MonadError (..))
@@ -56,6 +57,7 @@ data Env = Env
 -- encountered, the structure of our AppM will automatically handle it for us.
 
 newtype AppM a = AppM (Env -> IO (Either Error a))
+  deriving Functor
 
 -- The runAppM function only needs to change the final return type as it has an
 -- 'Either Error' and not just the 'a'.
@@ -66,11 +68,7 @@ runAppM
 runAppM (AppM m) =
   m
 
--- Copy over your previously completed definitions, or re-implement them for practice.
-
-instance Functor AppM where
-  fmap :: (a -> b) -> AppM a -> AppM b
-  fmap = error "fmap for AppM not implemented"
+-- Copy over your previously completed definitions.
 
 instance Applicative AppM where
   pure :: a -> AppM a
@@ -114,8 +112,8 @@ instance MonadError Error AppM where
 -- throwError :: MonadError e m => e -> m a
 -- pure :: Applicative m => a -> m a
 --
-throwLeft
+liftEither
   :: Either Error a
   -> AppM a
-throwLeft =
+liftEither =
   error "throwLeft not implemented"

@@ -112,7 +112,6 @@ fromDbComment dbc =
       <*> (mkCommentText $ dbCommentComment dbc)
       <*> (pure          $ dbCommentTime dbc)
 
-
 nonEmptyText
   :: (Text -> a)
   -> Error
@@ -185,6 +184,7 @@ data Conf = Conf
   { port       :: Port
   , dbFilePath :: DBFilePath
   }
+  deriving Eq
 
 -- We're storing our Port as a Word16 to be more precise and prevent invalid
 -- values from being used in our application. However Wai is not so stringent.
