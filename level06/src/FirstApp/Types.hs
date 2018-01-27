@@ -23,7 +23,7 @@ module FirstApp.Types
   , confPortToWai
   ) where
 
-import System.IO.Error (IOError)
+import           System.IO.Error                    (IOError)
 
 import           GHC.Generics                       (Generic)
 import           GHC.Word                           (Word16)
@@ -33,9 +33,10 @@ import           Data.Text                          (Text)
 
 import           Data.List                          (stripPrefix)
 import           Data.Maybe                         (fromMaybe)
-import           Data.Monoid                        (Last, (<>))
+import           Data.Monoid                        (Last (Last), (<>))
 
-import           Data.Aeson                         (ToJSON)
+import           Data.Aeson                         (FromJSON (..), ToJSON,
+                                                     (.:?))
 import qualified Data.Aeson                         as A
 import qualified Data.Aeson.Types                   as A
 
@@ -253,6 +254,23 @@ instance Monoid PartialConf where
     { pcPort       = pcPort a <> pcPort b
     , pcDBFilePath = pcDBFilePath a <> pcDBFilePath b
     }
+
+-- When it comes to reading the configuration options from the command-line, we
+-- use the 'optparse-applicative' package. This part of the exercise has already
+-- been completed for you, feel free to have a look through the 'CommandLine'
+-- module and see how it works.
+--
+-- For reading the configuration from the file, we're going to use the aeson
+-- library to handle the parsing and decoding for us. In order to do this, we
+-- have to tell aeson how to go about converting the JSON into our PartialConf
+-- data structure.
+instance FromJSON PartialConf where
+  parseJSON = A.withObject "PartialConf" $ \o -> PartialConf
+    <$> parseToLast "port" Port o
+    <*> parseToLast "dbFilePath" DBFilePath o
+    where
+      parseToLast k c o =
+        Last . fmap c <$> o .:? k
 
 -- We have a data type to simplify passing around the information we need to run
 -- our database queries. This also allows things to change over time without
