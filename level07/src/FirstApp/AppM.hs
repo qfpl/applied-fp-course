@@ -22,10 +22,9 @@ data Env = Env
   , envDB        :: FirstAppDB
   }
 
--- We're going to add a very nice piece to our application, in the form of
--- "automating" away our explicit error handling without losing the valuable
--- type level information or the functionality of correctly handling the error
--- values.
+-- We're going to add a very useful abstraction to our application. We'll
+-- automate away the explicit error handling and inspection of our Either values
+-- while preserving the type-level information that tells us what can go wrong.
 --
 -- To do this we will expand the capabilities of our AppM by including the
 -- Either type in our definition. We will also rework our Monad instance to stop
