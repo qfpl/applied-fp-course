@@ -1,83 +1,97 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE InstanceSigs          #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 module FirstApp.AppM where
 
-import           Control.Monad.IO.Class (MonadIO)
-import           Control.Monad.Reader   (MonadReader, ReaderT, runReaderT)
+import           Control.Monad.IO.Class (MonadIO (..))
+import           Control.Monad.Reader   (MonadReader (..))
 
 import           Data.Text              (Text)
 
 import           FirstApp.Types         (Conf, FirstAppDB)
 
--- a ReaderT is a function from some 'r' to some 'm a' : (r -> m a). Whereby
--- the 'r' is accessible to all functions that run in the context of that 'm'.
---
--- This means that if you use the 'r' everywhere or enough throughout your
--- application, you no longer have to constantly weave the extra 'r' as an
--- argument to everything that might need it.
--- Since by definition:
--- foo :: ReaderT r m a
--- When run, becomes:
--- foo :: r -> m a
---
 -- First, let's clean up our (Conf,FirstAppDB) with an application Env type. We
--- will add a general purpose logging function as well
+-- will add a general purpose logging function as well. Remember that functions
+-- are values, we're able to pass them around and place them on records like any
+-- other type.
 data Env = Env
   { envLoggingFn :: Text -> AppM ()
   , envConfig    :: Conf
   , envDB        :: FirstAppDB
   }
 
--- Lets crack on and define a newtype wrapper for our ReaderT, this will save us
--- having to write out the full ReaderT definition for every function that uses
--- it.
-
--- Our ReaderT will only contain the Env, and our base monad will be IO, leave
--- the return type polymorphic so that it will work regardless of what is
--- being returned from the functions that will use it. Using a newtype (in
--- addition to the useful type system) means that it is harder to use a
--- different ReaderT when we meant to use our own, or vice versa. In such a
--- situation it is extremely unlikely the application would compile at all,
--- but the name differences alone make the confusion less likely.
-
--- Because we're using a newtype, all of the instance definitions for ReaderT
--- would normally not apply. However, because we've done nothing but create a
--- convenience wrapper for our ReaderT, it is not difficult for GHC to
--- automatically derive instances on our behalf.
-
--- With the 'GeneralizedNewtypeDeriving' pragma at the top of the file, we
--- will be able to derive these instances automatically.
-newtype AppM a = AppM
-  { unAppM :: ReaderT Env IO a }
-  deriving ( Functor
-           , Applicative
-           , Monad
-           , MonadReader Env
-           , MonadIO
-           )
-
--- Below is a helper function that will take the requirements for our ReaderT,
--- an Env, and the (AppM a) that is the action to be run with the given Env.
-
--- Our AppM must first be 'unwrapped', the newtype definition we wrote gives us
--- that function:
--- > unAppM :: AppM a -> ReaderT Env IO a
+-- It would be nice to remove the need to pass around our Env to every function
+-- that needs it. Wouldn't it be great to have our functions run where we could
+-- simply ask for the current Env?
 --
--- Then we run the ReaderT, using:
--- > runReaderT :: ReaderT r m a -> r -> m a
--- ~
--- > runReaderT :: ReaderT Env IO a -> Env -> IO a
+-- We can create this by wrapping a function in a newtype like so:
+
+newtype AppM a = AppM ( Env -> IO a )
+
+-- This gives us a type that declares this function has access to our Env, and
+-- will do something involving IO. It's another form of documentation and type
+-- safety. AppM only has one definition and so we can easily understand what it
+-- implies when used in our application.
 --
--- Composing them (runReaderT . unAppM) we are left with:
--- > Env -> IO a
+-- This structure allows us to start writing our functions in terms of
+-- constraints. As an example, if we wanted to abstract over IO and indicate
+-- that instead of the concrete type we wanted a constraint that allows for IO
+-- actions. Our AppM would look more like this:
 --
--- We have an Env so that leaves us with the:
--- > IO a
--- and we're done.
+-- AppM m a = AppM ( Env -> m a )
+--
+-- Then our functions would look like:
+--
+-- foo :: MonadIO m => Int -> AppM m a
+--
+-- Or we could not use a concrete type for Env
+--
+-- AppM e m a = AppM ( e -> m a )
+--
+
 runAppM
-  :: Env
-  -> AppM a
+  :: AppM a
+  -> Env
   -> IO a
 runAppM =
   error "runAppM not implemented"
+
+instance Functor AppM where
+  fmap :: (a -> b) -> AppM a -> AppM b
+  fmap = error "fmap for AppM not implemented"
+
+instance Applicative AppM where
+  pure :: a -> AppM a
+  pure = error "pure for AppM not implemented"
+
+  (<*>) :: AppM (a -> b) -> AppM a -> AppM b
+  (<*>) = error "spaceship for AppM not implemented"
+
+instance Monad AppM where
+  return :: a -> AppM a
+  return = error "return for AppM not implemented"
+
+  -- When it comes to running functions in AppM as a Monad, this will take care
+  -- of passing the Env from one function to the next.
+  (>>=) :: AppM a -> (a -> AppM b) -> AppM b
+  (>>=) = error "bind for AppM not implemented"
+
+instance MonadReader Env AppM where
+  -- Return the current Env from the AppM.
+  ask :: AppM Env
+  ask = error "ask for AppM not implemented"
+
+  -- Run a AppM inside of the current one using a modified Env value.
+  local :: (Env -> Env) -> AppM a -> AppM a
+  local = error "local for AppM not implemented"
+
+  -- This will run a function on the current Env and return the result.
+  reader :: (Env -> a) -> AppM a
+  reader = error "reader for AppM not implemented"
+
+instance MonadIO AppM where
+  -- Take a type of 'IO a' and lift it into our AppM.
+  liftIO :: IO a -> AppM a
+  liftIO = error "liftIO for AppM not implemented"
 
 -- Move on to ``src/FirstApp/DB.hs`` after this

@@ -43,7 +43,7 @@ import           FirstApp.Types                     (Conf (..),
 
 import           FirstApp.AppM                      (AppM,
                                                      Env (Env, envConfig, envDB),
-                                                     runAppM, throwL)
+                                                     runAppM, liftEither)
 
 -- Our start-up process is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
@@ -65,13 +65,13 @@ runApp = do
     appWithDb env =
       run ( confPortToWai $ envConfig env ) (app env)
 
--- Monad transformers can be used without needing to write the newtype. Recall
--- that the constructor for ExceptT has a type of :: m (Either e a). So if you
--- have multiple functions that match that pattern and you don't want to have to
+-- Monad transformers can be used without needing to write the newtype. The
+-- constructor for ExceptT has a type of :: m (Either e a). So if you have
+-- multiple functions that match that pattern and you don't want to have to
 -- thread the error handling needle yourself. You can apply the constructor to
 -- the functions and work directly on the values, knowing that the error
--- handling will work as expected. Then you `runExceptT` and produce the
--- final Either value.
+-- handling will work as expected. Then you `runExceptT` and produce the final
+-- Either value.
 prepareAppReqs
   :: IO (Either StartUpError Env)
 prepareAppReqs =
@@ -105,7 +105,7 @@ app env rq cb = do
     logToErr = liftIO . hPutStrLn stderr
 
     requestToResponse :: IO (Either Error Response)
-    requestToResponse = runAppM env $ mkRequest rq >>= handleRequest
+    requestToResponse = runAppM ( mkRequest rq >>= handleRequest ) env
 
     handleError :: Error -> IO Response
     handleError e = mkErrorResponse e <$ ( logToErr . Text.pack . show ) e
@@ -130,7 +130,7 @@ mkRequest
   :: Request
   -> AppM RqType
 mkRequest rq =
-  throwL =<< case ( pathInfo rq, requestMethod rq ) of
+  liftEither =<< case ( pathInfo rq, requestMethod rq ) of
   -- Commenting on a given topic
   ( [t, "add"], "POST" ) ->
     liftIO $ mkAddRequest t <$> strictRequestBody rq

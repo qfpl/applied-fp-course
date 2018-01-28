@@ -35,7 +35,7 @@ import           FirstApp.Types                     (Comment, CommentText,
                                                      getCommentText, getTopic,
                                                      mkTopic)
 
-import           FirstApp.AppM                      (AppM, envDB, throwL)
+import           FirstApp.AppM                      (AppM, envDB, liftEither)
 
 -- Quick helper to pull the connection and close it down.
 closeDB
