@@ -11,8 +11,7 @@ import           Control.Monad.Reader   (MonadReader (..))
 import           Data.Text              (Text)
 
 import           FirstApp.DB.Types      (FirstAppDB)
-import           FirstApp.Error         (Error)
-import           FirstApp.Types         (Conf)
+import           FirstApp.Types         (Conf, Error)
 
 import           Data.Bifunctor         (first)
 

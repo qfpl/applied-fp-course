@@ -44,14 +44,18 @@ import qualified Data.Aeson.Types                   as A
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 import           FirstApp.DB.Types                  (DbComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
+import           FirstApp.Types.Error               (Error ( UnknownRoute
+                                                           , EmptyCommentText
+                                                           , EmptyTopic
+                                                           , DBError
+                                                           ))
+import           FirstApp.Types.CommentText        ( CommentText
+                                                   , mkCommentText
+                                                   , getCommentText
+                                                   )
+import           FirstApp.Types.Topic              (Topic, mkTopic, getTopic)
 
 newtype CommentId = CommentId Int
-  deriving (Show, ToJSON)
-
-newtype Topic = Topic Text
-  deriving (Show, ToJSON)
-
-newtype CommentText = CommentText Text
   deriving (Show, ToJSON)
 
 data Comment = Comment
@@ -111,34 +115,6 @@ fromDbComment dbc =
       <*> (mkCommentText $ dbCommentComment dbc)
       <*> (pure          $ dbCommentTime dbc)
 
-mkTopic
-  :: Text
-  -> Either Error Topic
-mkTopic "" =
-  Left EmptyTopic
-mkTopic ti =
-  Right (Topic ti)
-
-getTopic
-  :: Topic
-  -> Text
-getTopic (Topic t) =
-  t
-
-mkCommentText
-  :: Text
-  -> Either Error CommentText
-mkCommentText "" =
-  Left EmptyCommentText
-mkCommentText ct =
-  Right (CommentText ct)
-
-getCommentText
-  :: CommentText
-  -> Text
-getCommentText (CommentText t) =
-  t
-
 -- We have to be able to:
 -- - Comment on a given topic
 -- - View a topic and its comments
@@ -153,13 +129,6 @@ data RqType
   = AddRq Topic CommentText
   | ViewRq Topic
   | ListRq
-
-data Error
-  = UnknownRoute
-  | EmptyCommentText
-  | EmptyTopic
-  | DBError SQLiteResponse
-  deriving Show
 
 data ContentType
   = PlainText

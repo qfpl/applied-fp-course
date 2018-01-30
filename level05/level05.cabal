@@ -50,13 +50,16 @@ tested-with:         GHC==8.2.2
                    , GHC==7.10.3
 
 library
-  exposed-modules:       FirstApp.Types
-                       , FirstApp.DB.Types
-                       , FirstApp.DB
+  exposed-modules:       FirstApp.Conf
                        , FirstApp.Conf.CommandLine
                        , FirstApp.Conf.File
-                       , FirstApp.Conf
+                       , FirstApp.DB
+                       , FirstApp.DB.Types
                        , FirstApp.Main
+                       , FirstApp.Types
+                       , FirstApp.Types.CommentText
+                       , FirstApp.Types.Error
+                       , FirstApp.Types.Topic
 
   ghc-options:         -Wall
                        -fno-warn-unused-binds

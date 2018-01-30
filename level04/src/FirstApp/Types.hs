@@ -16,27 +16,29 @@ module FirstApp.Types
   , fromDbComment
   ) where
 
-import           GHC.Generics      (Generic)
+import           GHC.Generics               (Generic)
 
-import           Data.ByteString   (ByteString)
-import           Data.Text         (Text)
+import           Data.ByteString            (ByteString)
+import           Data.Text                  (Text)
 
-import           Data.List         (stripPrefix)
-import           Data.Maybe        (fromMaybe)
+import           Data.List                  (stripPrefix)
+import           Data.Maybe                 (fromMaybe)
 
-import           Data.Aeson        (ToJSON (toJSON))
-import qualified Data.Aeson        as A
-import qualified Data.Aeson.Types  as A
+import           Data.Aeson                 (ToJSON (toJSON))
+import qualified Data.Aeson                 as A
+import qualified Data.Aeson.Types           as A
 
-import           Data.Time         (UTCTime)
+import           Data.Time                  (UTCTime)
 
-import           FirstApp.DB.Types (DBComment)
-
-newtype Topic = Topic Text
-  deriving (Show, ToJSON)
-
-newtype CommentText = CommentText Text
-  deriving (Show, ToJSON)
+import           FirstApp.DB.Types          (DBComment)
+import           FirstApp.Types.CommentText (CommentText, mkCommentText
+                                            , getCommentText)
+import           FirstApp.Types.Error       (Error( UnknownRoute
+                                                  , EmptyCommentText
+                                                  , EmptyTopic
+                                                  )
+                                            )
+import           FirstApp.Types.Topic       (Topic, mkTopic, getTopic)
 
 -- This is the `Comment` record that we will be sending to users, it's a simple
 -- record type, containing an `Int`, `Topic`, `CommentText`, and `UTCTime`.
@@ -98,49 +100,10 @@ fromDbComment
 fromDbComment =
   error "fromDbComment not yet implemented"
 
-nonEmptyText
-  :: (Text -> a)
-  -> Error
-  -> Text
-  -> Either Error a
-nonEmptyText _ e "" = Left e
-nonEmptyText c _ tx = Right (c tx)
-
-mkTopic
-  :: Text
-  -> Either Error Topic
-mkTopic =
-  nonEmptyText Topic EmptyTopic
-
-getTopic
-  :: Topic
-  -> Text
-getTopic (Topic t) =
-  t
-
-mkCommentText
-  :: Text
-  -> Either Error CommentText
-mkCommentText =
-  nonEmptyText CommentText EmptyCommentText
-
-getCommentText
-  :: CommentText
-  -> Text
-getCommentText (CommentText t) =
-  t
-
 data RqType
   = AddRq Topic CommentText
   | ViewRq Topic
   | ListRq
-
-data Error
-  = UnknownRoute
-  | EmptyCommentText
-  | EmptyTopic
-  -- We need another constructor for our DB error types.
-  deriving Show
 
 data ContentType
   = PlainText
