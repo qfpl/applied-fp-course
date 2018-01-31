@@ -109,5 +109,5 @@ test-suite level03-tests
                       , wai == 3.2.*
                       , wai-extra == 3.0.*
                       , hspec == 2.4.*
-                      , hspec-wai == 0.8.*
+                      , hspec-wai == 0.9.*
                       , bytestring == 0.10.*
