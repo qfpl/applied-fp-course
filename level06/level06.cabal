@@ -75,7 +75,7 @@ library
                      , http-types == 0.9.*
                      , bytestring == 0.10.*
                      , text == 1.2.*
-                     , optparse-applicative == 0.13.*
+                     , optparse-applicative == 0.14.*
                      , aeson == 1.*
                      , mtl == 2.2.*
                      , time >= 1.4 && <= 1.9
@@ -119,7 +119,7 @@ test-suite level06-tests
                      , wai == 3.2.*
                      , wai-extra == 3.0.*
                      , hspec == 2.4.*
-                     , hspec-wai == 0.8.*
+                     , hspec-wai == 0.9.*
                      , bytestring == 0.10.*
 
 test-suite doctests
