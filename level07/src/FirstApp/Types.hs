@@ -45,15 +45,18 @@ import           Database.SQLite.Simple             (Connection)
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import           FirstApp.DB.Types                  (DbComment (..))
-import           FirstApp.Error                     (Error (..))
+import           FirstApp.Types.Error               (Error ( UnknownRoute
+                                                           , EmptyCommentText
+                                                           , EmptyTopic
+                                                           , DBError
+                                                           ))
+import           FirstApp.Types.CommentText        ( CommentText
+                                                   , mkCommentText
+                                                   , getCommentText
+                                                   )
+import           FirstApp.Types.Topic              (Topic, mkTopic, getTopic)
 
 newtype CommentId = CommentId Int
-  deriving (Show, ToJSON)
-
-newtype Topic = Topic Text
-  deriving (Show, ToJSON)
-
-newtype CommentText = CommentText Text
   deriving (Show, ToJSON)
 
 data Comment = Comment
@@ -111,38 +114,6 @@ fromDbComment dbc =
       <$> (mkTopic       $ dbCommentTopic dbc)
       <*> (mkCommentText $ dbCommentComment dbc)
       <*> (pure          $ dbCommentTime dbc)
-
-nonEmptyText
-  :: (Text -> a)
-  -> Error
-  -> Text
-  -> Either Error a
-nonEmptyText _ e "" = Left e
-nonEmptyText c _ tx = Right (c tx)
-
-mkTopic
-  :: Text
-  -> Either Error Topic
-mkTopic =
-  nonEmptyText Topic EmptyTopic
-
-getTopic
-  :: Topic
-  -> Text
-getTopic (Topic t) =
-  t
-
-mkCommentText
-  :: Text
-  -> Either Error CommentText
-mkCommentText =
-  nonEmptyText CommentText EmptyCommentText
-
-getCommentText
-  :: CommentText
-  -> Text
-getCommentText (CommentText t) =
-  t
 
 data RqType
   = AddRq Topic CommentText

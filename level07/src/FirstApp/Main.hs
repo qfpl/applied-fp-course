@@ -33,10 +33,10 @@ import           System.IO                          (stderr)
 import qualified FirstApp.DB                        as DB
 
 import qualified FirstApp.Conf                      as Conf
-import           FirstApp.Error                     (Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute))
 import qualified FirstApp.Responses                 as Res
 import           FirstApp.Types                     (Conf (..),
                                                      ConfigError (..),
+                                                     Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute),
                                                      RqType (AddRq, ListRq, ViewRq),
                                                      confPortToWai,
                                                      mkCommentText, mkTopic)

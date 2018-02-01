@@ -51,16 +51,18 @@ tested-with:         GHC==8.2.2
 
 library
   -- Modules included in this executable, other than Main.
-  exposed-modules:     FirstApp.Conf
+  exposed-modules:     FirstApp.AppM
+                     , FirstApp.Conf
                      , FirstApp.Conf.CommandLine
                      , FirstApp.Conf.File
-                     , FirstApp.Responses
-                     , FirstApp.Types
-                     , FirstApp.Error
-                     , FirstApp.AppM
                      , FirstApp.DB
                      , FirstApp.DB.Types
                      , FirstApp.Main
+                     , FirstApp.Responses
+                     , FirstApp.Types
+                     , FirstApp.Types.CommentText
+                     , FirstApp.Types.Error
+                     , FirstApp.Types.Topic
 
   ghc-options:         -Wall
                        -fno-warn-unused-binds

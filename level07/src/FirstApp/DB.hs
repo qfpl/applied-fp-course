@@ -28,9 +28,9 @@ import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import           FirstApp.DB.Types                  (FirstAppDB (FirstAppDB, dbConn),
                                                      Table (Table, getTableName))
-import           FirstApp.Error                     (Error (DBError))
 import           FirstApp.Types                     (Comment, CommentText,
                                                      DBFilePath (getDBFilePath),
+                                                     Error (DBError),
                                                      Topic, fromDbComment,
                                                      getCommentText, getTopic,
                                                      mkTopic)
