@@ -108,6 +108,6 @@ test-suite level03-tests
                       , level03
                       , wai == 3.2.*
                       , wai-extra == 3.0.*
-                      , hspec == 2.4.*
-                      , hspec-wai >= 0.8 && < 0.10
+                      , hspec >= 2.2 && < 3.0
+                      , hspec-wai >= 0.6 && < 0.10
                       , bytestring == 0.10.*
