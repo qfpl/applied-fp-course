@@ -90,9 +90,9 @@ what the goal is for that specific level.
 
 * Level 01 : Simple Hello World web app.
 * Level 02 : Define our application spec with types!
-* Level 03 : Add some flexible configuration
-* Level 04 : Testing & Tools (hspec & ghcid)
-* Level 05 : Database layer (sqlite-simple)
+* Level 03 : Testing & Tools (hspec & ghcid)
+* Level 04 : Database layer (sqlite-simple)
+* Level 05 : Add some flexible configuration
 * Level 06 : ReaderT & Refactoring
 * Level 07 : ExceptT & Refactoring
 
