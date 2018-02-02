@@ -40,11 +40,24 @@ data Error
 
 -- Provide the constructors for a sum type to specify the `ContentType` Header,
 -- to be used when we build our Response type.
+--
+-- Our application will be simple, we will only have a need for two content types:
+-- - plain text
+-- - json
+--
 data ContentType
 
 -- The ``ContentType`` constructors don't match what is required for the header
 -- information, so write a function that will take our ``ContentType`` and
 -- produce the correct value for the header.
+--
+-- We have included the return types for the different content types below,
+-- write this function such that your ContentType constructors match the
+-- following values:
+--
+-- - plain text = "text/plain"
+-- - json       = "application/json"
+--
 renderContentType
   :: ContentType
   -> ByteString
