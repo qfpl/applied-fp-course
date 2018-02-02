@@ -32,7 +32,12 @@ import           FirstApp.Types                     (Comment, CommentText,
 -- our database queries. This also allows things to change over time without
 -- having to rewrite all of the functions that need to interact with DB related
 -- things in different ways.
+--
+-- To help with that, we create a new data type that can hold our `Connection`
+-- for us, and allows it to be expanded later if we need to
 data FirstAppDB = FirstAppDB
+  { dbConn :: Connection
+  }
 
 -- Quick helper to pull the connection and close it down.
 closeDB
