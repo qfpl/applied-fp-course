@@ -1,3 +1,4 @@
+resolver: lts-10.4
 projects:
 - level01
 - level02
