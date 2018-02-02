@@ -150,6 +150,8 @@ renderContentType JSON      = "application/json"
 -- function in order to get the value out.
 --
 newtype Port = Port
+  -- You will notice we're using ``Word16`` as our type for the ``Port`` value.
+  -- This is because a valid port number can only be a 16bit unsigned integer.
   { getPort :: Word16 }
   deriving (Eq, Show)
 
@@ -157,7 +159,7 @@ newtype DBFilePath = DBFilePath
   { getDBFilePath :: FilePath }
   deriving (Eq, Show)
 
--- The ``Conf`` type will need:
+-- Add some fields to the ``Conf`` type:
 -- - A customisable port number: ``Port``
 -- - A filepath for our SQLite database: ``DBFilePath``
 data Conf = Conf
@@ -166,6 +168,12 @@ data Conf = Conf
 -- values from being used in our application. However Wai is not so stringent.
 -- To accommodate this and make our lives a bit easier, we will write this
 -- helper function to take ``Conf`` value and convert it to an ``Int``.
+--
+-- We'll need to use a function called; ``fromIntegral``, to convert our
+-- ``Word16`` to an ``Int``. The type of this function is:
+--
+-- fromIntegral :: (Num b, Integral a) => a -> b
+--
 confPortToWai
   :: Conf
   -> Int
