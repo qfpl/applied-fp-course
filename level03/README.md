@@ -32,10 +32,10 @@ To load the tests in the REPL:
 
 ```shell
 # Cabal
-$ cabal repl level04-tests
+$ cabal repl level03-tests
 
 # Stack
-$ stack ghci level04:level04-tests
+$ stack ghci level03:level03-tests
 ```
 
 Start in ``tests/Test.hs``.
