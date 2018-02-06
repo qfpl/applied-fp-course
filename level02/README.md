@@ -66,3 +66,10 @@ $ curl -XPOST -v localhost:<port>/puppies/add
 $ curl -XGET -v localhost:<port>/puppies/view
 $ curl -XGET -v localhost:<port>/list
 ```
+
+### Running the program in the REPL:
+
+```bash
+# Using cabal
+$ cabal repl level02
+```
