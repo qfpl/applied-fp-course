@@ -12,7 +12,7 @@ As is to be expected, there are multiple testing frameworks and packages
 available but we will only cover one here. We will use the [HSpec] framework,
 with the [hspec-wai] package to make our lives a bit easier.
 
-### NB: Including Test Library Dependencies
+### Including Test Library Dependencies and Running the Tests
 
 For a cabal sandbox:
 
@@ -20,6 +20,7 @@ For a cabal sandbox:
 $ cabal sandbox init
 $ cabal install --only-dependencies --enable-tests
 $ cabal configure --enable-tests
+$ cabal test
 ```
 
 For a stack environment:
