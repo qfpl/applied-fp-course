@@ -17,7 +17,7 @@ import           FirstApp.Types      (DBFilePath (DBFilePath),
 -- | Command Line Parsing
 
 -- This is an example of using the ``optparse-applicative`` package to build our command line
--- parser. As this particular problem is fraught with silly dangers and we appreciate someone else
+-- parser. As this particular problem is fraught with silly dangers, we appreciate someone else
 -- having eaten this gremlin on our behalf.
 commandLineParser
   :: IO PartialConf
