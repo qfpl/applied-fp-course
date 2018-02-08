@@ -75,7 +75,7 @@ library
                      , http-types == 0.9.*
                      , bytestring == 0.10.*
                      , text == 1.2.*
-                     , optparse-applicative == 0.14.*
+                     , optparse-applicative >= 0.13 && <= 0.15
                      , aeson == 1.*
                      , mtl == 2.2.*
                      , time >= 1.4 && <= 1.9
