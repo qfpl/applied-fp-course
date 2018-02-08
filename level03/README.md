@@ -39,6 +39,12 @@ $ cabal repl level03-tests
 $ stack ghci level03:level03-tests
 ```
 
+To run the tests in the repl:
+
+```shell
+*Main> :main
+```
+
 Start in ``tests/Test.hs``.
 
 [HSpec]: (http://hspec.github.io/)
