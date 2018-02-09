@@ -12,6 +12,7 @@ module FirstApp.DB
 import           Data.Text                          (Text)
 import qualified Data.Text                          as Text
 
+import           Data.Bifunctor                     (first)
 import           Data.Time                          (getCurrentTime)
 
 import           Database.SQLite.Simple             (Connection,
@@ -60,15 +61,14 @@ initDB fp = Sql.runDBAction $ do
     createTableQ =
       "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time INTEGER)"
 
-runDb
+runDB
   :: (a -> Either Error b)
   -> IO a
   -> IO (Either Error b)
-runDb f a = do
-  r <- Sql.runDBAction a
-  pure $ either (Left . DBError) f r
+runDB f a =
+  (>>= f) . first DBError <$> Sql.runDBAction a
   -- Choices, choices...
-  -- Sql.runDBAction a >>= pure . either (Left . DBError) f
+  -- either (Left . DBError) f <$> Sql.runDBAction a
   -- these two are pretty much the same.
   -- Sql.runDBAction >=> pure . either (Left . DBError) f
   -- this is because we noticed that our call to pure, which means we should
@@ -85,7 +85,7 @@ getComments db t = do
   -- To be doubly and triply sure we've no garbage in our response, we take care
   -- to convert our DB storage type into something we're going to share with the
   -- outside world. Checking again for things like empty Topic or CommentText values.
-  runDb ( traverse fromDbComment ) $ Sql.query (dbConn db) q [ getTopic t ]
+  runDB (traverse fromDbComment) $ Sql.query (dbConn db) q (Sql.Only . getTopic $ t)
 
 addCommentToTopic
   :: FirstAppDB
@@ -105,7 +105,7 @@ addCommentToTopic db t c = do
   -- We use the execute function this time as we don't care about anything
   -- that is returned. The execute function will still return the number of rows
   -- affected by the query, which in our case should always be 1.
-  runDb Right $ Sql.execute (dbConn db) q (getTopic t, getCommentText c, nowish)
+  runDB Right $ Sql.execute (dbConn db) q (getTopic t, getCommentText c, nowish)
   -- An alternative is to write a returning query to get the Id of the DbComment
   -- we've created. We're being lazy (hah!) for now, so assume awesome and move on.
 
@@ -115,7 +115,7 @@ getTopics
 getTopics db =
   let q = "SELECT DISTINCT topic FROM comments"
   in
-    runDb (traverse ( mkTopic . Sql.fromOnly )) $ Sql.query_ (dbConn db) q
+    runDB (traverse ( mkTopic . Sql.fromOnly )) $ Sql.query_ (dbConn db) q
 
 deleteTopic
   :: FirstAppDB
@@ -124,4 +124,4 @@ deleteTopic
 deleteTopic db t =
   let q = "DELETE FROM comments WHERE topic = ?"
   in
-    runDb Right $ Sql.execute (dbConn db) q [getTopic t]
+    runDB Right $ Sql.execute (dbConn db) q (Sql.Only . getTopic $ t)

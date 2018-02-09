@@ -9,28 +9,29 @@ module FirstApp.DB
   , deleteTopic
   ) where
 
-import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Reader (asks)
+import           Control.Monad.IO.Class             (liftIO)
+import           Control.Monad.Reader               (asks)
 
-import Data.Bifunctor (first)
+import           Data.Bifunctor                     (first)
 import           Data.Text                          (Text)
 import qualified Data.Text                          as Text
 
 import           Data.Time                          (getCurrentTime)
 
-import           Database.SQLite.Simple             (Connection, FromRow, ToRow,
-                                                     Query (fromQuery))
+import           Database.SQLite.Simple             (Connection, FromRow,
+                                                     Query (fromQuery), ToRow)
 import qualified Database.SQLite.Simple             as Sql
 
 import qualified Database.SQLite.SimpleErrors       as Sql
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import FirstApp.AppM (AppM, Env (envDB))
+import           FirstApp.AppM                      (AppM, Env (envDB))
 
-import           FirstApp.Types                     (FirstAppDB (FirstAppDB, dbConn), Comment, CommentText,
+import           FirstApp.Types                     (Comment, CommentText,
                                                      DBFilePath (getDBFilePath),
-                                                     Error (DBError), Topic,
-                                                     fromDbComment,
+                                                     Error (DBError),
+                                                     FirstAppDB (FirstAppDB, dbConn),
+                                                     Topic, fromDbComment,
                                                      getCommentText, getTopic,
                                                      mkTopic)
 

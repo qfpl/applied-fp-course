@@ -62,6 +62,10 @@ mkAddRequest
   -> Either Error RqType
 mkAddRequest =
   error "mkAddRequest not implemented"
+  where
+    -- This is a helper function to assist us in going from a Lazy ByteString, to a Strict Text
+    lazyByteStringToStrictText =
+      decodeUtf8 . LBS.toStrict
 
 -- This has a number of benefits, we're able to isolate our validation
 -- requirements into smaller components that are simpler to maintain and verify.

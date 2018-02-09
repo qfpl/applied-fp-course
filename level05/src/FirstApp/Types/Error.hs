@@ -2,8 +2,8 @@
 
 module FirstApp.Types.Error (Error(..), nonEmptyText) where
 
-import Data.Text (Text)
-import Database.SQLite.SimpleErrors.Types (SQLiteResponse)
+import           Data.Text                          (Text)
+import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 data Error
   = UnknownRoute
