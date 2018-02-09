@@ -63,6 +63,7 @@ The steps for this level:
 3) ``src/FirstApp/DB.hs``
 4) ``src/FirstApp/Main.hs``
 
+- Call out `Traversable` and `Bifunctor` typeclasses.
 - Call out the encoding instances & the automatic deriving of the ToJSON instances
 
 # Level 5
