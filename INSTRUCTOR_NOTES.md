@@ -89,6 +89,13 @@ But that's about it.
 Exceptions will be discussed when working on the 'readObject' function to load
 the file into a JSON Value.
 
+Mention and work through the type signature of:
+
+- ``fmap . fmap``
+
+Students start to encounter multiple ``Functor`` layers around this level and
+this technique comes in handy.
+
 # Level 6
 
 This is "The ReaderT" level.
