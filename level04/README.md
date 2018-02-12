@@ -44,45 +44,15 @@ traverse :: (Applicative f, Traversable t) => (a -> f b) -> t a -> f (t b)
 
 This is very useful when you want to perform an action on every element of a
 list, but that action will return the new result in a some ``Applicative``
-context. Such as ``IO`` or ``Either``. By way of example, if we have the
-following:
+context. 
 
-```haskell
-possibleTopics :: [Text]
-mkTopic :: Text -> Either Error Topic
-```
+To help build some intuition for how this function can be useful, write out
+the type signature for ``traverse``, but replace the ``f`` with ``Either e``,
+and the ``t`` with ``[]``. This type of exercise is useful to help build your
+understanding of how the pieces fit together for generic functions such as
+this one.
 
-We can use ``traverse`` to apply our function to every item in the list, but
-abort should any of them fail, courtesy of the ``Applicative`` instance for
-``Either``.
-
-```haskell
-# If we partially apply our traverse with mkTopic:
-( traverse mkTopic ) :: Traversable t => t Text -> Either Error (t Topic)
-
-# Then add the list of possibleTopics:
-( traverse mkTopic possibleTopics ) :: Either Error [Topic]
-```
-
-Contrast this with using ``fmap``:
-
-```haskell
-# Recall that fmap has the type:
-fmap :: Functor f => (a -> b) -> f a -> f b
-
-# Partially applied with mkTopic
-( fmap mkTopic ) :: Functor f => f Text -> f (Either Error Topic)
-
-# Over the list of possibleTopics
-( fmap mkTopic possibleTopics ) :: [Either Error Topic]
-```
-
-Both techniques are valid, but by using ``traverse`` we are able to more
-easily compose the result with something that may need a ``[Topic]``. As
-opposed to using ``fmap`` that requires us to still handle the errors
-individually. In this instance, the trade-off is that using ``traverse`` will
-fail on the first error, whereas ``fmap`` will provide a list that still may
-have errors in it.
+Can you explain why you replace ``f`` with ``Either e`` and not ``Either``?
 
 ## [Bifunctor](hackage.haskell.org/package/base/docs/Data-Bifunctor.html)
 
