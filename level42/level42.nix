@@ -1,4 +1,4 @@
-{ mkDerivation, aeson, base, bytestring, containers, doctest
+{ mkDerivation, aeson, async, base, bytestring, containers, doctest
 , hedgehog, hspec, hspec-wai, http-types, mtl, optparse-applicative
 , semigroups, sqlite-simple, sqlite-simple-errors, stdenv, text
 , time, transformers, wai, wai-extra, warp
@@ -16,8 +16,8 @@ mkDerivation {
   ];
   executableHaskellDepends = [ base ];
   testHaskellDepends = [
-    base bytestring containers doctest hedgehog hspec hspec-wai mtl
-    text wai wai-extra
+    async base bytestring containers doctest hedgehog hspec hspec-wai
+    mtl text wai wai-extra warp
   ];
   description = "Simplest of web apps";
   license = stdenv.lib.licenses.bsd3;

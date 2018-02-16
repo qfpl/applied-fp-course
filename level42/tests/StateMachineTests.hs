@@ -1,7 +1,8 @@
 module StateMachineTests where
 
-import Control.Concurrent.Async (race_)
-import           Control.Concurrent.MVar  (MVar, newEmptyMVar, putMVar, takeMVar)
+import           Control.Concurrent.Async (race_)
+import           Control.Concurrent.MVar  (MVar, newEmptyMVar, putMVar,
+                                           takeMVar)
 import           Control.Monad.IO.Class   (liftIO)
 import qualified Data.IntMap              as M
 import           Data.Semigroup           ((<>))
@@ -17,21 +18,21 @@ import qualified Hedgehog.Range           as Range
 
 import           FirstApp.AppM            (Env (Env))
 import           FirstApp.DB              (initDB)
+import           FirstApp.Main            (app)
 import           FirstApp.Types           (Conf (Conf), DBFilePath (DBFilePath),
                                            Port (Port))
 
 main :: IO ()
-main = do
-  env' <- env
-  let app' = app env
-  run (fromIntegral portNum) app'
+main =
+  putStrLn "test"
 
-runUntilSignalled
-  :: IO a
-  -> MVar ()
+runAppUntilSignalled
+  :: MVar ()
   -> IO ()
-runUntilSignalled a m =
-  race_ a (takeMVar m)
+runAppUntilSignalled m = do
+  env' <- env
+  let runApp = run (fromIntegral portNum) (app env')
+  race_ runApp (takeMVar m)
 
 portNum :: Word16
 portNum = 3000
