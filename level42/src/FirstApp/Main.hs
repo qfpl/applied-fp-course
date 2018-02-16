@@ -74,14 +74,16 @@ runApp = do
 -- Either value.
 prepareAppReqs
   :: IO (Either StartUpError Env)
-prepareAppReqs =
-  error "Copy your completed 'prepareAppReqs' and refactor to match the new type signature"
+prepareAppReqs = runExceptT $ do
+  c <- initConf
+  db <- initDB c
+  pure $ Env logToErr c db
   where
     logToErr :: Text -> AppM ()
     logToErr = liftIO . hPutStrLn stderr
 
     toStartUpErr :: (a -> StartUpError) -> IO (Either a c) -> ExceptT StartUpError IO c
-    toStartUpErr = error "toStartUpErr not reimplemented"
+    toStartUpErr f = ExceptT . fmap (first f)
 
     -- Take our possibly failing configuration/db functions with their unique
     -- error types and turn them into a consistently typed ExceptT. We can then
