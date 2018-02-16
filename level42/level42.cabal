@@ -129,9 +129,12 @@ test-suite level42-state-machine-tests
   default-language:    Haskell2010
   type:                exitcode-stdio-1.0
   hs-source-dirs:      tests
-  main-is:             Test.hs
+  main-is:             StateMachineTests.hs
   build-depends:       base >= 4.7 && <=4.11
+                     , containers >=0.4.0 && <0.6
+                     , hedgehog >=0.5 && <0.6
                      , level42
+                     , text == 1.2.*
 
 test-suite doctests
   -- Base language which the package is written in.
