@@ -1,7 +1,8 @@
 { mkDerivation, aeson, async, base, bytestring, containers, doctest
-, hedgehog, hspec, hspec-wai, http-types, mtl, optparse-applicative
-, semigroups, sqlite-simple, sqlite-simple-errors, stdenv, text
-, time, transformers, wai, wai-extra, warp
+, hedgehog, hspec, hspec-wai, http-types, mmorph, mtl
+, optparse-applicative, semigroups, sqlite-simple
+, sqlite-simple-errors, stdenv, text, time, transformers, wai
+, wai-extra, warp
 }:
 mkDerivation {
   pname = "level42";
@@ -17,7 +18,7 @@ mkDerivation {
   executableHaskellDepends = [ base ];
   testHaskellDepends = [
     async base bytestring containers doctest hedgehog hspec hspec-wai
-    mtl text wai wai-extra warp
+    mmorph mtl text transformers wai wai-extra warp
   ];
   description = "Simplest of web apps";
   license = stdenv.lib.licenses.bsd3;
