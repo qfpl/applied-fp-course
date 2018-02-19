@@ -132,10 +132,12 @@ test-suite level42-state-machine-tests
   main-is:             StateMachineTests.hs
   build-depends:       base >= 4.7 && <=4.11
                      , async >=2.1.1 && < 2.3
+                     , bytestring == 0.10.*
                      , containers >=0.4.0 && <0.6
                      , hedgehog >=0.5 && <0.6
                      , level42
                      , text == 1.2.*
+                     , wai-extra ==3.0.*
                      , warp == 3.2.*
 
 test-suite doctests
