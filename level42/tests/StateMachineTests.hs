@@ -3,26 +3,21 @@
 
 module StateMachineTests where
 
-import           Control.Concurrent.Async  (race_)
-import           Control.Concurrent.MVar   (MVar, newEmptyMVar, putMVar,
-                                            takeMVar)
 import           Control.Monad.IO.Class    (liftIO)
 import           Control.Monad.Morph       (hoist)
 import           Control.Monad.Trans.Class (lift)
 import qualified Data.ByteString.Lazy      as LBS
-import           Data.Functor.Identity     (Identity)
 import qualified Data.IntMap               as M
 import           Data.Semigroup            ((<>))
 import           Data.Text                 (Text)
 import           Data.Text.IO              (hPutStrLn)
 import           GHC.Word                  (Word16)
-import           Network.Wai.Handler.Warp  (run)
 import qualified Network.Wai.Test          as WT
 import           System.IO                 (stderr)
 
 import           Hedgehog                  (Callback (..), Command (Command),
                                             Gen, HTraversable (htraverse),
-                                            Property, PropertyT, Sequential,
+                                            Property, PropertyT,
                                             assert, executeSequential, forAll,
                                             property)
 import qualified Hedgehog.Gen              as Gen
@@ -31,7 +26,7 @@ import qualified Hedgehog.Range            as Range
 import           FirstApp.AppM             (Env (Env))
 import           FirstApp.DB               (initDB)
 import           FirstApp.Main             (app)
-import           FirstApp.Types            (Conf (Conf),
+import           FirstApp.Types            (Conf (Conf), dbFilePath,
                                             DBFilePath (DBFilePath),
                                             Port (Port))
 
@@ -47,16 +42,16 @@ data Comment =
           , comment :: Text
           } deriving (Eq, Show)
 
-data CommentState (v :: * -> *) =
+newtype CommentState (v :: * -> *) =
   CommentState (M.IntMap Comment)
   deriving (Eq, Show)
 
 env :: IO Env
 env =
   let
-    dbPath = DBFilePath "state-machine-tests.sqlite"
-    c = Conf (Port 3000) dbPath
-    edb = initDB dbPath
+    dbPath = "state-machine-tests.sqlite"
+    c = Conf (Port 3000) (DBFilePath dbPath)
+    edb = initDB (dbFilePath c)
     logErr = liftIO . hPutStrLn stderr
     splode = error . ("Error connecting to DB: " <>) . show
   in
@@ -100,4 +95,4 @@ propFirstApp =
     let session :: PropertyT WT.Session ()
         session =  executeSequential initialState commands
 
-    hoist (`WT.runSession` (app env')) session
+    hoist (`WT.runSession` app env') session
