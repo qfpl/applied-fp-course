@@ -7,7 +7,13 @@ let
                       then pkgs.haskellPackages
                       else pkgs.haskell.packages.${compiler};
 
-  drv = haskellPackages.callPackage ./level42.nix {};
+  myHaskellPackages = haskellPackages.override {
+    overrides = self: super: {
+      hspec-wai = haskellPackages.callPackage ../../hspec-wai/hspec-wai.nix {};
+    };
+  };
+
+  drv = myHaskellPackages.callPackage ./level42.nix {};
 
 in
   if pkgs.lib.inNixShell then drv.env else drv
