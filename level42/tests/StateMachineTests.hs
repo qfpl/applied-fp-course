@@ -1,11 +1,14 @@
 {-# LANGUAGE KindSignatures    #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module StateMachineTests where
+module Main where
 
+import           Control.Applicative       (liftA3)
+import           Control.Exception         (catch, throw)
 import           Control.Monad.IO.Class    (liftIO)
 import           Control.Monad.Morph       (hoist)
 import           Control.Monad.Trans.Class (lift)
+import           Data.Bool                 (bool)
 import qualified Data.ByteString.Lazy      as LBS
 import qualified Data.IntMap               as M
 import           Data.Semigroup            ((<>))
@@ -13,26 +16,29 @@ import           Data.Text                 (Text)
 import           Data.Text.IO              (hPutStrLn)
 import           GHC.Word                  (Word16)
 import qualified Network.Wai.Test          as WT
+import           System.Directory          (removeFile)
 import           System.IO                 (stderr)
+import           System.IO.Error           (isDoesNotExistError)
 
 import           Hedgehog                  (Callback (..), Command (Command),
                                             Gen, HTraversable (htraverse),
-                                            Property, PropertyT,
-                                            assert, executeSequential, forAll,
-                                            property)
+                                            Property, PropertyT, assert,
+                                            executeSequential, forAll, property)
 import qualified Hedgehog.Gen              as Gen
 import qualified Hedgehog.Range            as Range
+import           Test.Tasty                (defaultMain)
+import           Test.Tasty.Hedgehog       (testProperty)
 
 import           FirstApp.AppM             (Env (Env))
 import           FirstApp.DB               (initDB)
 import           FirstApp.Main             (app)
-import           FirstApp.Types            (Conf (Conf), dbFilePath,
+import           FirstApp.Types            (Conf (Conf),
                                             DBFilePath (DBFilePath),
-                                            Port (Port))
+                                            Port (Port), dbFilePath)
 
 main :: IO ()
 main =
-  putStrLn "test"
+  defaultMain . testProperty "FirstApp" $ propFirstApp
 
 portNum :: Word16
 portNum = 3000
@@ -54,8 +60,11 @@ env =
     edb = initDB (dbFilePath c)
     logErr = liftIO . hPutStrLn stderr
     splode = error . ("Error connecting to DB: " <>) . show
+    checkRmException =
+      liftA3 bool throw (const . putStrLn $ "No test DB to delete") isDoesNotExistError
   in
-    fmap (either splode (Env logErr c)) edb
+    removeFile dbPath `catch` checkRmException
+      >> fmap (either splode (Env logErr c)) edb
 
 initialState :: CommentState v
 initialState = CommentState M.empty
@@ -81,7 +90,7 @@ cListTopicsEmpty =
 
     callbacks =
       [ Require (\(CommentState s) _i -> M.null s)
-      , Ensure (\_b _a _i -> assert . LBS.null)
+      , Ensure (\_b _a _i -> assert . (== "[]"))
       ]
   in
     Command gen execute callbacks
