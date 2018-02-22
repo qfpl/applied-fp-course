@@ -46,8 +46,10 @@ import           FirstApp.Types            (Conf (Conf),
                                             Port (Port), dbFilePath)
 
 main :: IO ()
-main =
-  defaultMain . testProperty "FirstApp" $ propFirstApp
+main =  do
+  rmOkMissing dbPath
+  env <- mkEnv
+  defaultMain . testProperty "FirstApp" . propFirstApp $ env
 
 dbPath :: FilePath
 dbPath = "state-machine-tests.sqlite"
@@ -73,8 +75,8 @@ newtype CommentState (v :: * -> *) =
   CommentState (M.IntMap Comment)
   deriving (Eq, Show)
 
-env :: IO Env
-env =
+mkEnv :: IO Env
+mkEnv =
   let
     c = Conf (Port 3000) (DBFilePath dbPath)
     edb = initDB (dbFilePath c)
@@ -82,7 +84,7 @@ env =
     splode = error . ("Error connecting to DB: " <>) . show
   in
     -- Ensure we get a clean DB whenever we get a new `Env`
-    rmOkMissing dbPath >> fmap (either splode (Env logErr c)) edb
+    fmap (either splode (Env logErr c)) edb
 
 initialState :: CommentState v
 initialState = CommentState M.empty
@@ -109,7 +111,7 @@ cListTopics =
 
     callbacks =
       [ Require (\(CommentState s) _i -> M.null s)
-      , Ensure (\_b (CommentState a) _i o ->
+      , Ensure (\(CommentState b) (CommentState a) _i o ->
                   let
                     expected = Just . Set.fromList . fmap topic . M.elems $ a
                     actual = fmap Set.fromList . decode $ o
@@ -135,7 +137,8 @@ cAddComment =
   let
     gen _ = Just $ AddComment <$> utf8Gen <*> utf8Gen
 
-    exe (AddComment t c) =
+    exe (AddComment t c) = do
+      liftIO . print $ "Adding topic '" <> show t <> "', comment: '" <> show c <> "'"
       lift $ post ("/" <> t <> "/add") (LBS.fromStrict c)
       -- in rsp `shouldRespondWith` 200
 
@@ -151,7 +154,9 @@ cAddComment =
             newComment = Comment (decodeUtf8 t) (decodeUtf8 c)
           in
             CommentState (M.insert newId newComment s)
-      , Ensure $ \_old _new _add output -> do
+      , Ensure $ \(CommentState old) (CommentState new) (AddComment t c) output -> do
+          (snd . fst <$> M.maxViewWithKey new) === Just (Comment (decodeUtf8 t) (decodeUtf8 c))
+          length old + 1 === length new
           WT.simpleBody output  === "Success"
           (statusCode . WT.simpleStatus $ output) === 200
       ]
@@ -161,12 +166,11 @@ cAddComment =
 utf8Gen :: Gen BS.ByteString
 utf8Gen = Gen.utf8 (Range.linear 1 100) Gen.alphaNum
 
-propFirstApp :: Property
-propFirstApp =
+propFirstApp :: Env -> Property
+propFirstApp env =
   property $ do
-    env' <- liftIO env
     commands <- forAll $
       Gen.sequential (Range.linear 1 100) initialState [cListTopics, cAddComment]
     let session :: PropertyT WaiSession ()
         session =  executeSequential initialState commands
-    hoist (`runWaiSession` app env') session
+    hoist (`runWaiSession` app env) session
