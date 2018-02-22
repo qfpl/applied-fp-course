@@ -27,7 +27,7 @@ import           System.IO.Error           (isDoesNotExistError)
 import           Hedgehog                  (Callback (..), Command (Command),
                                             Gen, HTraversable (htraverse),
                                             Property, PropertyT, assert,
-                                            executeSequential, forAll, property)
+                                            executeSequential, forAll, property, (===))
 import qualified Hedgehog.Gen              as Gen
 import qualified Hedgehog.Range            as Range
 import qualified Network.Wai.Test          as WT
@@ -47,6 +47,18 @@ main :: IO ()
 main =
   defaultMain . testProperty "FirstApp" $ propFirstApp
 
+dbPath :: FilePath
+dbPath = "state-machine-tests.sqlite"
+
+rmOkMissing :: FilePath -> IO ()
+rmOkMissing fp =
+  let
+    logMissing = putStrLn $ fp <> " does not exist - nothing to do"
+    checkRmException =
+      liftA3 bool throw (const logMissing) isDoesNotExistError
+  in
+    removeFile fp `catch` checkRmException
+
 portNum :: Word16
 portNum = 3000
 
@@ -62,17 +74,13 @@ newtype CommentState (v :: * -> *) =
 env :: IO Env
 env =
   let
-    dbPath = "state-machine-tests.sqlite"
     c = Conf (Port 3000) (DBFilePath dbPath)
     edb = initDB (dbFilePath c)
     logErr = liftIO . hPutStrLn stderr
     splode = error . ("Error connecting to DB: " <>) . show
-    checkRmException =
-      liftA3 bool throw (const . putStrLn $ "No test DB to delete") isDoesNotExistError
   in
     -- Ensure we get a clean DB whenever we get a new `Env`
-    removeFile dbPath `catch` checkRmException
-      >> fmap (either splode (Env logErr c)) edb
+    rmOkMissing dbPath >> fmap (either splode (Env logErr c)) edb
 
 initialState :: CommentState v
 initialState = CommentState M.empty
@@ -99,11 +107,11 @@ cListTopicsEmpty =
       rsp <- lift . get $ "/list"
       pure $ WT.simpleBody rsp
 
-    isEmptyJsonList = (== (Just [] :: Maybe [Text])) . decode
-
     callbacks =
       [ Require (\(CommentState s) _i -> M.null s)
-      , Ensure (\_b _a _i -> assert . isEmptyJsonList)
+      , Ensure (\(CommentState b) (CommentState a) _i o -> do
+                   b === a
+                   (=== (Just [] :: Maybe [Text])) . decode $ o)
       ]
   in
     Command gen execute callbacks
@@ -139,16 +147,15 @@ cAddComment =
             newComment = Comment (decodeUtf8 t) (decodeUtf8 c)
           in
             CommentState (M.insert newId newComment s)
-      , Ensure $ \_old _new _add output ->
-          void . traverse assert $ [ WT.simpleBody output  == ""
-                                   , (statusCode . WT.simpleStatus $ output) == 200
-                                   ]--`shouldRespondWith` 200]
+      , Ensure $ \_old _new _add output -> do
+          WT.simpleBody output  === "Success"
+          (statusCode . WT.simpleStatus $ output) === 200
       ]
   in
     Command gen exe callbacks
 
 utf8Gen :: Gen BS.ByteString
-utf8Gen = Gen.utf8 (Range.linear 1 100) Gen.unicode
+utf8Gen = Gen.utf8 (Range.linear 1 100) Gen.alphaNum
 
 propFirstApp :: Property
 propFirstApp =
@@ -158,5 +165,4 @@ propFirstApp =
       Gen.sequential (Range.linear 1 100) initialState [cListTopicsEmpty, cAddComment]
     let session :: PropertyT WaiSession ()
         session =  executeSequential initialState commands
-
     hoist (`runWaiSession` app env') session
