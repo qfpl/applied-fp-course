@@ -140,7 +140,6 @@ cAddComment =
     exe (AddComment t c) = do
       liftIO . print $ "Adding topic '" <> show t <> "', comment: '" <> show c <> "'"
       lift $ post ("/" <> t <> "/add") (LBS.fromStrict c)
-      -- in rsp `shouldRespondWith` 200
 
     callbacks =
       [ Update $ \(CommentState s) (AddComment t c) _ ->
