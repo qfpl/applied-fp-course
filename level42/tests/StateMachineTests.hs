@@ -109,8 +109,11 @@ cListTopicsEmpty =
 
     callbacks =
       [ Require (\(CommentState s) _i -> M.null s)
-      , Ensure (\(CommentState b) (CommentState a) _i o -> do
-                   b === a
+      , Ensure (\_b _a _i o ->
+                   (=== (Just [] :: Maybe [Text])) . decode $ o)
+      ]
+  in
+    Command gen execute callbacks
                    (=== (Just [] :: Maybe [Text])) . decode $ o)
       ]
   in
