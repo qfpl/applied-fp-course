@@ -15,6 +15,7 @@ import qualified Data.ByteString.Lazy      as LBS
 import           Data.Functor              (void)
 import qualified Data.IntMap               as M
 import           Data.Semigroup            ((<>))
+import qualified Data.Set                  as Set
 import           Data.Text                 (Text)
 import           Data.Text.Encoding        (decodeUtf8)
 import           Data.Text.IO              (hPutStrLn)
@@ -27,7 +28,8 @@ import           System.IO.Error           (isDoesNotExistError)
 import           Hedgehog                  (Callback (..), Command (Command),
                                             Gen, HTraversable (htraverse),
                                             Property, PropertyT, assert,
-                                            executeSequential, forAll, property, (===))
+                                            executeSequential, forAll, property,
+                                            (===))
 import qualified Hedgehog.Gen              as Gen
 import qualified Hedgehog.Range            as Range
 import qualified Network.Wai.Test          as WT
@@ -95,13 +97,11 @@ data ListTopics (v :: * -> *) =
 instance HTraversable ListTopics where
   htraverse _ ListTopics = pure ListTopics
 
-cListTopicsEmpty :: Command Gen (PropertyT WaiSession) CommentState
-cListTopicsEmpty =
+cListTopics :: Command Gen (PropertyT WaiSession) CommentState
+cListTopics =
   let
     gen :: CommentState v -> Maybe (Gen (ListTopics v))
-    gen (CommentState s)
-      | s == M.empty = Just (pure ListTopics)
-      | otherwise    = Nothing
+    gen = const . Just . pure $ ListTopics
 
     execute ListTopics = do
       rsp <- lift . get $ "/list"
@@ -109,12 +109,13 @@ cListTopicsEmpty =
 
     callbacks =
       [ Require (\(CommentState s) _i -> M.null s)
-      , Ensure (\_b _a _i o ->
-                   (=== (Just [] :: Maybe [Text])) . decode $ o)
-      ]
-  in
-    Command gen execute callbacks
-                   (=== (Just [] :: Maybe [Text])) . decode $ o)
+      , Ensure (\_b (CommentState a) _i o ->
+                  let
+                    expected = Just . Set.fromList . fmap topic . M.elems $ a
+                    actual = fmap Set.fromList . decode $ o
+                  in
+                    actual === expected
+               )
       ]
   in
     Command gen execute callbacks
@@ -165,7 +166,7 @@ propFirstApp =
   property $ do
     env' <- liftIO env
     commands <- forAll $
-      Gen.sequential (Range.linear 1 100) initialState [cListTopicsEmpty, cAddComment]
+      Gen.sequential (Range.linear 1 100) initialState [cListTopics, cAddComment]
     let session :: PropertyT WaiSession ()
         session =  executeSequential initialState commands
     hoist (`runWaiSession` app env') session
