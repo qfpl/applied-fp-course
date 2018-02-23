@@ -12,13 +12,13 @@ import           Data.Aeson                (decode)
 import           Data.Bool                 (bool)
 import qualified Data.ByteString           as BS
 import qualified Data.ByteString.Lazy      as LBS
-import           Data.Functor              (void)
 import qualified Data.IntMap               as M
 import           Data.Semigroup            ((<>))
 import qualified Data.Set                  as Set
 import           Data.Text                 (Text)
 import           Data.Text.Encoding        (decodeUtf8)
 import           Data.Text.IO              (hPutStrLn)
+import qualified Database.SQLite.Simple    as Sql
 import           GHC.Word                  (Word16)
 import           Network.HTTP.Types.Status (statusCode)
 import           System.Directory          (removeFile)
@@ -27,26 +27,27 @@ import           System.IO.Error           (isDoesNotExistError)
 
 import           Hedgehog                  (Callback (..), Command (Command),
                                             Gen, HTraversable (htraverse),
-                                            Property, PropertyT, assert,
+                                            Property, PropertyT,
                                             executeSequential, forAll, property,
                                             (===))
 import qualified Hedgehog.Gen              as Gen
 import qualified Hedgehog.Range            as Range
 import qualified Network.Wai.Test          as WT
 import           Test.Hspec.Wai            (WaiSession, get, post,
-                                            runWaiSession, shouldRespondWith)
+                                            runWaiSession)
 import           Test.Tasty                (defaultMain)
 import           Test.Tasty.Hedgehog       (testProperty)
 
-import           FirstApp.AppM             (Env (Env))
+import           FirstApp.AppM             (Env (Env), envDB)
 import           FirstApp.DB               (initDB)
+import           FirstApp.DB.Types         (dbConn)
 import           FirstApp.Main             (app)
 import           FirstApp.Types            (Conf (Conf),
                                             DBFilePath (DBFilePath),
                                             Port (Port), dbFilePath)
 
 main :: IO ()
-main =  do
+main = do
   rmOkMissing dbPath
   env <- mkEnv
   defaultMain . testProperty "FirstApp" . propFirstApp $ env
@@ -111,7 +112,7 @@ cListTopics =
 
     callbacks =
       [ Require (\(CommentState s) _i -> M.null s)
-      , Ensure (\(CommentState b) (CommentState a) _i o ->
+      , Ensure (\_b (CommentState a) _i o ->
                   let
                     expected = Just . Set.fromList . fmap topic . M.elems $ a
                     actual = fmap Set.fromList . decode $ o
@@ -137,8 +138,7 @@ cAddComment =
   let
     gen _ = Just $ AddComment <$> utf8Gen <*> utf8Gen
 
-    exe (AddComment t c) = do
-      liftIO . print $ "Adding topic '" <> show t <> "', comment: '" <> show c <> "'"
+    exe (AddComment t c) =
       lift $ post ("/" <> t <> "/add") (LBS.fromStrict c)
 
     callbacks =
@@ -168,8 +168,16 @@ utf8Gen = Gen.utf8 (Range.linear 1 100) Gen.alphaNum
 propFirstApp :: Env -> Property
 propFirstApp env =
   property $ do
+    liftIO $ nukeDb env
     commands <- forAll $
       Gen.sequential (Range.linear 1 100) initialState [cListTopics, cAddComment]
     let session :: PropertyT WaiSession ()
         session =  executeSequential initialState commands
     hoist (`runWaiSession` app env) session
+
+nukeDb :: Env -> IO ()
+nukeDb env = do
+  let
+    q = "DELETE FROM comments"
+    conn = dbConn . envDB $ env
+  Sql.execute_ conn q

@@ -141,6 +141,7 @@ test-suite level42-state-machine-tests
                      , http-types == 0.9.*
                      , level42
                      , mmorph >= 1.0 && <1.2
+                     , sqlite-simple == 0.4.*
                      , tasty == 0.11.*
                      , tasty-hedgehog >= 0.1 && < 0.2
                      , text == 1.2.*

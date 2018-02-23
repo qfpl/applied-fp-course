@@ -18,8 +18,8 @@ mkDerivation {
   executableHaskellDepends = [ base ];
   testHaskellDepends = [
     aeson async base bytestring containers directory doctest hedgehog
-    hspec hspec-wai http-types mmorph mtl tasty tasty-hedgehog text
-    transformers wai wai-extra warp
+    hspec hspec-wai http-types mmorph mtl sqlite-simple tasty
+    tasty-hedgehog text transformers wai wai-extra warp
   ];
   description = "Simplest of web apps";
   license = stdenv.lib.licenses.bsd3;
