@@ -56,7 +56,7 @@ runApp = error "runApp needs re-implementing"
 -- 2) Attempt to initialise the database.
 -- 3) Combine the results into a tuple
 --
--- The filename for our application config is: "appconfig.json"
+-- Our application configuration is defined in Conf.hs
 --
 prepareAppReqs
   :: IO ( Either StartUpError DB.FirstAppDB )
