@@ -183,11 +183,6 @@ script:
 
         if [ $CABALVER != "2.0" ]
         then
-          SRC_TGZ=$PKGVER.tar.gz
-          cd dist
-          tar zxfv "$SRC_TGZ"
-          cd "$PKGVER"
-
           for l in $(ls -d1 level*)
           do
             cd $l
