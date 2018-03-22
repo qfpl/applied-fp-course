@@ -185,8 +185,8 @@ script:
           PKGVER=$(cabal info . | awk '{print $2;exit}')
         
           cabal sandbox init
-          cabal configure --enable-tests --ghc-options -O0
           cabal install --only-dependencies
+          cabal configure --enable-tests --ghc-options -O0
           cabal build
       
           cd $ORIGDIR
