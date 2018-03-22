@@ -69,7 +69,7 @@ library
                        -ferror-spans
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.11
+  build-depends:       base >=4.7 && <4.12
                      , wai == 3.2.*
                      , warp == 3.2.*
                      , http-types == 0.9.*
@@ -93,7 +93,7 @@ executable level05-exe
   main-is:             Main.hs
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.11
+  build-depends:       base >=4.7 && <4.12
                      , level05
 
   -- Directories containing source files.
@@ -107,7 +107,7 @@ test-suite level05-tests
   type:                exitcode-stdio-1.0
   hs-source-dirs:      tests
   main-is:             Test.hs
-  build-depends:       base >= 4.7 && <=4.11
+  build-depends:       base >= 4.7 && <=4.12
                      , level05
                      , wai == 3.2.*
                      , wai-extra == 3.0.*
