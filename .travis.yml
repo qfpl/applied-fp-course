@@ -177,6 +177,9 @@ script:
 
       if [ $CABALVER != "2.0" ]
       then
+
+        cabal sandbox init
+        
         for dir in $PACKAGES
         do
           cd $dir
@@ -184,7 +187,6 @@ script:
           travis_retry cabal update
           PKGVER=$(cabal info . | awk '{print $2;exit}')
         
-          cabal sandbox init
           cabal install --only-dependencies --enable-tests
           cabal configure --enable-tests --ghc-options -O0
           cabal build
