@@ -183,9 +183,10 @@ script:
           echo "Processing $dir"
           travis_retry cabal update
           PKGVER=$(cabal info . | awk '{print $2;exit}')
-
         
+          cabal sandbox init
           cabal configure --enable-tests --ghc-options -O0
+          cabal install --only-dependencies
           cabal build
       
           cd $ORIGDIR
