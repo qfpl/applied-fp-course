@@ -123,4 +123,4 @@ test-suite doctests
   hs-source-dirs:      tests
   build-depends:       base
                      , level05
-                     , doctest >= 0.11 && < 0.14
+                     , doctest >= 0.11 && <= 0.15

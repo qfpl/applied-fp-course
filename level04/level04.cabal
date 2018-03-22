@@ -128,5 +128,5 @@ test-suite doctests
   main-is:             doctests.hs
   hs-source-dirs:      tests
   build-depends:       base
-                     , doctest >= 0.11 && < 0.14
+                     , doctest >= 0.11 && <= 0.15
                      , semigroups >= 0.18
