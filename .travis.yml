@@ -166,7 +166,7 @@ install:
 
 script:
 - |
-  set -x
+  set -ex
   case "$BUILD" in
     stack)
       stack --no-terminal $ARGS build --no-run-benchmarks --haddock --no-haddock-deps
@@ -179,12 +179,25 @@ script:
         cd $dir
         echo "Processing $dir"
         PKGVER=$(cabal info . | awk '{print $2;exit}')
-        SRC_TGZ=$PKGVER.tar.gz
-        cd dist
-        tar zxfv "$SRC_TGZ"
-        cd "$PKGVER"
-        cabal new-configure --project-file="cabal.project" --enable-tests --ghc-options -O0
-        cabal new-build --project-file="cabal.project" all
+
+        if [ $CABALVER != "2.0" ]
+        then
+          SRC_TGZ=$PKGVER.tar.gz
+          cd dist
+          tar zxfv "$SRC_TGZ"
+          cd "$PKGVER"
+
+          for l in $(ls -d1 level*)
+          do
+            cd $l
+            cabal configure --enable-tests --ghc-options -O0
+            cabal build
+            cd ..
+          done
+        else
+          cabal new-configure --project-file="cabal.project" --enable-tests --ghc-options -O0
+          cabal new-build --project-file="cabal.project" all
+        fi
         cd $ORIGDIR
       done
       ;;

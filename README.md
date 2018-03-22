@@ -4,8 +4,6 @@
 
 <img src="https://i.imgur.com/0h9dFhl.png" height="400" width="640" />
 
-## * Beta Release *
-
 This is a brand new course, so there are going to be rough edges. We invite you to submit issues or
 pull requests if you find errors or have suggestions on how to improve it.
 
