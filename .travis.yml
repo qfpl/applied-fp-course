@@ -178,6 +178,7 @@ script:
       do
         cd $dir
         echo "Processing $dir"
+        travis_retry cabal update
         PKGVER=$(cabal info . | awk '{print $2;exit}')
 
         if [ $CABALVER != "2.0" ]
