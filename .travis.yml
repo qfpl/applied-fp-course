@@ -174,28 +174,26 @@ script:
     cabal)
 
       ORIGDIR=$(pwd)
-      for dir in $PACKAGES
-      do
-        cd $dir
-        echo "Processing $dir"
-        travis_retry cabal update
-        PKGVER=$(cabal info . | awk '{print $2;exit}')
 
-        if [ $CABALVER != "2.0" ]
-        then
-          for l in $(ls -d1 level*)
-          do
-            cd $l
-            cabal configure --enable-tests --ghc-options -O0
-            cabal build
-            cd ..
-          done
-        else
-          cabal new-configure --project-file="cabal.project" --enable-tests --ghc-options -O0
-          cabal new-build --project-file="cabal.project" all
-        fi
-        cd $ORIGDIR
-      done
+      if [ $CABALVER != "2.0" ]
+      then
+        for dir in $PACKAGES
+        do
+          cd $dir
+          echo "Processing $dir"
+          travis_retry cabal update
+          PKGVER=$(cabal info . | awk '{print $2;exit}')
+
+        
+          cabal configure --enable-tests --ghc-options -O0
+          cabal build
+      
+          cd $ORIGDIR
+        done
+      else
+        cabal new-configure --project-file="cabal.project" --enable-tests --ghc-options -O0
+        cabal new-build --project-file="cabal.project" all
+      fi
       ;;
   esac
   set +ex
