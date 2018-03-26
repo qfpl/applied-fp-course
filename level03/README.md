@@ -36,7 +36,7 @@ To load the tests in the REPL:
 $ cabal repl level03-tests
 
 # Stack
-$ stack ghci level03:level03-tests
+$ stack ghci level03:test:level03-tests
 ```
 
 To run the tests in the repl:
