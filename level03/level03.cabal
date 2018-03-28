@@ -104,7 +104,7 @@ test-suite level03-tests
    type:                exitcode-stdio-1.0
    hs-source-dirs:      tests
    main-is:             Test.hs
-   build-depends:       base >= 4.7 && <=4.12
+   build-depends:       base >= 4.7 && <4.12
                       , level03
                       , wai == 3.2.*
                       , wai-extra == 3.0.*
