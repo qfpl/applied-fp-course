@@ -35,12 +35,12 @@ matrix:
   include:
   # We grab the appropriate GHC and cabal-install versions from hvr's PPA. See:
   # https://github.com/hvr/multi-ghc-travis
-  - env: BUILD=cabal GHCVER=7.10.3 CABALVER=1.22 HAPPYVER=1.19.5 ALEXVER=3.1.7
+  - env: BUILD=cabal GHCVER=7.10.3 CABALVER=2.0 HAPPYVER=1.19.5 ALEXVER=3.1.7
     compiler: ": #GHC 7.10.3"
-    addons: {apt: {packages: [cabal-install-1.22,ghc-7.10.3,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
-  - env: BUILD=cabal GHCVER=8.0.2 CABALVER=1.24 HAPPYVER=1.19.5 ALEXVER=3.1.7
+    addons: {apt: {packages: [cabal-install-2.0,ghc-7.10.3,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
+  - env: BUILD=cabal GHCVER=8.0.2 CABALVER=2.0 HAPPYVER=1.19.5 ALEXVER=3.1.7
     compiler: ": #GHC 8.0.2"
-    addons: {apt: {packages: [cabal-install-1.24,ghc-8.0.2,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
+    addons: {apt: {packages: [cabal-install-2.0,ghc-8.0.2,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
   - env: BUILD=cabal GHCVER=8.2.2 CABALVER=2.0 HAPPYVER=1.19.5 ALEXVER=3.1.7
     compiler: ": #GHC 8.2.2"
     addons: {apt: {packages: [cabal-install-2.0,ghc-8.2.2,happy-1.19.5,alex-3.1.7], sources: [hvr-ghc]}}
@@ -166,7 +166,7 @@ install:
 
 script:
 - |
-  set -x
+  set -ex
   case "$BUILD" in
     stack)
       stack --no-terminal $ARGS build --no-run-benchmarks --haddock --no-haddock-deps
@@ -174,19 +174,29 @@ script:
     cabal)
 
       ORIGDIR=$(pwd)
-      for dir in $PACKAGES
-      do
-        cd $dir
-        echo "Processing $dir"
-        PKGVER=$(cabal info . | awk '{print $2;exit}')
-        SRC_TGZ=$PKGVER.tar.gz
-        cd dist
-        tar zxfv "$SRC_TGZ"
-        cd "$PKGVER"
+
+      if [ $CABALVER != "2.0" ]
+      then
+
+        cabal sandbox init
+
+        for dir in $PACKAGES
+        do
+          cd $dir
+          echo "Processing $dir"
+          travis_retry cabal update
+          PKGVER=$(cabal info . | awk '{print $2;exit}')
+        
+          cabal install --only-dependencies --enable-tests
+          cabal configure --enable-tests --ghc-options -O0
+          cabal build
+      
+          cd $ORIGDIR
+        done
+      else
         cabal new-configure --project-file="cabal.project" --enable-tests --ghc-options -O0
         cabal new-build --project-file="cabal.project" all
-        cd $ORIGDIR
-      done
+      fi
       ;;
   esac
   set +ex

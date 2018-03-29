@@ -72,16 +72,16 @@ library
                        -ferror-spans
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.11
+  build-depends:       base >=4.7 && <4.12
                      , wai == 3.2.*
                      , warp == 3.2.*
                      , http-types == 0.9.*
                      , bytestring == 0.10.*
                      , text == 1.2.*
-                     , optparse-applicative >= 0.13 && <= 0.15
+                     , optparse-applicative >= 0.13 && < 0.15
                      , aeson == 1.*
                      , mtl == 2.2.*
-                     , time >= 1.4 && <= 1.9
+                     , time >= 1.4 && < 1.10
                      , sqlite-simple == 0.4.*
                      , sqlite-simple-errors == 0.6.*
                      , semigroups >= 0.18
@@ -104,7 +104,7 @@ executable level07-exe
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.11
+  build-depends:       base >=4.7 && <4.12
                      , level07
 
   -- Base language which the package is written in.
@@ -115,7 +115,7 @@ test-suite level07-tests
   type:                exitcode-stdio-1.0
   hs-source-dirs:      tests
   main-is:             Test.hs
-  build-depends:       base >= 4.7 && <=4.11
+  build-depends:       base >= 4.7 && <4.12
                      , level07
                      , wai == 3.2.*
                      , wai-extra == 3.0.*
@@ -133,4 +133,4 @@ test-suite doctests
   main-is:             doctests.hs
   hs-source-dirs:      tests
   build-depends:       base
-                     , doctest >= 0.11 && < 0.14
+                     , doctest >= 0.11 && < 0.16
