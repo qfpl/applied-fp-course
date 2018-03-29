@@ -33,7 +33,8 @@ import           Data.Text                          (Text)
 
 import           Data.List                          (stripPrefix)
 import           Data.Maybe                         (fromMaybe)
-import           Data.Monoid                        (Last (Last), (<>))
+import           Data.Monoid                        (Last (Last))
+import           Data.Semigroup                     (Semigroup ((<>)))
 
 import           Data.Aeson                         (FromJSON (..), ToJSON,
                                                      (.:?))
@@ -206,17 +207,21 @@ data PartialConf = PartialConf
   , pcDBFilePath :: Last DBFilePath
   }
 
--- We now define our ``Monoid`` instance for ``PartialConf``. Allowing us to
--- define our always empty configuration, which would always fail our
--- requirements. More interestingly, we define our ``mappend`` function to lean
--- on the ``Monoid`` instance for Last to always get the last value.
-instance Monoid PartialConf where
-  mempty = PartialConf mempty mempty
-
-  mappend a b = PartialConf
+-- Before we can define our ``Monoid`` instance for ``PartialConf``, we'll have
+-- to define a Semigroup instance. We define our ``(<>)`` function to lean
+-- on the ``Semigroup`` instance for Last to always get the last value.
+instance Semigroup PartialConf where
+  a <> b = PartialConf
     { pcPort       = pcPort a <> pcPort b
     , pcDBFilePath = pcDBFilePath a <> pcDBFilePath b
     }
+
+-- We now define our ``Monoid`` instance for ``PartialConf``. Allowing us to
+-- define our always empty configuration, which would always fail our
+-- requirements. We just define `mappend` to be an alias of ``(<>)``
+instance Monoid PartialConf where
+  mempty = PartialConf mempty mempty
+  mappend = (<>)
 
 -- When it comes to reading the configuration options from the command-line, we
 -- use the 'optparse-applicative' package. This part of the exercise has already

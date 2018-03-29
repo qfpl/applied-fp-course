@@ -72,7 +72,7 @@ library
                        -ferror-spans
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.12
+  build-depends:       base >=4.8 && <4.12
                      , wai == 3.2.*
                      , warp == 3.2.*
                      , http-types == 0.9.*
@@ -105,7 +105,7 @@ executable level06-exe
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.12
+  build-depends:       base >=4.8 && <4.12
                      , level06
 
   -- Base language which the package is written in.
@@ -116,7 +116,7 @@ test-suite level06-tests
   type:                exitcode-stdio-1.0
   hs-source-dirs:      tests
   main-is:             Test.hs
-  build-depends:       base >= 4.7 && <4.12
+  build-depends:       base >= 4.8 && <4.12
                      , level06
                      , mtl == 2.2.*
                      , wai == 3.2.*

@@ -61,7 +61,7 @@ library
                        -ferror-spans
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.12
+  build-depends:       base >=4.8 && <4.12
                      , wai == 3.2.*
                      , warp == 3.2.*
                      , http-types == 0.9.*
@@ -86,7 +86,7 @@ executable level02-exe
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.12
+  build-depends:       base >=4.8 && <4.12
                      , level02
 
   -- Directories containing source files.
