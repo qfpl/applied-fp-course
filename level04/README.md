@@ -32,7 +32,7 @@ NB: The PostgreSQL example module is in ``src/FirstApp/DB/PostgreSQL.hs``.
 
 # Useful Typeclasses
 
-## [Traversable](hackage.haskell.org/package/base/docs/Data-Traversable.html)
+## [Traversable](https://hackage.haskell.org/package/base/docs/Data-Traversable.html)
 
 This typeclass provides a function called ``traverse``, which is for
 traversing a structure from left to right, performing an action on each
@@ -54,7 +54,7 @@ this one.
 
 Can you explain why you replace ``f`` with ``Either e`` and not ``Either``?
 
-## [Bifunctor](hackage.haskell.org/package/base/docs/Data-Bifunctor.html)
+## [Bifunctor](https://hackage.haskell.org/package/base/docs/Data-Bifunctor.html)
 
 As you may be able to work out from the name, this typeclass describes
 structures that have two things we can treat like a ``Functor``. The ones
