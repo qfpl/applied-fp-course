@@ -84,8 +84,8 @@ library
                      , time >= 1.4 && < 1.10
                      , sqlite-simple == 0.4.*
                      , sqlite-simple-errors == 0.6.*
-                     , semigroups >= 0.18
-                     , transformers >= 0.4
+                     , semigroups == 0.18.*
+                     , transformers >= 0.4 && < 0.6
 
   -- Directories containing source files.
   hs-source-dirs:      src
