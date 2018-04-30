@@ -4,8 +4,8 @@
 #
 # For more information, see https://github.com/hvr/multi-ghc-travis
 #
+language: c
 sudo: false
-language: generic
 
 git:
   submodules: false  # whether to recursively clone submodules
@@ -164,8 +164,8 @@ script:
         ;;
       cabal)
         # test that source-distributions can be generated
-        # (cd "." && cabal sdist)
-        # mv "."/dist/applied-fp-course-*.tar.gz ${DISTDIR}/
+        (cd "." && cabal sdist)
+        mv "."/dist/applied-fp-course-*.tar.gz ${DISTDIR}/
         cd ${DISTDIR} || false
         find . -maxdepth 1 -name '*.tar.gz' -exec tar -xvf '{}' \;
         "printf 'packages: applied-fp-course-*/*.cabal\\n' > cabal.project"
