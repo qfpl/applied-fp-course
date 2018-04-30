@@ -172,17 +172,6 @@ executable level01-exe
   -- Base language which the package is written in.
   default-language:    Haskell2010
 
-executable level01-exe
-  -- .hs or .lhs file containing the Main module.
-  main-is:             Level01.hs
-  -- Directories containing source files.
-  hs-source-dirs:      exe
-  -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.12
-                     , applied-fp-course
-  -- Base language which the package is written in.
-  default-language:    Haskell2010
-
 executable level02-exe
   -- .hs or .lhs file containing the Main module.
   main-is:             Level02.hs

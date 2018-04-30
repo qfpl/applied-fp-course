@@ -170,20 +170,20 @@ script:
         find . -maxdepth 1 -name '*.tar.gz' -exec tar -xvf '{}' \;
         "printf 'packages: applied-fp-course-*/*.cabal\\n' > cabal.project"
         cat cabal.project
-        this builds all libraries and executables (without tests/benchmarks)
+        # this builds all libraries and executables (without tests/benchmarks)
         cabal new-build -w ${HC} --disable-tests --disable-benchmarks all
 
-        Build with installed constraints for packages in global-db
+        # Build with installed constraints for packages in global-db
         if $INSTALLED; then echo cabal new-build -w ${HC} --disable-tests --disable-benchmarks $(${HCPKG} list --global --simple-output --names-only | sed 's/\([a-zA-Z0-9-]\{1,\}\) */--constraint="\1 installed" /g') all | sh; else echo "Not building with installed constraints"; fi
 
-        build & run tests, build benchmarks
+        # build & run tests, build benchmarks
         cabal new-build -w ${HC} ${TEST} ${BENCH} all
         if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${TEST} ${BENCH} all; fi
 
-        cabal check
+        # cabal check
         (cd applied-fp-course-* && cabal check)
 
-        haddock
+        # haddock
         rm -rf ./dist-newstyle
         if $HADDOCK; then cabal new-haddock -w ${HC} ${TEST} ${BENCH} all; else echo "Skipping haddock generation";fi
         ;;
