@@ -119,7 +119,6 @@ before_install:
 
 install:
   - echo "$(${HC} --version) [$(${HC} --print-project-git-commit-id 2> /dev/null || echo '?')]"
-  - cabal --version
   - BENCH=${BENCH---enable-benchmarks}
   - TEST=${TEST---enable-tests}
   - HADDOCK=${HADDOCK-true}
@@ -137,6 +136,7 @@ install:
         stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
         ;;
       cabal)
+        cabal --version
         travis_retry cabal update -v
         "sed -i.bak 's/^jobs:/-- jobs:/' ${HOME}/.cabal/config"
         rm -fv cabal.project cabal.project.local
@@ -164,17 +164,23 @@ script:
         ;;
       cabal)
         # test that source-distributions can be generated
-        (cd "." && cabal sdist)
-        mv "."/dist/applied-fp-course-*.tar.gz ${DISTDIR}/
+        # (cd "." && cabal sdist)
+        # mv "."/dist/applied-fp-course-*.tar.gz ${DISTDIR}/
         cd ${DISTDIR} || false
         find . -maxdepth 1 -name '*.tar.gz' -exec tar -xvf '{}' \;
         "printf 'packages: applied-fp-course-*/*.cabal\\n' > cabal.project"
         cat cabal.project
         # this builds all libraries and executables (without tests/benchmarks)
+        cabal new-configure -w ${HC} --enable-tests --ghc-options -O0
         cabal new-build -w ${HC} --disable-tests --disable-benchmarks all
 
         # Build with installed constraints for packages in global-db
-        if $INSTALLED; then echo cabal new-build -w ${HC} --disable-tests --disable-benchmarks $(${HCPKG} list --global --simple-output --names-only | sed 's/\([a-zA-Z0-9-]\{1,\}\) */--constraint="\1 installed" /g') all | sh; else echo "Not building with installed constraints"; fi
+        if $INSTALLED;
+        then
+          echo cabal new-build -w ${HC} --disable-tests --disable-benchmarks $(${HCPKG} list --global --simple-output --names-only | sed 's/\([a-zA-Z0-9-]\{1,\}\) */--constraint="\1 installed" /g') all | sh;
+        else
+          echo "Not building with installed constraints";
+        fi
 
         # build & run tests, build benchmarks
         cabal new-build -w ${HC} ${TEST} ${BENCH} all
