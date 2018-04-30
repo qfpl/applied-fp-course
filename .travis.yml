@@ -119,6 +119,12 @@ before_install:
 
 install:
   - echo "$(${HC} --version) [$(${HC} --print-project-git-commit-id 2> /dev/null || echo '?')]"
+  - cabal --version
+  - BENCH=${BENCH---enable-benchmarks}
+  - TEST=${TEST---enable-tests}
+  - HADDOCK=${HADDOCK-true}
+  - INSTALLED=${INSTALLED-true}
+  - GHCHEAD=${GHCHEAD-false}
   - |
     case "$BUILD" in
       stack)
@@ -131,12 +137,6 @@ install:
         stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
         ;;
       cabal)
-        cabal --version
-        BENCH=${BENCH---enable-benchmarks}
-        TEST=${TEST---enable-tests}
-        HADDOCK=${HADDOCK-true}
-        INSTALLED=${INSTALLED-true}
-        GHCHEAD=${GHCHEAD-false}
         travis_retry cabal update -v
         "sed -i.bak 's/^jobs:/-- jobs:/' ${HOME}/.cabal/config"
         rm -fv cabal.project cabal.project.local
