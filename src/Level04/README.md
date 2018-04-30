@@ -20,15 +20,15 @@ Also we will not necessarily provide all of the required imports any more, there
 may be other things you have to bring into scope.
 
 The steps for this level:
-1) ``src/FirstApp/DB/Types.hs``
-2) ``src/FirstApp/Types.hs``
-3) ``src/FirstApp/DB.hs``
-4) ``src/FirstApp/Main.hs``
+1) ``src/Level04/DB/Types.hs``
+2) ``src/Level04/Types.hs``
+3) ``src/Level04/DB.hs``
+4) ``src/Level04/Main.hs``
 
 For the sake of simplicity, any configuration requirements will be hardcoded in
-``FirstApp/Conf.hs`` for now. We will return to that in the next level.
+``Level04/Conf.hs`` for now. We will return to that in the next level.
 
-NB: The PostgreSQL example module is in ``src/FirstApp/DB/PostgreSQL.hs``.
+NB: The PostgreSQL example module is in ``src/Level04/DB/PostgreSQL.hs``.
 
 # Useful Typeclasses
 
@@ -44,7 +44,7 @@ traverse :: (Applicative f, Traversable t) => (a -> f b) -> t a -> f (t b)
 
 This is very useful when you want to perform an action on every element of a
 list, but that action will return the new result in a some ``Applicative``
-context. 
+context.
 
 To help build some intuition for how this function can be useful, write out
 the type signature for ``traverse``, but replace the ``f`` with ``Either e``,

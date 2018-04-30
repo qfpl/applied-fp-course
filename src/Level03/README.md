@@ -23,6 +23,14 @@ $ cabal configure --enable-tests
 $ cabal test
 ```
 
+If you're using Cabal 2.0 or greater. You can check your cabal version with `$ cabal --version`:
+
+```shell
+$ cabal new-configure --enable-tests
+$ cabal new-build --enable-tests
+$ cabal new-test
+```
+
 For a stack environment:
 
 ```shell
@@ -33,7 +41,7 @@ To load the tests in the REPL:
 
 ```shell
 # Cabal
-$ cabal repl level03-tests
+$ cabal new-repl level03-tests
 
 # Stack
 $ stack ghci level03:test:level03-tests
@@ -45,7 +53,7 @@ To run the tests in the repl:
 *Main> :main
 ```
 
-Start in ``tests/Test.hs``.
+Start in ``tests/level03-tests/Level03Tests.hs``.
 
 [HSpec]: (http://hspec.github.io/)
 [hspec-wai]: (https://hackage.haskell.org/package/hspec-wai)

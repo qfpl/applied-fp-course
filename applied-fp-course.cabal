@@ -160,6 +160,7 @@ test-suite doctests
   build-depends:       base
                      , doctest >= 0.11 && < 0.16
 
+-- Level Executables
 executable level01-exe
   -- .hs or .lhs file containing the Main module.
   main-is:             Level01.hs
