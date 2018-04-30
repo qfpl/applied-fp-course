@@ -124,6 +124,7 @@ install:
   - HADDOCK=${HADDOCK-true}
   - INSTALLED=${INSTALLED-true}
   - GHCHEAD=${GHCHEAD-false}
+  - DISTDIR=$(mktemp -d /tmp/dist-test.XXXX)
   - |
     case "$BUILD" in
       stack)
