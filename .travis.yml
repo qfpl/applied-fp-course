@@ -95,6 +95,7 @@ matrix:
     os: osx
 
   allow_failures:
+  #- env: BUILD=stack ARGS="--resolver lts-6"
   - env: BUILD=stack ARGS="--resolver nightly"
 
 before_install:
@@ -146,7 +147,7 @@ install:
 # any command which exits with a non-zero exit code causes the build to fail.
 script:
   # Build with stack
-  - if [[ "$BUILD" == "stack" ]]; then stack --no-terminal $ARGS build --no-run-benchmarks --haddock --no-haddock-deps; fi
+  - if [[ "$BUILD" == "stack" ]]; then stack --no-terminal $ARGS build --no-run-benchmarks; fi
   # Build with cabal, using individual commands so we can see which part failed.
   - if [[ "$BUILD" == "cabal" ]]; then cabal new-configure -w ${HC} --enable-tests --ghc-options -O0; fi
   - if [[ "$BUILD" == "cabal" ]]; then cabal new-build -w ${HC} all; fi
