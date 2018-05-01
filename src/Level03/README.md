@@ -41,10 +41,10 @@ To load the tests in the REPL:
 
 ```shell
 # Cabal
-$ cabal new-repl level03-tests
+$ cabal new-repl app-fp-tests
 
 # Stack
-$ stack ghci level03:test:level03-tests
+$ stack ghci applied-fp-course:test:app-fp-tests
 ```
 
 To run the tests in the repl:

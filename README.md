@@ -41,10 +41,13 @@ IRC on [Freenode](https://freenode.net/) in #qfpl or #fp-course.
 ### Setup build tools:
 
 Each level is a self-contained Haskell module, containing incomplete, or as yet
-undefined, data types and functions. We recommend using either a cabal sandbox,
-or a ``nix-shell``, depending on your preference.
+undefined, data types and functions.
+
+We recommend using either a cabal sandbox, or a ``nix-shell``, depending on your
+preference.
 
 To use a sandbox:
+
 ```bash
 $ cd path/to/applied-fp-course
 $ cabal sandbox init
@@ -63,7 +66,7 @@ find out), then you can use the ``new-*`` commands and you don't need a sandbox:
 ```bash
 $ cd path/to/applied-fp-course
 $ cabal new-configure --enable-tests
-$ cabal new-build
+$ cabal new-build <levelN>-exe
 $ $EDITOR src/<LevelN>/README.md
 ```
 
@@ -73,8 +76,9 @@ To use the Nix Shell:
 ```bash
 $ cd path/to/applied-fp-course
 $ nix-shell
-$ cabal new-build
+$ cabal new-build <levelN>-exe
 $ $EDITOR src/<LevelN>/README.md
+
 ```
 Once that completes you will be in a ``nix-shell`` environment with all the
 tools required to build the application for that level. Note that the
@@ -101,8 +105,8 @@ free [WebChat client](https://webchat.freenode.net).
 
 #### Subsequent lessons may contain spoilers, don't cheat yourself out of the experience!
 
-There is a ``README.md`` file in each Level project that will provide instructions about
-what the goal is for that specific level.
+There is a ``README.md`` file in each Level module folder that will provide
+instructions about what the goal is for that specific level.
 
 * Level 01 : Simple Hello World web app.
 * Level 02 : Define our application spec with types!
