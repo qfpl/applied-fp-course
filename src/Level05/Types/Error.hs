@@ -1,6 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
-
-module Level05.Types.Error (Error(..), nonEmptyText) where
+module Level05.Types.Error
+  ( Error(..)
+  , nonEmptyText
+  ) where
 
 import           Data.Text                          (Text)
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
@@ -9,7 +11,6 @@ data Error
   = UnknownRoute
   | EmptyCommentText
   | EmptyTopic
-  -- This is our new error constructor.
   | DBError SQLiteResponse
   deriving (Eq, Show)
 

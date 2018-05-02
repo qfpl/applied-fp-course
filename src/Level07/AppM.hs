@@ -1,7 +1,7 @@
+{-# LANGUAGE DeriveFunctor         #-}
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE InstanceSigs          #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE DeriveFunctor #-}
 module Level07.AppM where
 
 import           Control.Monad.Except   (MonadError (..))
@@ -10,91 +10,54 @@ import           Control.Monad.Reader   (MonadReader (..))
 
 import           Data.Text              (Text)
 
-import           Level07.DB.Types      (FirstAppDB)
-import           Level07.Types         (Conf, Error)
+import           Level07.Types          (Conf, FirstAppDB)
+import           Level07.Types.Error    (Error)
 
-import           Data.Bifunctor         (first)
-
+-- First, let's clean up our (Conf,FirstAppDB) with an application Env type. We
+-- will add a general purpose logging function as well. Remember that functions
+-- are values, we're able to pass them around and place them on records like any
+-- other type.
 data Env = Env
   { envLoggingFn :: Text -> AppM ()
   , envConfig    :: Conf
   , envDB        :: FirstAppDB
   }
 
--- We're going to add a very useful abstraction to our application. We'll
--- automate away the explicit error handling and inspection of our Either values
--- while preserving the type-level information that tells us what can go wrong.
+-- It would be nice to remove the need to pass around our Env to every function
+-- that needs it. Wouldn't it be great to have our functions run where we could
+-- simply ask for the current Env?
 --
--- To do this we will expand the capabilities of our AppM by including the
--- Either type in our definition. We will also rework our Monad instance to stop
--- processing when it encounters a Left value.
+-- We can create this by wrapping a function in a newtype like so:
 --
--- This will work in the same manner as the Functor/Applicative/Monad
--- instances for Either, with functions being applied to the Right value and
--- everything been ignored if a Left value is encountered, returning that Left
--- value.
---
--- f <$> (Left e)  = Left e
--- f <$> (Right a) = Right (f a)
---
--- (Left e)  >>= f = Left e
--- (Right a) >>= f = f a
---
--- This means when we have a function doing this sort of shuffling:
---
--- foo :: IO (Either Error Value)
--- foo = do
---   aE <- mightFail
---   either (pure . Left) needsAButMightFail aE
---   where
---     mightFail :: IO (Either Error Int)
---     alsoMightFail :: Int -> IO (Either Error Value)
---
--- We can wrap our functions with AppM and we can work directly with the
--- values we expect to appear on the happy path, knowing that if the sad path is
--- encountered, the structure of our AppM will automatically handle it for us.
-
-newtype AppM a = AppM (Env -> IO (Either Error a))
+-- This gives us a type that declares this function has access to our Env, and
+-- will do something involving IO. It's another form of documentation and type
+-- safety. AppM only has one definition and so we can easily understand what it
+-- implies when used in our application.
+newtype AppM a = AppM ( Env -> IO (Either Error a) )
   deriving Functor
 
--- The runAppM function only needs to change the final return type as it has an
--- 'Either Error' and not just the 'a'.
 runAppM
   :: AppM a
   -> Env
   -> IO (Either Error a)
-runAppM (AppM m) =
-  m
-
--- Copy over your previously completed definitions.
+runAppM =
+  error "runAppM not implemented"
 
 instance Applicative AppM where
   pure :: a -> AppM a
-  pure  = error "pure for AppM not implemented"
+  pure = error "pure for AppM not implemented"
 
   (<*>) :: AppM (a -> b) -> AppM a -> AppM b
-  (<*>) = error "ap for AppM not implemented"
+  (<*>) = error "spaceship for AppM not implemented"
 
 instance Monad AppM where
   return :: a -> AppM a
   return = error "return for AppM not implemented"
 
+  -- When it comes to running functions in AppM as a Monad, this will take care
+  -- of passing the Env from one function to the next.
   (>>=) :: AppM a -> (a -> AppM b) -> AppM b
-  (>>=)  = error "bind for AppM not implemented"
-
-instance MonadIO AppM where
-  liftIO :: IO a -> AppM a
-  liftIO = error "liftIO for AppM not implemented"
-
-instance MonadReader Env AppM where
-  ask :: AppM Env
-  ask = error "ask for AppM not implemented"
-
-  local :: (Env -> Env) -> AppM a -> AppM a
-  local = error "local for AppM not implemented"
-
-  reader :: (Env -> a) -> AppM a
-  reader = error "reader for AppM not implemented"
+  (>>=) = error "bind for AppM not implemented"
 
 instance MonadError Error AppM where
   throwError :: Error -> AppM a
@@ -103,13 +66,26 @@ instance MonadError Error AppM where
   catchError :: AppM a -> (Error -> AppM a) -> AppM a
   catchError = error "catchError for AppM not implemented"
 
--- This is a helper function that will `lift` an Either value into our new AppM
--- by applying `throwError` to the Left value, and using `pure` to lift the
--- Right value into the AppM.
---
--- throwError :: MonadError e m => e -> m a
--- pure :: Applicative m => a -> m a
---
+instance MonadReader Env AppM where
+  -- Return the current Env from the AppM.
+  ask :: AppM Env
+  ask = error "ask for AppM not implemented"
+
+  -- Run a AppM inside of the current one using a modified Env value.
+  local :: (Env -> Env) -> AppM a -> AppM a
+  local = error "local for AppM not implemented"
+
+  -- This will run a function on the current Env and return the result.
+  reader :: (Env -> a) -> AppM a
+  reader = error "reader for AppM not implemented"
+
+instance MonadIO AppM where
+  -- Take a type of 'IO a' and lift it into our AppM.
+  liftIO :: IO a -> AppM a
+  liftIO = error "liftIO for AppM not implemented"
+
+-- Move on to ``src/Level07/DB.hs`` after this
+
 liftEither
   :: Either Error a
   -> AppM a

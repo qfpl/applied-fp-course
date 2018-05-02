@@ -13,7 +13,7 @@ import qualified System.Exit                as Exit
 
 import qualified Data.ByteString.Lazy.Char8 as LBS8
 
-import qualified FirstApp.Main              as Main
+import qualified Level03.Main              as Main
 
 doctests :: [FilePath]
 doctests =
@@ -21,8 +21,8 @@ doctests =
   , "src/Level03/Conf.hs"
   ]
 
-uniTests :: IO ()
-uniTests = do
+unitTests :: IO ()
+unitTests = do
   -- We need to setup our Application.
   let app' = pure Main.app
 

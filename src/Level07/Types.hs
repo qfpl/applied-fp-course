@@ -23,7 +23,7 @@ module Level07.Types
   , confPortToWai
   ) where
 
-import System.IO.Error (IOError)
+import           System.IO.Error                    (IOError)
 
 import           GHC.Generics                       (Generic)
 import           GHC.Word                           (Word16)
@@ -33,10 +33,11 @@ import           Data.Text                          (Text)
 
 import           Data.List                          (stripPrefix)
 import           Data.Maybe                         (fromMaybe)
-import           Data.Monoid                        (Last (..))
+import           Data.Monoid                        (Last (Last))
 import           Data.Semigroup                     (Semigroup ((<>)))
 
-import           Data.Aeson                         (ToJSON, FromJSON (..), (.:?))
+import           Data.Aeson                         (FromJSON (..), ToJSON,
+                                                     (.:?))
 import qualified Data.Aeson                         as A
 import qualified Data.Aeson.Types                   as A
 
@@ -45,7 +46,7 @@ import           Data.Time                          (UTCTime)
 import           Database.SQLite.Simple             (Connection)
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import           Level07.DB.Types                  (DbComment (..))
+import           Level07.DB.Types                  (DbComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
 import           Level07.Types.Error               (Error ( UnknownRoute
                                                            , EmptyCommentText
                                                            , EmptyTopic
@@ -210,9 +211,9 @@ data PartialConf = PartialConf
 -- to define a Semigroup instance. We define our ``(<>)`` function to lean
 -- on the ``Semigroup`` instance for Last to always get the last value.
 instance Semigroup PartialConf where
-  _a <> _b = PartialConf
-    { pcPort       = error "pcPort (<>) not implemented"
-    , pcDBFilePath = error "pcDBFilePath (<>) not implemented"
+  a <> b = PartialConf
+    { pcPort       = pcPort a <> pcPort b
+    , pcDBFilePath = pcDBFilePath a <> pcDBFilePath b
     }
 
 -- We now define our ``Monoid`` instance for ``PartialConf``. Allowing us to

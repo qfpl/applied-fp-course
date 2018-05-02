@@ -1,6 +1,7 @@
+{-# LANGUAGE OverloadedStrings          #-}
+{-# OPTIONS_GHC -fno-warn-missing-methods #-}
 {-# LANGUAGE DeriveGeneric              #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE OverloadedStrings          #-}
 module Level06.Types
   ( Error (..)
   , ConfigError (..)
@@ -8,7 +9,6 @@ module Level06.Types
   , Port (..)
   , DBFilePath (..)
   , Conf (..)
-  , FirstAppDB (..)
   , RqType (..)
   , ContentType (..)
   , Comment (..)
@@ -19,11 +19,9 @@ module Level06.Types
   , mkCommentText
   , getCommentText
   , renderContentType
-  , fromDbComment
   , confPortToWai
+  , fromDbComment
   ) where
-
-import           System.IO.Error                    (IOError)
 
 import           GHC.Generics                       (Generic)
 import           GHC.Word                           (Word16)
@@ -31,21 +29,21 @@ import           GHC.Word                           (Word16)
 import           Data.ByteString                    (ByteString)
 import           Data.Text                          (Text)
 
-import           Data.List                          (stripPrefix)
-import           Data.Maybe                         (fromMaybe)
-import           Data.Monoid                        (Last (Last))
+import           System.IO.Error                    (IOError)
+
+import           Data.Monoid                        (Last,
+                                                     Monoid (mappend, mempty))
 import           Data.Semigroup                     (Semigroup ((<>)))
 
-import           Data.Aeson                         (FromJSON (..), ToJSON,
-                                                     (.:?))
+import           Data.List                          (stripPrefix)
+import           Data.Maybe                         (fromMaybe)
+import           Data.Time                          (UTCTime)
+
+import           Data.Aeson                         (FromJSON (..), ToJSON)
 import qualified Data.Aeson                         as A
 import qualified Data.Aeson.Types                   as A
 
-import           Data.Time                          (UTCTime)
-
-import           Database.SQLite.Simple             (Connection)
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
-
 import           Level06.DB.Types                  (DbComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
 import           Level06.Types.Error               (Error ( UnknownRoute
                                                            , EmptyCommentText
@@ -108,6 +106,7 @@ instance ToJSON Comment where
 -- we would be okay with showing someone. However unlikely it may be, this is a
 -- nice method for separating out the back and front end of a web app and
 -- providing greater guarantees about data cleanliness.
+
 fromDbComment
   :: DbComment
   -> Either Error Comment
@@ -117,13 +116,21 @@ fromDbComment dbc =
       <*> (mkCommentText $ dbCommentComment dbc)
       <*> (pure          $ dbCommentTime dbc)
 
+-- We have to be able to:
+-- - Comment on a given topic
+-- - View a topic and its comments
+-- - List the current topics
+--
+-- To that end, we have the following types:
+--
+-- AddRq : Which needs to the target topic, and the body of the comment.
+-- ViewRq : Which needs the topic being requested.
+-- ListRq : Which lists all of the current topics.
 data RqType
   = AddRq Topic CommentText
   | ViewRq Topic
   | ListRq
 
--- Provide a type to list our response content types so we don't try to
--- do the wrong thing with what we meant to be used as text or JSON etc.
 data ContentType
   = PlainText
   | JSON
@@ -138,11 +145,14 @@ renderContentType JSON      = "application/json"
 -- Config Types
 -----------------
 
--- This is an alternative way of defining a `newtype`. You define it as a simple
--- record and this lets you specify an unwrapping function at the same time. Which
--- technique you choose is a matter for your specific needs and preference.
+-- This is an alternative way of defining a `newtype`. You define it as a record
+-- with a single field, this provides the unwrapping function for free. When
+-- defined using the other method, you must use pattern-matching or write a dedicated
+-- function in order to get the value out.
 --
 newtype Port = Port
+  -- You will notice we're using ``Word16`` as our type for the ``Port`` value.
+  -- This is because a valid port number can only be a 16bit unsigned integer.
   { getPort :: Word16 }
   deriving (Eq, Show)
 
@@ -150,32 +160,30 @@ newtype DBFilePath = DBFilePath
   { getDBFilePath :: FilePath }
   deriving (Eq, Show)
 
--- The ``Conf`` type will need:
+-- Add some fields to the ``Conf`` type:
 -- - A customisable port number: ``Port``
 -- - A filepath for our SQLite database: ``DBFilePath``
 data Conf = Conf
-  { port       :: Port
-  , dbFilePath :: DBFilePath
-  }
-  deriving Eq
 
 -- We're storing our Port as a Word16 to be more precise and prevent invalid
 -- values from being used in our application. However Wai is not so stringent.
 -- To accommodate this and make our lives a bit easier, we will write this
 -- helper function to take ``Conf`` value and convert it to an ``Int``.
+--
+-- We'll need to use a function called; ``fromIntegral``, to convert our
+-- ``Word16`` to an ``Int``. The type of this function is:
+--
+-- fromIntegral :: (Num b, Integral a) => a -> b
+--
 confPortToWai
   :: Conf
   -> Int
 confPortToWai =
-  fromIntegral . getPort . port
+  error "confPortToWai not implemented"
 
 -- Similar to when we were considering our application types, leave this empty
 -- for now and add to it as you go.
-data ConfigError
-  = MissingPort
-  | MissingDBFilePath
-  | JSONDecodeError String
-  | ConfigFileReadError IOError
+data ConfigError = ConfigError
   deriving Show
 
 -- Our application will be able to load configuration from both a file and
@@ -211,9 +219,9 @@ data PartialConf = PartialConf
 -- to define a Semigroup instance. We define our ``(<>)`` function to lean
 -- on the ``Semigroup`` instance for Last to always get the last value.
 instance Semigroup PartialConf where
-  a <> b = PartialConf
-    { pcPort       = pcPort a <> pcPort b
-    , pcDBFilePath = pcDBFilePath a <> pcDBFilePath b
+  _a <> _b = PartialConf
+    { pcPort       = error "pcPort (<>) not implemented"
+    , pcDBFilePath = error "pcDBFilePath (<>) not implemented"
     }
 
 -- We now define our ``Monoid`` instance for ``PartialConf``. Allowing us to
@@ -233,17 +241,4 @@ instance Monoid PartialConf where
 -- have to tell aeson how to go about converting the JSON into our PartialConf
 -- data structure.
 instance FromJSON PartialConf where
-  parseJSON = A.withObject "PartialConf" $ \o -> PartialConf
-    <$> parseToLast "port" Port o
-    <*> parseToLast "dbFilePath" DBFilePath o
-    where
-      parseToLast k c o =
-        Last . fmap c <$> o .:? k
-
--- We have a data type to simplify passing around the information we need to run
--- our database queries. This also allows things to change over time without
--- having to rewrite all of the functions that need to interact with DB related
--- things in different ways.
-newtype FirstAppDB = FirstAppDB
-  { dbConn  :: Connection
-  }
+  parseJSON = error "parseJSON for PartialConf not implemented yet."

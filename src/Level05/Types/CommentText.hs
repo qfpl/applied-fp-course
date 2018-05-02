@@ -1,15 +1,14 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-
 module Level05.Types.CommentText
   ( CommentText
   , mkCommentText
   , getCommentText
   ) where
 
-import Level05.Types.Error (Error(EmptyCommentText), nonEmptyText)
+import           Data.Aeson          (ToJSON)
+import           Data.Text           (Text)
 
-import Data.Text (Text)
-import Data.Aeson (ToJSON)
+import           Level05.Types.Error (Error (EmptyCommentText), nonEmptyText)
 
 newtype CommentText = CommentText Text
   deriving (Show, ToJSON)

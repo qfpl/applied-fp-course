@@ -1,23 +1,9 @@
 module Level07.DB.Types where
 
+import           Data.Text                      (Text)
 import           Data.Time                      (UTCTime)
 
-import           Data.Text                      (Text)
-
-import           Database.SQLite.Simple         (Connection)
 import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
-
-newtype Table = Table
-  { getTableName :: Text }
-  deriving Show
-
--- We have a data type to simplify passing around the information we need to run
--- our database queries. This also allows things to change over time without
--- having to rewrite all of the functions that need to interact with DB related
--- things in different ways.
-data FirstAppDB = FirstAppDB
-  { dbConn  :: Connection
-  }
 
 -- To try to avoid leaking various types and expected functionality around the
 -- application, we create a stand alone type that will represent the data we

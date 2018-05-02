@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Level05Tests
+module Level04Tests
   ( unitTests
   , doctests
   ) where
@@ -11,14 +11,16 @@ import           Test.Hspec.Wai
 
 import qualified System.Exit    as Exit
 
-import qualified Level05.DB    as DB
-import qualified Level05.Main  as Main
-import qualified Level05.Types as Types
+import qualified Level04.DB    as DB
+import qualified Level04.Main  as Main
+import qualified Level04.Types as Types
 
 doctests :: [FilePath]
 doctests =
   [ "-isrc"
-  , "src/FirstApp/Conf.hs"
+  , "src/Level04/Conf.hs"
+  , "src/Level04/DB.hs"
+  , "src/Level04/Types.hs"
   ]
 
 unitTests :: IO ()
@@ -30,8 +32,8 @@ unitTests = do
 
     Left err -> dieWith err
 
-    Right ( cfg, db ) -> do
-      let app' = pure ( Main.app cfg db )
+    Right db -> do
+      let app' = pure ( Main.app db )
 
           flushTopic =
             -- Clean up and yell about our errors

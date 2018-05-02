@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Level07.DB
-  ( Table (..)
-  , FirstAppDB (FirstAppDB)
+  ( FirstAppDB (FirstAppDB)
   , initDB
   , closeDB
   , addCommentToTopic
@@ -14,7 +13,7 @@ import           Control.Monad.IO.Class             (liftIO)
 import           Control.Monad.Reader               (asks)
 
 import           Data.Bifunctor                     (first)
-
+import           Data.Text                          (Text)
 import qualified Data.Text                          as Text
 
 import           Data.Time                          (getCurrentTime)
@@ -26,16 +25,15 @@ import qualified Database.SQLite.Simple             as Sql
 import qualified Database.SQLite.SimpleErrors       as Sql
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import           Level07.DB.Types                  (FirstAppDB (FirstAppDB, dbConn),
-                                                     Table (Table, getTableName))
+import           Level07.AppM                      (AppM, Env (envDB))
+
 import           Level07.Types                     (Comment, CommentText,
                                                      DBFilePath (getDBFilePath),
                                                      Error (DBError),
+                                                     FirstAppDB (FirstAppDB, dbConn),
                                                      Topic, fromDbComment,
                                                      getCommentText, getTopic,
                                                      mkTopic)
-
-import           Level07.AppM                      (AppM, envDB, liftEither)
 
 -- Quick helper to pull the connection and close it down.
 closeDB
@@ -59,19 +57,20 @@ initDB fp = Sql.runDBAction $ do
   -- Query has an `IsString` instance so string literals like this can be
   -- converted into a `Query` type when the `OverloadedStrings` language
   -- extension is enabled.
-    createTableQ = "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time INTEGER)"
+    createTableQ =
+      "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time INTEGER)"
 
 getDBConn
   :: AppM Connection
 getDBConn =
-  asks (dbConn . envDB)
+  error "getDBConn not implemented"
 
 runDB
   :: (a -> Either Error b)
   -> (Connection -> IO a)
   -> AppM b
 runDB =
-  error "Copy your completed 'runDB' and refactor to match the new type signature"
+  error "runDB not re-implemented"
 
 getComments
   :: Topic

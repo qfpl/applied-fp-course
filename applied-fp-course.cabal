@@ -55,59 +55,57 @@ source-repository head
 
 library
   -- Modules included in this executable, other than Main.
-  exposed-modules:     Level01.Main
+  exposed-modules:       Level01.Main
 
-                     , Level02.Main
-                     , Level02.Types
+                       , Level02.Main
+                       , Level02.Types
 
-                     , Level03.Main
-                     , Level03.Types
+                       , Level03.Main
+                       , Level03.Types
 
-                     , Level04.Types.Topic
-                     , Level04.Types.CommentText
-                     , Level04.Types.Error
-                     , Level04.Types
-                     , Level04.Conf
-                     , Level04.DB.Types
-                     , Level04.DB
-                     , Level04.Main
+                       , Level04.Conf
+                       , Level04.DB
+                       , Level04.DB.Types
+                       , Level04.Main
+                       , Level04.Types
+                       , Level04.Types.CommentText
+                       , Level04.Types.Error
+                       , Level04.Types.Topic
 
-                     , Level05.Types.Error
-                     , Level05.Types.CommentText
-                     , Level05.Types.Topic
-                     , Level05.Types
-                     , Level05.DB.Types
-                     , Level05.DB
-                     , Level05.Conf.CommandLine
-                     , Level05.Conf.File
-                     , Level05.Conf
-                     , Level05.Main
+                       , Level05.AppM
+                       , Level05.Conf
+                       , Level05.DB
+                       , Level05.DB.Types
+                       , Level05.Main
+                       , Level05.Types
+                       , Level05.Types.CommentText
+                       , Level05.Types.Error
+                       , Level05.Types.Topic
 
-                     , Level06.Types.CommentText
-                     , Level06.Types.Topic
-                     , Level06.Types.Error
-                     , Level06.Types
-                     , Level06.DB.Types
-                     , Level06.DB
-                     , Level06.AppM
-                     , Level06.Responses
-                     , Level06.Conf.File
-                     , Level06.Conf.CommandLine
-                     , Level06.Conf
-                     , Level06.Main
+                       , Level06.AppM
+                       , Level06.Conf
+                       , Level06.Conf.CommandLine
+                       , Level06.Conf.File
+                       , Level06.DB
+                       , Level06.DB.Types
+                       , Level06.Main
+                       , Level06.Types
+                       , Level06.Types.CommentText
+                       , Level06.Types.Error
+                       , Level06.Types.Topic
 
-                     , Level07.Responses
-                     , Level07.Conf.File
-                     , Level07.Conf.CommandLine
-                     , Level07.Conf
-                     , Level07.Types.Topic
-                     , Level07.Types.CommentText
-                     , Level07.Types.Error
-                     , Level07.Types
-                     , Level07.DB.Types
-                     , Level07.DB
-                     , Level07.AppM
-                     , Level07.Main
+                       , Level07.AppM
+                       , Level07.Conf
+                       , Level07.Conf.CommandLine
+                       , Level07.Conf.File
+                       , Level07.DB
+                       , Level07.DB.Types
+                       , Level07.Main
+                       , Level07.Responses
+                       , Level07.Types
+                       , Level07.Types.CommentText
+                       , Level07.Types.Error
+                       , Level07.Types.Topic
 
   ghc-options:         -Wall
                        -fno-warn-unused-binds
@@ -139,6 +137,12 @@ library
   default-language:    Haskell2010
 
 test-suite app-fp-tests
+  other-modules:       Level03Tests
+                     , Level04Tests
+                     , Level05Tests
+                     , Level06Tests
+                     , Level07Tests
+
   default-language:    Haskell2010
   type:                exitcode-stdio-1.0
   hs-source-dirs:      tests

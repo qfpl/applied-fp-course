@@ -1,139 +1,168 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# OPTIONS_GHC -fno-warn-unused-matches #-}
 module Level06.Main
   ( runApp
-  , prepareAppReqs
   , app
+  , prepareAppReqs
   ) where
 
-import           Control.Applicative                (liftA2)
-import           Control.Monad                      (join)
-
 import           Control.Monad.IO.Class             (liftIO)
-import           Control.Monad.Reader               (asks)
 
 import           Network.Wai                        (Application, Request,
                                                      Response, pathInfo,
-                                                     requestMethod,
+                                                     requestMethod, responseLBS,
                                                      strictRequestBody)
 import           Network.Wai.Handler.Warp           (run)
 
-import           Data.Bifunctor                     (first)
-import           Data.Either                        (Either (Left, Right),
-                                                     either)
+import           Network.HTTP.Types                 (Status, hContentType,
+                                                     status200, status400,
+                                                     status404, status500)
+
+import qualified Data.ByteString.Lazy               as LBS
+
+import           Data.Either                        (either)
+import           Data.Monoid                        ((<>))
 
 import           Data.Text                          (Text)
-import qualified Data.Text                          as Text
 import           Data.Text.Encoding                 (decodeUtf8)
-import           Data.Text.IO                       (hPutStrLn)
-
-import qualified Data.ByteString.Lazy.Char8         as LBS
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import           System.IO                          (stderr)
+import           Data.Aeson                         (ToJSON)
+import qualified Data.Aeson                         as A
 
-import qualified Level06.Conf                      as Conf
-import qualified Level06.DB                        as DB
-
-import qualified Level06.Responses                 as Res
-import           Level06.Types                     (Conf (dbFilePath),
-                                                     ConfigError,
-                                                     ContentType (PlainText),
-                                                     Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute),
+import           Level06.AppM                       (AppM, liftEither, runAppM)
+import qualified Level06.Conf                       as Conf
+import qualified Level06.DB                         as DB
+import           Level06.Types                      (Conf, ContentType (..),
+                                                     Error (..),
                                                      RqType (AddRq, ListRq, ViewRq),
-                                                     confPortToWai,
-                                                     mkCommentText, mkTopic)
-
-import           Level06.AppM                      (AppM, Env (Env, envConfig, envDB, envLoggingFn))
+                                                     mkCommentText, mkTopic,
+                                                     renderContentType)
 
 -- Our start-up is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
 -- single type so that we can deal with the entire start-up process as a whole.
 data StartUpError
-  = ConfErr ConfigError
-  | DbInitErr SQLiteResponse
+  = DbInitErr SQLiteResponse
   deriving Show
 
 runApp :: IO ()
 runApp = do
-  appE <- prepareAppReqs
-  either print runWithDbConn appE
-  where
-    runWithDbConn env =
-      appWithDb env >> DB.closeDB (envDB env)
+  -- Load our configuration
+  cfgE <- prepareAppReqs
+  -- Loading the configuration can fail, so we have to take that into account now.
+  case cfgE of
+    Left err   -> undefined
+    Right _cfg -> run undefined undefined
 
-    appWithDb env =
-      run ( confPortToWai $ envConfig env ) (app env)
-
+-- We need to complete the following steps to prepare our app requirements:
+--
+-- 1) Load the configuration.
+-- 2) Attempt to initialise the database.
+-- 3) Combine the results into a tuple
+--
+-- The filename for our application config is: "files/appconfig.json"
+--
 prepareAppReqs
-  :: IO (Either StartUpError Env)
-prepareAppReqs = do
-  cfgE <- initConf
-  -- This is awkward because we need to initialise our DB using the config,
-  -- which might have failed to be created for some reason, but our DB start up
-  -- might have also failed for some reason. This is a bit clunky
-  dbE <- join <$> traverse initDB cfgE
+  :: IO ( Either StartUpError ( Conf, DB.FirstAppDB ) )
+prepareAppReqs =
+  error "copy your prepareAppReqs from the previous level."
 
-  -- Wrap our values (if we have them) in our Env for use in other parts of our
-  -- application. We do it this way so we can have access to the bits we need
-  -- when starting up the full app or one for testing.
-  pure $ liftA2 ( Env logToErr ) cfgE dbE
-  where
-    logToErr = liftIO . hPutStrLn stderr
+-- | Some helper functions to make our lives a little more DRY.
+mkResponse
+  :: Status
+  -> ContentType
+  -> LBS.ByteString
+  -> Response
+mkResponse sts ct =
+  responseLBS sts [(hContentType, renderContentType ct)]
 
-    -- This makes it a bit easier to take our individual initialisation
-    -- functions and ensure that they both conform to the StartUpError type
-    -- that we want them too.
-    --
-    -- Fun for later: Play with composing 'fmap' and 'first' in ghci and
-    -- watch how the types specialise and change.
-    toStartUpErr :: (a -> b) -> IO (Either a c) -> IO (Either b c)
-    toStartUpErr = fmap . first
+resp200
+  :: ContentType
+  -> LBS.ByteString
+  -> Response
+resp200 =
+  mkResponse status200
 
-    -- Prepare the config
-    initConf :: IO (Either StartUpError Conf)
-    initConf = toStartUpErr ConfErr $ Conf.parseOptions "appconfig.json"
+resp404
+  :: ContentType
+  -> LBS.ByteString
+  -> Response
+resp404 =
+  mkResponse status404
 
-    -- Power up the tubes
-    initDB :: Conf -> IO (Either StartUpError DB.FirstAppDB)
-    initDB cfg = toStartUpErr DbInitErr $ DB.initDB (dbFilePath cfg)
+resp400
+  :: ContentType
+  -> LBS.ByteString
+  -> Response
+resp400 =
+  mkResponse status400
 
--- Now that our request handling and response creating functions operate
--- within our AppM context, we need to run the AppM to get our IO action out
--- to be run and handed off to the callback function. We've already written
--- the function for this so include the 'runAppM' with the Env.
+resp500
+  :: ContentType
+  -> LBS.ByteString
+  -> Response
+resp500 =
+  mkResponse status500
+
+resp200Json
+  :: ToJSON a
+  => a
+  -> Response
+resp200Json =
+  resp200 JSON . A.encode
+-- |
+
+-- Now that we have our configuration, pass it where it needs to go.
 app
-  :: Env
+  :: Conf
+  -> DB.FirstAppDB
   -> Application
-app =
-  error "Copy your completed 'app' from the previous level and refactor it here"
+app cfg db rq cb =
+  runAppM (handleRequest db =<< mkRequest rq) >>= cb . handleRespErr
+  where
+    handleRespErr :: Either Error Response -> Response
+    handleRespErr = either mkErrorResponse id
 
+-- Now we have some config, we can pull the ``helloMsg`` off it and use it in
+-- the response.
 handleRequest
-  :: RqType
-  -> AppM (Either Error Response)
-handleRequest rqType =
+  :: DB.FirstAppDB
+  -> RqType
+  -> AppM Response
+handleRequest db rqType =
+  -- Now that we're operating within the context of our AppM, which is a
+  -- ReaderT, we're able to access the values stored in the Env.
+  --
+  -- Two functions that allow us to access the data stored in our ReaderT are:
+  -- ask :: MonadReader r m => m r
+  -- &
+  -- asks :: MonadReader r m => (r -> a) -> m a
+  --
+  -- We will use ``asks`` here as we only want the FirstAppDB, so...
+  -- > envDb      :: Env -> FirstAppDB
+  -- > AppM       :: ReaderT Env IO a
+  -- > asks       :: (Env -> a) -> AppM a
+  -- > asks envDb :: AppM FirstAppDB
   case rqType of
-    -- Exercise: Could this be generalised to clean up the repetition ?
-    AddRq t c -> pure (Res.resp200 PlainText "Success") <$ DB.addCommentToTopic t c
-    ViewRq t  -> fmap Res.resp200Json <$> DB.getComments t
-    ListRq    -> fmap Res.resp200Json <$> DB.getTopics
+    -- Exercise for later: Could this be generalised to clean up the repetition ?
+    AddRq t c -> resp200 PlainText "Success" <$ DB.addCommentToTopic db t c
+    ViewRq t  -> resp200Json <$> DB.getComments db t
+    ListRq    -> resp200Json <$> DB.getTopics db
 
 mkRequest
   :: Request
-  -- We change this to be in our AppM context as well because when we're
-  -- constructing our RqType we might want to call on settings or other such
-  -- things, maybe.
-  -> AppM ( Either Error RqType )
+  -> AppM RqType
 mkRequest rq =
-  case ( pathInfo rq, requestMethod rq ) of
+  liftEither =<< case ( pathInfo rq, requestMethod rq ) of
     -- Commenting on a given topic
-    ( [t, "add"], "POST" ) ->
-      liftIO (mkAddRequest t <$> strictRequestBody rq)
+    ( [t, "add"], "POST" ) -> liftIO $ mkAddRequest t <$> strictRequestBody rq
     -- View the comments on a given topic
     ( [t, "view"], "GET" ) -> pure ( mkViewRequest t )
     -- List the current topics
     ( ["list"], "GET" )    -> pure mkListRequest
-    -- Finally we don't care about any other requests so throw your hands in the air
+    -- Finally we don't care about any other requests so build an Error response
     _                      -> pure ( Left UnknownRoute )
 
 mkAddRequest
@@ -157,16 +186,12 @@ mkListRequest =
 
 mkErrorResponse
   :: Error
-  -> AppM Response
-mkErrorResponse UnknownRoute     =
-  pure $ Res.resp404 PlainText "Unknown Route"
+  -> Response
+mkErrorResponse UnknownRoute =
+  resp404 PlainText "Unknown Route"
 mkErrorResponse EmptyCommentText =
-  pure $ Res.resp400 PlainText "Empty Comment"
-mkErrorResponse EmptyTopic       =
-  pure $ Res.resp400 PlainText "Empty Topic"
-mkErrorResponse ( DBError _e )    = do
-  -- As with our request for the FirstAppDB, we use the asks function from
-  -- Control.Monad.Reader and pass the field accessors from the Env record.
-  error "mkErrorResponse needs to 'log' our DB Errors to the console"
-  -- Be a sensible developer and don't leak your DB errors over the internet.
-  pure (Res.resp500 PlainText "OH NOES")
+  resp400 PlainText "Empty Comment"
+mkErrorResponse EmptyTopic =
+  resp400 PlainText "Empty Topic"
+mkErrorResponse ( DBError _ ) =
+  resp500 PlainText "Oh noes"

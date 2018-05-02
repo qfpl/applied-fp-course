@@ -1,8 +1,12 @@
-# Level 07
+# Level 06
 
-Handling those `Either` values everywhere is a bit awkward, this exercise
-introduces another monad transformer, ``ExceptT``. As well as the concept of a
-'transformer stack' and what benefits it can provide.
+This exercise involves introducing a monad transformer (ReaderT) to our
+application. The use of the ReaderT in our application is motivated in part by
+the expansion of the number of inputs to the various functions involved in
+handling different requests.
 
-Start in ``Level07/AppM.hs``.
+Since nearly any given request handler will likely require access to either the
+general application configuration or the database, it is tedious to have to pass
+the information in manually in every instance.
 
+Start in ``src/Level07/AppM.hs``.

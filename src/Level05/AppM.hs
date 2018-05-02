@@ -1,14 +1,14 @@
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE InstanceSigs          #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-module Level06.AppM where
+module Level05.AppM where
 
 import           Control.Monad.Except   (MonadError (..))
 import           Control.Monad.IO.Class (MonadIO (..))
 
 import           Data.Text              (Text)
 
-import           Level06.Types          (Error)
+import           Level05.Types          (Error)
 
 import           Data.Bifunctor         (first)
 
@@ -45,6 +45,20 @@ import           Data.Bifunctor         (first)
 -- encountered, the structure of our AppM will automatically handle it for us.
 
 newtype AppM a = AppM (IO (Either Error a))
+-- This structure allows us to start writing our functions in terms of
+-- constraints. As an example, if we wanted to abstract over IO and indicate
+-- that instead of the concrete type we wanted a constraint that allows for IO
+-- actions. Our AppM would look more like this:
+--
+-- AppM m a = AppM ( m (Either Error a) )
+--
+-- Then our functions would look like:
+--
+-- foo :: MonadIO m => Int -> AppM m a
+--
+-- Or we could not use a concrete type for Error
+--
+-- AppM e m a = AppM ( m (Either e a) )
 
 runAppM
   :: AppM a

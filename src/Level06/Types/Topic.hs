@@ -2,10 +2,10 @@
 
 module Level06.Types.Topic (Topic, mkTopic, getTopic) where
 
-import Level06.Types.Error (Error(EmptyTopic), nonEmptyText)
+import           Level06.Types.Error (Error (EmptyTopic), nonEmptyText)
 
-import Data.Text (Text)
-import Data.Aeson (ToJSON)
+import           Data.Aeson           (ToJSON)
+import           Data.Text            (Text)
 
 newtype Topic = Topic Text
   deriving (Show, ToJSON)

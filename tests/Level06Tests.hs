@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Level04Tests
+module Level06Tests
   ( unitTests
   , doctests
   ) where
@@ -11,16 +11,15 @@ import           Test.Hspec.Wai
 
 import qualified System.Exit    as Exit
 
-import qualified FirstApp.DB    as DB
-import qualified FirstApp.Main  as Main
-import qualified FirstApp.Types as Types
+import qualified Level06.AppM   as AppM
+import qualified Level06.DB     as DB
+import qualified Level06.Main   as Main
+import qualified Level06.Types  as Types
 
 doctests :: [FilePath]
 doctests =
   [ "-isrc"
-  , "src/Level04/Conf.hs"
-  , "src/Level04/DB.hs"
-  , "src/Level04/Types.hs"
+  , "src/FirstApp/Conf.hs"
   ]
 
 unitTests :: IO ()
@@ -32,17 +31,19 @@ unitTests = do
 
     Left err -> dieWith err
 
-    Right db -> do
-      let app' = pure ( Main.app db )
+    Right ( cfg, db ) -> do
+      let app' = pure ( Main.app cfg db )
 
           flushTopic =
             -- Clean up and yell about our errors
-            fmap ( either dieWith pure . join ) .
-            -- Purge all of the comments for this topic for our tests
-            traverse ( DB.deleteTopic db )
-            -- We don't export the constructor so even for known values we have
-            -- to play by the rules. There is no - "Oh just this one time.", do it right.
-            $ Types.mkTopic "fudge"
+            (either dieWith pure =<<) $ AppM.runAppM
+            ( do
+                -- We don't export the constructor so even for known values we have
+                -- to play by the rules. There is no - "Oh just this one time.", do it right.
+                t <- AppM.liftEither $ Types.mkTopic "fudge"
+                -- Purge all of the comments for this topic for our tests
+                DB.deleteTopic db t
+            )
 
       -- Run the tests with a DB topic flush between each spec
       hspec . with ( flushTopic >> app' ) $ do

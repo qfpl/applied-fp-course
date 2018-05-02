@@ -9,6 +9,7 @@ data Error
   = UnknownRoute
   | EmptyCommentText
   | EmptyTopic
+  -- This is our new error constructor.
   | DBError SQLiteResponse
   deriving (Eq, Show)
 
