@@ -11,9 +11,9 @@ import           Test.Hspec.Wai
 
 import qualified System.Exit    as Exit
 
-import qualified Level04.DB    as DB
-import qualified Level04.Main  as Main
-import qualified Level04.Types as Types
+import qualified Level04.Core   as Core
+import qualified Level04.DB     as DB
+import qualified Level04.Types  as Types
 
 doctests :: [FilePath]
 doctests =
@@ -27,13 +27,13 @@ unitTests :: IO ()
 unitTests = do
   let dieWith m = print m >> Exit.exitFailure
 
-  reqsE <- Main.prepareAppReqs
+  reqsE <- Core.prepareAppReqs
   case reqsE of
 
     Left err -> dieWith err
 
     Right db -> do
-      let app' = pure ( Main.app db )
+      let app' = pure ( Core.app db )
 
           flushTopic =
             -- Clean up and yell about our errors

@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-unused-matches #-}
-module Level05.Main
+module Level06.Core
   ( runApp
   , app
   , prepareAppReqs
@@ -31,10 +31,10 @@ import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 import           Data.Aeson                         (ToJSON)
 import qualified Data.Aeson                         as A
 
-import           Level05.AppM                       (AppM, liftEither, runAppM)
-import qualified Level05.Conf                       as Conf
-import qualified Level05.DB                         as DB
-import           Level05.Types                      (ContentType (..),
+import           Level06.AppM                       (AppM, liftEither, runAppM)
+import qualified Level06.Conf                       as Conf
+import qualified Level06.DB                         as DB
+import           Level06.Types                      (Conf, ContentType (..),
                                                      Error (..),
                                                      RqType (AddRq, ListRq, ViewRq),
                                                      mkCommentText, mkTopic,
@@ -60,11 +60,12 @@ runApp = do
 --
 -- 1) Load the configuration.
 -- 2) Attempt to initialise the database.
+-- 3) Combine the results into a tuple
 --
--- Our application configuration is defined in Conf.hs
+-- The filename for our application config is: "files/appconfig.json"
 --
 prepareAppReqs
-  :: IO ( Either StartUpError DB.FirstAppDB )
+  :: IO ( Either StartUpError ( Conf, DB.FirstAppDB ) )
 prepareAppReqs =
   error "copy your prepareAppReqs from the previous level."
 
@@ -113,25 +114,42 @@ resp200Json =
   resp200 JSON . A.encode
 -- |
 
--- How has this implementation changed, now that we have an AppM to handle the
--- errors for our application? Could it be simplified? Can it be changed at all?
+-- Now that we have our configuration, pass it where it needs to go.
 app
-  :: DB.FirstAppDB
+  :: Conf
+  -> DB.FirstAppDB
   -> Application
-app db rq cb =
-  error "app not reimplemented"
+app cfg db rq cb =
+  runAppM (handleRequest db =<< mkRequest rq) >>= cb . handleRespErr
+  where
+    handleRespErr :: Either Error Response -> Response
+    handleRespErr = either mkErrorResponse id
 
+-- Now we have some config, we can pull the ``helloMsg`` off it and use it in
+-- the response.
 handleRequest
   :: DB.FirstAppDB
   -> RqType
   -> AppM Response
-handleRequest db rqType = case rqType of
-  -- Notice that we've been able to remove a layer of `fmap` because our `AppM`
-  -- handles all of that for us. Such is the pleasant nature of these
-  -- abstractions.
-  AddRq t c -> resp200 PlainText "Success" <$ DB.addCommentToTopic db t c
-  ViewRq t  -> resp200Json <$> DB.getComments db t
-  ListRq    -> resp200Json <$> DB.getTopics db
+handleRequest db rqType =
+  -- Now that we're operating within the context of our AppM, which is a
+  -- ReaderT, we're able to access the values stored in the Env.
+  --
+  -- Two functions that allow us to access the data stored in our ReaderT are:
+  -- ask :: MonadReader r m => m r
+  -- &
+  -- asks :: MonadReader r m => (r -> a) -> m a
+  --
+  -- We will use ``asks`` here as we only want the FirstAppDB, so...
+  -- > envDb      :: Env -> FirstAppDB
+  -- > AppM       :: ReaderT Env IO a
+  -- > asks       :: (Env -> a) -> AppM a
+  -- > asks envDb :: AppM FirstAppDB
+  case rqType of
+    -- Exercise for later: Could this be generalised to clean up the repetition ?
+    AddRq t c -> resp200 PlainText "Success" <$ DB.addCommentToTopic db t c
+    ViewRq t  -> resp200Json <$> DB.getComments db t
+    ListRq    -> resp200Json <$> DB.getTopics db
 
 mkRequest
   :: Request

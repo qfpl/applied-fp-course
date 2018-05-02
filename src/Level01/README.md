@@ -2,7 +2,7 @@
 
 The purpose of this exercise is to whet our appetite by creating a basic web
 app. The focus will be on reading the [Hackage] documentation for the [Wai]
-framework. Consult the ``src/Level01/Main.hs`` to find the parts that are
+framework. Consult the ``src/Level01/Core.hs`` to find the parts that are
 missing and what we need from the [Wai] package to build our "Hello, World!"
 application.
 

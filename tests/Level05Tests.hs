@@ -17,8 +17,8 @@ import qualified System.Exit          as Exit
 
 import qualified Level05.AppM         as AppM
 
+import qualified Level05.Core         as Core
 import qualified Level05.DB           as DB
-import qualified Level05.Main         as Main
 import qualified Level05.Types        as Types
 
 doctests :: [FilePath]
@@ -41,21 +41,17 @@ unitTests = do
     testTopic :: IsString s => s
     testTopic = "fudge"
 
-  reqsE <- Main.prepareAppReqs
+  reqsE <- Core.prepareAppReqs
   case reqsE of
 
     Left err -> dieWith err
 
     Right db -> do
-      let app' = pure (Main.app db)
+      let app' = pure (Core.app db)
 
           flushTopic :: IO ()
-          flushTopic = (either dieWith pure =<<)
-            $ AppM.runAppM
-            ( do
-                t <- AppM.liftEither $ Types.mkTopic "fudge"
-                DB.deleteTopic db t
-            )
+          flushTopic = either dieWith pure =<< AppM.runAppM
+            (AppM.liftEither (Types.mkTopic "fudge") >>= DB.deleteTopic db)
 
       -- Run the tests with a DB topic flush between each spec
       hspec . with ( flushTopic >> app' ) $ do

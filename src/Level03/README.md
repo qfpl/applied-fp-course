@@ -53,7 +53,7 @@ To run the tests in the repl:
 *Main> :main
 ```
 
-Start in ``tests/level03-tests/Level03Tests.hs``.
+Start in ``tests/Level03Tests.hs``.
 
 [HSpec]: (http://hspec.github.io/)
 [hspec-wai]: (https://hackage.haskell.org/package/hspec-wai)

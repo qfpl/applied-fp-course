@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-unused-matches #-}
-module Level01.Main (runApp) where
+module Level01.Core (runApp) where
 
 import           Network.Wai              (Application, Request, Response,
                                            ResponseReceived, responseLBS)

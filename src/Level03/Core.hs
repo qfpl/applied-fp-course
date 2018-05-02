@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Level03.Main (runApp, app) where
+module Level03.Core (runApp, app) where
 
 import           Network.Wai              (Application, Request, Response,
                                            pathInfo, requestMethod, responseLBS,

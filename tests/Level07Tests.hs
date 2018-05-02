@@ -16,8 +16,8 @@ import qualified System.Exit          as Exit
 import           Level07.AppM         (Env)
 import qualified Level07.AppM         as AppM
 
+import qualified Level07.Core         as Core
 import qualified Level07.DB           as DB
-import qualified Level07.Main         as Main
 import qualified Level07.Types        as Types
 
 doctests :: [FilePath]
@@ -33,16 +33,16 @@ unitTests = do
   let dieWith m = print m >> Exit.exitFailure
 
   -- Keeping everything in sync with out larger application changes.
-  reqsE <- Main.prepareAppReqs
+  reqsE <- Core.prepareAppReqs
   case reqsE of
 
     Left err -> dieWith err
 
     Right env -> do
-      let app' = pure ( Main.app env )
+      let app' = pure ( Core.app env )
 
           flushTopic :: IO ()
-          flushTopic = either ( liftIO . dieWith ) pure =<< AppM.runAppM
+          flushTopic = either (liftIO . dieWith) pure =<< AppM.runAppM
             (AppM.liftEither =<< traverse DB.deleteTopic ( Types.mkTopic "fudge" ))
             env
 

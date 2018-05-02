@@ -23,7 +23,7 @@ The steps for this level:
 1) ``src/Level04/DB/Types.hs``
 2) ``src/Level04/Types.hs``
 3) ``src/Level04/DB.hs``
-4) ``src/Level04/Main.hs``
+4) ``src/Level04/Core.hs``
 
 For the sake of simplicity, any configuration requirements will be hardcoded in
 ``Level04/Conf.hs`` for now. We will return to that in the next level.

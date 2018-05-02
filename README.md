@@ -112,9 +112,9 @@ instructions about what the goal is for that specific level.
 * Level 02 : Define our application spec with types!
 * Level 03 : Testing & Tools (hspec & ghcid)
 * Level 04 : Database layer (sqlite-simple)
-* Level 05 : Add some flexible configuration
-* Level 06 : ReaderT & Refactoring
-* Level 07 : ExceptT & Refactoring
+* Level 05 : Better Error Handling Through ExceptT
+* Level 06 : Add some flexible configuration
+* Level 07 : ReaderT & Refactoring
 
 -- Coming Soon...
 * Level 08 : (Bonus Round) Lenses & Refactoring

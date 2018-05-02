@@ -11,7 +11,7 @@ The steps for this level:
 1) ``src/Level06/Types.hs``
 2) ``src/Level06/Conf/File.hs``
 3) ``src/Level06/Conf.hs``
-4) ``src/Level06/Main.hs``
+4) ``src/Level06/Core.hs``
 
 The packages we will use for this are:
 

@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Level04.Main
+module Level04.Core
   ( runApp
   , prepareAppReqs
   , app

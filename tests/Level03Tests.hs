@@ -13,7 +13,7 @@ import qualified System.Exit                as Exit
 
 import qualified Data.ByteString.Lazy.Char8 as LBS8
 
-import qualified Level03.Main              as Main
+import qualified Level03.Core               as Core
 
 doctests :: [FilePath]
 doctests =
@@ -24,7 +24,7 @@ doctests =
 unitTests :: IO ()
 unitTests = do
   -- We need to setup our Application.
-  let app' = pure Main.app
+  let app' = pure Core.app
 
   -- This sets up HSpec to use our application as the thing it executes before the tests are run
   hspec . with app' $ do
