@@ -8,6 +8,9 @@ import           Control.Monad.Reader (ask, reader)
 
 import           Control.Monad        (join)
 
+import           Data.Semigroup       ((<>))
+import           Data.String          (IsString)
+
 import           Test.Hspec
 import           Test.Hspec.Wai
 
@@ -30,7 +33,7 @@ doctests =
 
 unitTests :: IO ()
 unitTests = do
-  let 
+  let
     dieWith :: Show a => a -> IO ()
     dieWith m = print m >> Exit.exitFailure
 
