@@ -8,7 +8,7 @@ import           Control.Monad.Reader (ask, reader)
 
 import           Control.Monad        (join)
 
-import           Data.Semigroup       ((<>))
+import           Data.Monoid          ((<>))
 import           Data.String          (IsString)
 
 import           Test.Hspec

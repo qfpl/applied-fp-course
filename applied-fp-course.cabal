@@ -167,7 +167,7 @@ test-suite doctests
   ghc-options:         -threaded
   main-is:             doctests.hs
   hs-source-dirs:      tests
-  build-depends:       base
+  build-depends:       base >= 4.8 && <4.12
                      , applied-fp-course
                      , mtl == 2.2.*
                      , hspec >= 2.2 && < 3.0

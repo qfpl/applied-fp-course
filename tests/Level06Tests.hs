@@ -6,7 +6,7 @@ module Level06Tests
 
 import           Control.Monad  (join)
 
-import           Data.Semigroup ((<>))
+import           Data.Monoid    ((<>))
 import           Data.String    (IsString)
 
 import           Test.Hspec
