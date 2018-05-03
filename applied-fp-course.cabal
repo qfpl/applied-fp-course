@@ -158,10 +158,20 @@ test-suite doctests
   -- Base language which the package is written in.
   default-language:    Haskell2010
   type:                exitcode-stdio-1.0
+
+  other-modules:       Level04Tests
+                     , Level05Tests
+                     , Level06Tests
+                     , Level07Tests
+
   ghc-options:         -threaded
   main-is:             doctests.hs
   hs-source-dirs:      tests
   build-depends:       base
+                     , applied-fp-course
+                     , mtl == 2.2.*
+                     , hspec >= 2.2 && < 3.0
+                     , hspec-wai >= 0.6 && < 0.10
                      , doctest >= 0.11 && < 0.16
 
 -- Level Executables
