@@ -32,9 +32,9 @@ import qualified Data.Aeson                         as A
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import           Level04.Conf                      (Conf, firstAppConfig)
-import qualified Level04.DB                        as DB
-import           Level04.Types                     (ContentType (JSON, PlainText),
+import           Level04.Conf                       (Conf, firstAppConfig)
+import qualified Level04.DB                         as DB
+import           Level04.Types                      (ContentType (JSON, PlainText),
                                                      Error (EmptyCommentText, EmptyTopic, UnknownRoute),
                                                      RqType (AddRq, ListRq, ViewRq),
                                                      mkCommentText, mkTopic,

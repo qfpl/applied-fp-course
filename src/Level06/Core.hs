@@ -62,7 +62,7 @@ runApp = do
 -- 2) Attempt to initialise the database.
 -- 3) Combine the results into a tuple
 --
--- The filename for our application config is: "files/appconfig.json"
+-- The file path for our application config is: "files/appconfig.json"
 --
 prepareAppReqs
   :: IO ( Either StartUpError ( Conf, DB.FirstAppDB ) )
@@ -125,8 +125,6 @@ app cfg db rq cb =
     handleRespErr :: Either Error Response -> Response
     handleRespErr = either mkErrorResponse id
 
--- Now we have some config, we can pull the ``helloMsg`` off it and use it in
--- the response.
 handleRequest
   :: DB.FirstAppDB
   -> RqType

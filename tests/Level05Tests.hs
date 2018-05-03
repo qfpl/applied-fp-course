@@ -24,9 +24,9 @@ import qualified Level05.Types        as Types
 doctests :: [FilePath]
 doctests =
   [ "-isrc"
-  , "src/FirstApp/Conf.hs"
-  , "src/FirstApp/DB.hs"
-  , "src/FirstApp/Types.hs"
+  , "src/Level05/Conf.hs"
+  , "src/Level05/DB.hs"
+  , "src/Level05/Types.hs"
   ]
 
 unitTests :: IO ()
@@ -49,9 +49,15 @@ unitTests = do
     Right db -> do
       let app' = pure (Core.app db)
 
-          flushTopic :: IO ()
-          flushTopic = either dieWith pure =<< AppM.runAppM
-            (AppM.liftEither (Types.mkTopic "fudge") >>= DB.deleteTopic db)
+          flushTopic =
+            -- Clean up and yell about our errors
+            either dieWith pure =<< AppM.runAppM (
+            -- We don't export the constructor so even for known values we have
+            -- to play by the rules. There is no - "Oh just this one time.", do it right.
+            AppM.liftEither (Types.mkTopic testTopic)
+              -- Purge all of the comments for this topic for our tests
+              >>= DB.deleteTopic db
+            )
 
       -- Run the tests with a DB topic flush between each spec
       hspec . with ( flushTopic >> app' ) $ do

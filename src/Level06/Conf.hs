@@ -4,14 +4,14 @@ module Level06.Conf
     ( parseOptions
     ) where
 
-import           GHC.Word                  (Word16)
+import           GHC.Word                 (Word16)
 
-import           Data.Bifunctor            (first)
-import           Data.Monoid               ((<>))
+import           Data.Bifunctor           (first)
+import           Data.Monoid              ((<>))
 
 import           Level06.Types            (Conf, ConfigError,
-                                            DBFilePath (DBFilePath),
-                                            PartialConf, Port (Port))
+                                           DBFilePath (DBFilePath), PartialConf,
+                                           Port (Port))
 
 import           Level06.Conf.CommandLine (commandLineParser)
 import           Level06.Conf.File        (parseJSONConfigFile)

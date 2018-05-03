@@ -95,7 +95,6 @@ addCommentToTopic =
   in
     error "addCommentToTopic not implemented"
 
-
 getTopics
   :: FirstAppDB
   -> IO (Either Error [Topic])

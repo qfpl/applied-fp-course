@@ -23,14 +23,19 @@ import qualified Level07.Types        as Types
 doctests :: [FilePath]
 doctests =
   [ "-isrc"
-  , "src/FirstApp/Conf.hs"
-  , "src/FirstApp/DB.hs"
-  , "src/FirstApp/Types.hs"
+  , "src/Level07/Conf.hs"
+  , "src/Level07/DB.hs"
+  , "src/Level07/Types.hs"
   ]
 
 unitTests :: IO ()
 unitTests = do
-  let dieWith m = print m >> Exit.exitFailure
+  let 
+    dieWith :: Show a => a -> IO ()
+    dieWith m = print m >> Exit.exitFailure
+
+    testTopic :: IsString s => s
+    testTopic = "fudge"
 
   -- Keeping everything in sync with out larger application changes.
   reqsE <- Core.prepareAppReqs
@@ -42,8 +47,8 @@ unitTests = do
       let app' = pure ( Core.app env )
 
           flushTopic :: IO ()
-          flushTopic = either (liftIO . dieWith) pure =<< AppM.runAppM
-            (AppM.liftEither =<< traverse DB.deleteTopic ( Types.mkTopic "fudge" ))
+          flushTopic = either dieWith pure =<< AppM.runAppM
+            (AppM.liftEither =<< traverse DB.deleteTopic ( Types.mkTopic testTopic ))
             env
 
       -- We can't run the tests for our AppM in the same stage as our
@@ -54,25 +59,27 @@ unitTests = do
       -- Run the tests with a DB topic flush between each spec
       hspec . with ( flushTopic >> app' ) $ do
 
+        -- Save us a bit of repetition
+        let pOST = post ( "/" <> testTopic <> "/add" )
+
         -- AddRq Spec
         describe "POST /topic/add" $ do
-
           it "Should return 200 with well formed request" $
-            post "/fudge/add" "Fred" `shouldRespondWith` "Success"
+            pOST "Is super tasty." `shouldRespondWith` "Success"
 
           it "Should 400 on empty input" $
-            post "/fudge/add" "" `shouldRespondWith` 400
+            pOST "" `shouldRespondWith` 400
 
         -- ViewRq Spec
         describe "GET /topic/view" $
           it "Should return 200 with content" $ do
-            post "/fudge/add" "Is super tasty."
-            get "/fudge/view" `shouldRespondWith` 200
+            _ <- pOST "Is super tasty."
+            get ( "/" <> testTopic <> "/view" ) `shouldRespondWith` 200
 
         -- ListRq Spec
         describe "GET /list" $
           it "Should return 200 with content" $ do
-            post "/fudge/add" "Is super tasty."
+            _ <- pOST "Is super tasty."
             get "/list" `shouldRespondWith` "[\"fudge\"]"
 
 
@@ -96,4 +103,4 @@ appMTests env = describe "AppM Tests" $ do
           e <- ask
           AppM.envLoggingFn e "In a test!"
     r <- AppM.runAppM fn env
-    r `shouldBe` (Right ())
+    r `shouldBe` Right ()

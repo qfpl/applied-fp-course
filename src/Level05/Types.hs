@@ -38,17 +38,12 @@ import qualified Data.Aeson                         as A
 import qualified Data.Aeson.Types                   as A
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
-import           Level05.DB.Types                  (DbComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
-import           Level05.Types.Error               (Error ( UnknownRoute
-                                                           , EmptyCommentText
-                                                           , EmptyTopic
-                                                           , DBError
-                                                           ))
-import           Level05.Types.CommentText        ( CommentText
-                                                   , mkCommentText
-                                                   , getCommentText
-                                                   )
-import           Level05.Types.Topic              (Topic, mkTopic, getTopic)
+import           Level05.DB.Types                   (DbComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
+import           Level05.Types.CommentText          (CommentText,
+                                                     getCommentText,
+                                                     mkCommentText)
+import           Level05.Types.Error                (Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute))
+import           Level05.Types.Topic                (Topic, getTopic, mkTopic)
 
 newtype CommentId = CommentId Int
   deriving (Show, ToJSON)

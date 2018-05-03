@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/qfpl/applied-fp-course.svg?branch=master)](https://travis-ci.org/qfpl/applied-fp-course)
 
-<img src="https://i.imgur.com/0h9dFhl.png" height="400" width="640" />
+<img src="https://i.imgur.com/0h9dFhl.png" height="200" width="320" />
 
 This is a brand new course, so there are going to be rough edges. We invite you to submit issues or
 pull requests if you find errors or have suggestions on how to improve it.

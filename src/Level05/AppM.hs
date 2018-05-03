@@ -19,10 +19,10 @@ import           Data.Bifunctor         (first)
 -- To do this we will create a newtype `AppM` that is a shorthand way of
 -- describing the return type of a function that may contain an error.
 --
--- This will work in the same manner as the Functor/Applicative/Monad
+-- Our `AppM` type will work in the same manner as the Functor/Applicative/Monad 
 -- instances for Either, with functions being applied to the Right value and
 -- everything been ignored if a Left value is encountered, returning that Left
--- value.
+-- value. With the added bonus of allowing us to perform `IO` actions!
 --
 -- f <$> (Left e)  = Left e
 -- f <$> (Right a) = Right (f a)
@@ -75,7 +75,7 @@ instance Applicative AppM where
   pure  = error "pure for AppM not implemented"
 
   (<*>) :: AppM (a -> b) -> AppM a -> AppM b
-  (<*>) = error "ap for AppM not implemented"
+  (<*>) = error "spaceship for AppM not implemented"
 
 instance Monad AppM where
   return :: a -> AppM a

@@ -25,4 +25,4 @@ data DBComment = DBComment
 instance FromRow DBComment where
   fromRow = error "FromRow DBComment instance not implemented"
 
--- Now move to ``src/FirstApp/Types.hs``
+-- Now move to ``src/Level04/Types.hs``

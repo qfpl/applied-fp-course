@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Level03Tests
   ( unitTests
-  , doctests
   ) where
 
 import           Test.Hspec
@@ -14,12 +13,6 @@ import qualified System.Exit                as Exit
 import qualified Data.ByteString.Lazy.Char8 as LBS8
 
 import qualified Level03.Core               as Core
-
-doctests :: [FilePath]
-doctests =
-  [ "-isrc"
-  , "src/Level03/Conf.hs"
-  ]
 
 unitTests :: IO ()
 unitTests = do

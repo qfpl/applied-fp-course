@@ -17,17 +17,3 @@ The packages we will use for this are:
 
 - [Aeson](http://hackage.haskell.org/package/aeson)
 - [Optparse Applicative](http://hackage.haskell.org/package/optparse-applicative)
-
-#### Aside: Tool Introduction - doctest
-
-This level utilises the [doctest](https://hackage.haskell.org/package/doctest)
-tool to help us ensure our functions comply with some quick tests that are
-written as comments in the source file. This is a port of the same technology
-that exists in Python.
-
-You can see the new entry in the Cabal file as another ``test-suite``. The
-``doctests.hs`` lists the files that have doctests that we want to run. The
-``src/Level06/Conf/File.hs`` file contains some tests that you need to update
-as part of the level.
-
-For details on running and writing doctests, refer to the documentation.

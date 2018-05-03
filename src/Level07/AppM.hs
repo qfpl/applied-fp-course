@@ -34,7 +34,13 @@ data Env = Env
 -- safety. AppM only has one definition and so we can easily understand what it
 -- implies when used in our application.
 newtype AppM a = AppM ( Env -> IO (Either Error a) )
+  -- Quite often, GHC is able to write the code for us. In this case we just
+  -- tell GHC that we want a Functor instance for our newtype, and it is able to
+  -- correctly derive what is needed.
   deriving Functor
+  -- We could do this for the rest of these instances, but that would turn into
+  -- "magic" what is otherwise straight-forward implementations. You are here to
+  -- learn after all.
 
 runAppM
   :: AppM a

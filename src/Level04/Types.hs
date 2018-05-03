@@ -31,10 +31,16 @@ import qualified Data.Aeson.Types          as A
 import           Data.Time                 (UTCTime)
 
 import           Level04.DB.Types          (DBComment)
-import           Level04.Types.CommentText (CommentText, getCommentText,
-                                            mkCommentText)
+
+-- Notice how we've moved these types into their own modules. It's cheap and
+-- easy to add modules to carve out components in a Haskell application. So
+-- whenever you think that a module is too big, covers more than one piece of
+-- distinct functionality, or you want to carve out a particular piece of code,
+-- just spin up another module.
+import           Level04.Types.CommentText (CommentText, getCommentText, mkCommentText)
 import           Level04.Types.Error       (Error (EmptyCommentText, EmptyTopic, UnknownRoute))
 import           Level04.Types.Topic       (Topic, getTopic, mkTopic)
+
 
 -- This is the `Comment` record that we will be sending to users, it's a simple
 -- record type, containing an `Int`, `Topic`, `CommentText`, and `UTCTime`.
@@ -42,7 +48,6 @@ import           Level04.Types.Topic       (Topic, getTopic, mkTopic)
 -- well. This saves us some effort when it comes to creating encoding/decoding
 -- instances. Since our types are all simple types at the end of the day, we're
 -- able to let GHC do the work.
-
 newtype CommentId = CommentId Int
   deriving (Eq, Show, ToJSON)
 

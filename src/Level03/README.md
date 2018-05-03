@@ -23,7 +23,7 @@ $ cabal configure --enable-tests
 $ cabal test
 ```
 
-If you're using Cabal 2.0 or greater. You can check your cabal version with `$ cabal --version`:
+If you're using Cabal 2.0 or greater (You can check your cabal version with `$ cabal --version`):
 
 ```shell
 $ cabal new-configure --enable-tests

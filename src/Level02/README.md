@@ -38,7 +38,7 @@ GET /<topic>/view
 GET /list
 ```
 
-The starting point for this exercise is the ``src/FirstApp/Types.hs``.
+The starting point for this exercise is the ``src/Level02/Types.hs``.
 
 ### Running the program:
 

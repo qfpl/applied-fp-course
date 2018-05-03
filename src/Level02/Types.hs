@@ -122,3 +122,5 @@ getCommentText
   -> Text
 getCommentText =
   error "getCommentText not implemented"
+
+---- Go to `src/Level02/Core.hs` next

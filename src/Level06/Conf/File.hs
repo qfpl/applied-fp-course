@@ -15,7 +15,7 @@ import           Data.Aeson                 (FromJSON, Object)
 
 import qualified Data.Aeson                 as Aeson
 
-import           Level06.Types             (ConfigError,
+import           Level06.Types              (ConfigError,
                                              PartialConf (PartialConf))
 -- Doctest setup section
 -- $setup
