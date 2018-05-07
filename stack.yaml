@@ -1,9 +1,7 @@
 resolver: lts-10.4
-packages:
-- level01
-- level02
-- level03
-- level04
-- level05
-- level06
-- level07
+extra-deps:
+- aeson-1.3.1.0
+- optparse-applicative-0.14.2.0
+- sqlite-simple-errors-0.6.1.0
+- text-1.2.3.0
+- th-abstraction-0.2.6.0
