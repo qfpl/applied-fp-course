@@ -66,3 +66,17 @@ $ curl -XPOST -v localhost:<port>/puppies/add
 $ curl -XGET -v localhost:<port>/puppies/view
 $ curl -XGET -v localhost:<port>/list
 ```
+
+### Loading the Program:
+
+We're able to load our program into the Haskell REPL, so we can try out
+functions and data structures. Test things and have a more interactive
+development workflow:
+
+```bash
+$ cabal new-repl level02-exe
+```
+
+```bash
+$ stack ghci
+```
