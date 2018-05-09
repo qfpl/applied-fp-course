@@ -58,15 +58,23 @@ This level might be a bit hard to navigate as there are a bunch of files to walk
 through.
 
 The steps for this level:
-1) ``src/FirstApp/DB/Types.hs``
-2) ``src/FirstApp/Types.hs``
-3) ``src/FirstApp/DB.hs``
-4) ``src/FirstApp/Main.hs``
+1) ``src/Level04/DB/Types.hs``
+2) ``src/Level04/Types.hs``
+3) ``src/Level04/DB.hs``
+4) ``src/Level04/Main.hs``
 
 - Call out `Traversable` and `Bifunctor` typeclasses.
 - Call out the encoding instances & the automatic deriving of the ToJSON instances
 
 # Level 5
+
+This is the "ExceptT" level.
+
+After enduring some of the annoyance of manually handling the `Either` values in various ways. This level has the students implementing their own version of the `ExceptT` monad transformer.
+
+Enough of the motivation for this abstraction has been introduced by this point and demonstrating how effectively `ExceptT` solves this particular problem will be a relief in this and later levels.
+
+# Level 6
 
 We construct a proper method of handling our configuration.
 
@@ -89,46 +97,31 @@ But that's about it.
 Exceptions will be discussed when working on the 'readObject' function to load
 the file into a JSON Value.
 
-Mention and work through the type signature of:
-
-- ``fmap . fmap``
-
-Students start to encounter multiple ``Functor`` layers around this level and
-this technique comes in handy.
-
-# Level 6
+# Level 7
 
 This is "The ReaderT" level.
 
 Students will be required to copy their completed versions of functions from
 previous levels that will then break in this level and need to be refactored.
-The bulk of the work will most likely be in the DB module as the DB functions no
+The most interesting work will be undertaken in the `AppM` module as they must
+reimplement their existing transformer with the new functionality.
+
+There will also be a lot of time spent in the DB module as the DB functions no
 longer require the DB connection to be passed in manually.
 
 Also there are functions in the FirstApp/Main module that will need to be
 updated to handle the new shenanigans.
 
-# Level 7
-
-This is the "ExceptT" level.
-
-Students go back to AppM module to see how the new transformer plugs into our stack, there are some functions to complete in here.
-
-Then as per the previous level, the students have to copy over the completed
-functions from the previous level to see what breaks and what needs to be fixed.
-There will be a lot to do in the DB and FirstApp/Main modules.
-
-
 ## General Notes - More to add.
-- structure repo
-- readme in each repo
+- readme in each level folder.
 - monoid instance - rehash single/multiple number of possible instances. Don't let people hang too long on this point.
 - how to find the documentation for the Header / ContentType
 - more instruction that lead people to hackage documentation for Text/ByteString etc
 - mention that import lists may need to be updated for the new types
 - some editors will need to jump in and out of the different levels (close, cd, re-open)
 - Mention that it's fine to use case statements for Either handling, we make it okay at the end.
+- Mention that creating modules is easy, useful, and very helpful.
 
-### IMPORTANT! 
+### IMPORTANT!
 - Stephen Diehl - What I Wish I Knew Learning Haskell
 - Ask students if they would prefer access to a prepared VM with the code & an editor or two.
