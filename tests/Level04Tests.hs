@@ -15,6 +15,9 @@ import qualified Level04.Core   as Core
 import qualified Level04.DB     as DB
 import qualified Level04.Types  as Types
 
+-- Don't forget to uncomment these functions in @tests/Test.hs@ otherwise your
+-- tests won't be run.
+
 doctests :: [FilePath]
 doctests =
   [ "-isrc"

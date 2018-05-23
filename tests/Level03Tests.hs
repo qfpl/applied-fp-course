@@ -46,3 +46,6 @@ unitTests = do
       -- 2) The '<topic>/view' route will respond correctly when given a topic
       -- 3) The '<topic>/view' route will respond with an error when given an empty topic
       -- 4) A gibberish route will return a 404
+
+-- After you're done here, you'll need to uncomment the use of these functions
+-- in the `test/Test.hs` otherwise the tests won't run!

@@ -14,6 +14,10 @@ with the [hspec-wai] package to make our lives a bit easier.
 
 ### Including Test Library Dependencies and Running the Tests
 
+To run the tests we first need to uncomment the required functions in
+`test/Test.hs` otherwise nothing will be run! We do this so you don't have to
+worry about tests you haven't written yet.
+
 For a cabal sandbox:
 
 ```shell
@@ -47,7 +51,8 @@ $ cabal new-repl app-fp-tests
 $ stack ghci applied-fp-course:test:app-fp-tests
 ```
 
-To run the tests in the repl:
+If you want to run the tests using the REPL, you can use the following command
+in the REPL:
 
 ```shell
 *Main> :main
