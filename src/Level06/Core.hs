@@ -192,4 +192,5 @@ mkErrorResponse EmptyCommentText =
 mkErrorResponse EmptyTopic =
   resp400 PlainText "Empty Topic"
 mkErrorResponse ( DBError _ ) =
+  -- Be a sensible developer and don't leak your DB errors over the internet.
   resp500 PlainText "Oh noes"

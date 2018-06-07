@@ -1,4 +1,4 @@
-# Level 05
+# Level 06
 
 In this exercise we build some configuration capabilities into our application.
 

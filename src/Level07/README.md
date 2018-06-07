@@ -1,4 +1,4 @@
-# Level 06
+# Level 07
 
 This exercise involves introducing a monad transformer (ReaderT) to our
 application. The use of the ReaderT in our application is motivated in part by

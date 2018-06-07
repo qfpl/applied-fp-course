@@ -132,13 +132,13 @@ mkListRequest =
 
 mkErrorResponse
   :: Error
-  -> AppM Response
-mkErrorResponse UnknownRoute     = pure $ Res.resp404 PlainText "Unknown Route"
-mkErrorResponse EmptyCommentText = pure $ Res.resp400 PlainText "Empty Comment"
-mkErrorResponse EmptyTopic       = pure $ Res.resp400 PlainText "Empty Topic"
-mkErrorResponse ( DBError _ )    = do
-  -- As with our request for the FirstAppDB, we use the asks function from
-  -- Control.Monad.Reader and pass the field accessors from the Env record.
-  error "mkErrorResponse needs to 'log' our DB Errors to the console"
+  -> Response
+mkErrorResponse UnknownRoute     =
+  Res.resp404 PlainText "Unknown Route"
+mkErrorResponse EmptyCommentText =
+  Res.resp400 PlainText "Empty Comment"
+mkErrorResponse EmptyTopic       =
+  Res.resp400 PlainText "Empty Topic"
+mkErrorResponse ( DBError _ )    =
   -- Be a sensible developer and don't leak your DB errors over the internet.
-  pure (Res.resp500 PlainText "OH NOES")
+  Res.resp500 PlainText "OH NOES"
