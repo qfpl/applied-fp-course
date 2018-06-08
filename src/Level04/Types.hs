@@ -59,8 +59,7 @@ data Comment = Comment
   }
   deriving ( Show, Generic )
 
--- Strip the prefix (which may fail if the prefix isn't present), fall
--- back to the original label if need be.
+-- Strip the prefix, or fall back to the original label if prefix not present.
 
 -- | modFieldLabel
 -- >>> modFieldLabel "commentId"
