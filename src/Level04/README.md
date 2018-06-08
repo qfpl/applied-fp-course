@@ -43,7 +43,7 @@ traverse :: (Applicative f, Traversable t) => (a -> f b) -> t a -> f (t b)
 ```
 
 This is very useful when you want to perform an action on every element of a
-list, but that action will return the new result in a some ``Applicative``
+list, but that action will return the new result in an ``Applicative``
 context.
 
 To help build some intuition for how this function can be useful, write out
