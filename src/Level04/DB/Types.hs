@@ -13,7 +13,7 @@ import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
 
 -- Complete in the DbComment type below so it is a record type that matches the
 -- Comment type, but without the newtype wrappers for each value. To get started,
--- just copy the new definition for the `Comment` type from FirstApp.Types.
+-- just copy the new definition for the `Comment` type from Level04.Types.
 data DBComment = DBComment
   -- NB: Haskell does not allow duplicate field names for records so the field
   -- names for this type will have to be slightly different
