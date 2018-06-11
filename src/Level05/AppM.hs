@@ -19,7 +19,7 @@ import           Data.Bifunctor         (first)
 -- To do this we will create a newtype `AppM` that is a shorthand way of
 -- describing the return type of a function that may contain an error.
 --
--- Our `AppM` type will work in the same manner as the Functor/Applicative/Monad 
+-- Our `AppM` type will work in the same manner as the Functor/Applicative/Monad
 -- instances for Either, with functions being applied to the Right value and
 -- everything been ignored if a Left value is encountered, returning that Left
 -- value. With the added bonus of allowing us to perform `IO` actions!
@@ -38,7 +38,7 @@ import           Data.Bifunctor         (first)
 --   either (pure . Left) needsAButMightFail aE
 --   where
 --     mightFail :: IO (Either Error Int)
---     alsoMightFail :: Int -> IO (Either Error Value)
+--     needsAButMightFail :: Int -> IO (Either Error Value)
 --
 -- We can wrap our functions with AppM and we can work directly with the
 -- values we expect to appear on the happy path, knowing that if the sad path is
