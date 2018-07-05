@@ -4,16 +4,19 @@
 
 <img src="https://i.imgur.com/0h9dFhl.png" height="200" width="320" />
 
-This is a brand new course, so there are going to be rough edges. We invite you to submit issues or
-pull requests if you find errors or have suggestions on how to improve it.
+This is a brand new course, so there are going to be rough edges. We invite
+you to submit issues or pull requests if you find errors or have suggestions
+on how to improve it.
 
-This course is designed to be run in a class room with instructors, but we would like to make it
-suitable for self-study as well. Although undertaking this course outside of the workshops will
-increase the difficulty somewhat, we do not discourage it and invite suggestions on how to make the
-course more approachable.
+This course is designed to be run in a class room with instructors, but we
+would like to make it suitable for self-study as well. Although undertaking
+this course outside of the workshops will increase the difficulty somewhat,
+we do not discourage it and invite suggestions on how to make the course more
+approachable.
 
-If you do attempt this on your own and find yourself completely lost, then you may come find us on
-IRC on [Freenode](https://freenode.net/) in #qfpl or #fp-course.
+If you do attempt this on your own and find yourself completely lost, then
+you may come find us on IRC on [Freenode](https://freenode.net/) in #qfpl or
+#fp-course.
 
 ### You:
 
@@ -46,20 +49,6 @@ undefined, data types and functions.
 We recommend using either a cabal sandbox, or a ``nix-shell``, depending on your
 preference.
 
-To use a sandbox:
-
-```bash
-$ cd path/to/applied-fp-course
-$ cabal sandbox init
-$ cabal install --only-dependencies --enable-tests
-$ cabal build
-$ $EDITOR README.md
-```
-
-We do recommend using cabal sandboxes as they provide a contained Haskell
-environment for a given project. Easy to clean up, and package versions won't
-conflict with any other sandboxed project you may be working on.
-
 If you're using a version of Cabal that is >=2.0 (use ``cabal --version`` to
 find out), then you can use the ``new-*`` commands and you don't need a sandbox:
 
@@ -70,23 +59,37 @@ $ cabal new-build <levelN>-exe
 $ $EDITOR src/<LevelN>/README.md
 ```
 
-The normal cabal build commands should then work as expected.
+If you don't have a version of Cabal that is >=2.0 then we recommend using
+cabal sandboxes. They provide a contained Haskell environment for a given
+project. They're also easy to clean up and any installed packages won't
+conflict with any other sandboxed project you may be working on.
 
-To use the Nix Shell:
+```bash
+$ cd path/to/applied-fp-course
+$ cabal sandbox init
+$ cabal install --only-dependencies --enable-tests
+$ cabal build
+$ $EDITOR README.md
+```
+
+To delete a sandbox:
+
+```bash
+$ cd path/to/applied-fp-course
+$ cabal sandbox delete
+```
+
+If you would like to use a Nix Shell:
+
 ```bash
 $ cd path/to/applied-fp-course
 $ nix-shell
 $ cabal new-build <levelN>-exe
 $ $EDITOR src/<LevelN>/README.md
-
 ```
-Once that completes you will be in a ``nix-shell`` environment with all the
-tools required to build the application for that level. Note that the
-levels build on each other, so you can go to the highest level and enter a
-nix-shell there, you will then have all the required tools for every level.
 
-The ``shell.nix`` is not provided, so if you have a different work-flow you can
-utilise the derivation from the ``applied-fp-course.nix``.
+Once that completes you will be in a ``nix-shell`` environment with all the
+tools required to work through the course. 
 
 ##### Stack
 
