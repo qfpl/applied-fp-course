@@ -108,13 +108,13 @@ free [WebChat client](https://webchat.freenode.net).
 There is a ``README.md`` file in each Level module folder that will provide
 instructions about what the goal is for that specific level.
 
-* Level 01 : Simple Hello World web app.
+* Level 01 : Simple hello world web app.
 * Level 02 : Define our application spec with types!
-* Level 03 : Testing & Tools (hspec & ghcid)
+* Level 03 : Testing & tools
 * Level 04 : Database layer (sqlite-simple)
-* Level 05 : Better Error Handling Through ExceptT
+* Level 05 : Better error handling through ExceptT
 * Level 06 : Add some flexible configuration
-* Level 07 : ReaderT & Refactoring
+* Level 07 : ReaderT & refactoring
 
 -- Coming Soon...
 * Level 08 : (Bonus Round) Lenses & Refactoring
