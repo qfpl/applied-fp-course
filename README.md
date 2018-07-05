@@ -49,6 +49,8 @@ undefined, data types and functions.
 We recommend using either a cabal sandbox, or a ``nix-shell``, depending on your
 preference.
 
+#### Cabal
+
 If you're using a version of Cabal that is >=2.0 (use ``cabal --version`` to
 find out), then you can use the ``new-*`` commands and you don't need a sandbox:
 
@@ -79,6 +81,8 @@ $ cd path/to/applied-fp-course
 $ cabal sandbox delete
 ```
 
+#### Nix
+
 If you would like to use a Nix Shell:
 
 ```bash
@@ -91,13 +95,13 @@ $ $EDITOR src/<LevelN>/README.md
 Once that completes you will be in a ``nix-shell`` environment with all the
 tools required to work through the course. 
 
-##### Stack
+#### Stack
 
 Stack yaml configuration is provided and checked by our CI system for successful
 builds. However the authors do not use stack, so we cannot promise to be able to
 resolve stack related issues that may arise. Though we will do our best. :)
 
-##### Please note...
+#### Please note...
 
 These lessons are designed to be completed with an instructor as part of the
 Data61 Applied Functional Programming Course. You are of course welcome to
