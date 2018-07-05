@@ -10,7 +10,7 @@ data Conf = Conf
   { dbFilePath :: FilePath
   }
 
--- A aimple default that we could just inline this right where we need it. But
+-- A simple default that we could just inline this right where we need it. But
 -- types are so cheap that we can easily prepare ourselves for "doing the right
 -- thing".
 firstAppConfig :: Conf

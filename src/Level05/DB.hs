@@ -70,7 +70,7 @@ runDB
   -> IO a
   -> AppM b
 runDB =
-  error "Copy your completed 'runDB' and refactor to match the new type signature"
+  error "Write 'runDB' to match the type signature"
 
 getComments
   :: FirstAppDB

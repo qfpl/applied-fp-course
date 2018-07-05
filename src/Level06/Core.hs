@@ -130,19 +130,6 @@ handleRequest
   -> RqType
   -> AppM Response
 handleRequest db rqType =
-  -- Now that we're operating within the context of our AppM, which is a
-  -- ReaderT, we're able to access the values stored in the Env.
-  --
-  -- Two functions that allow us to access the data stored in our ReaderT are:
-  -- ask :: MonadReader r m => m r
-  -- &
-  -- asks :: MonadReader r m => (r -> a) -> m a
-  --
-  -- We will use ``asks`` here as we only want the FirstAppDB, so...
-  -- > envDb      :: Env -> FirstAppDB
-  -- > AppM       :: ReaderT Env IO a
-  -- > asks       :: (Env -> a) -> AppM a
-  -- > asks envDb :: AppM FirstAppDB
   case rqType of
     -- Exercise for later: Could this be generalised to clean up the repetition ?
     AddRq t c -> resp200 PlainText "Success" <$ DB.addCommentToTopic db t c
