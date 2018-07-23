@@ -55,18 +55,18 @@ import           Control.Monad.Except               (ExceptT (..), runExceptT)
 -- single type so that we can deal with the entire start-up process as a whole.
 data StartUpError
   = ConfErr ConfigError
-  | DbInitErr SQLiteResponse
+  | DBInitErr SQLiteResponse
   deriving Show
 
 runApp :: IO ()
 runApp = do
   appE <- prepareAppReqs
-  either print runWithDbConn appE
+  either print runWithDBConn appE
   where
-    runWithDbConn env =
-      appWithDb env >> DB.closeDB (envDB env)
+    runWithDBConn env =
+      appWithDB env >> DB.closeDB (envDB env)
 
-    appWithDb env =
+    appWithDB env =
       run ( confPortToWai $ envConfig env ) (app env)
 
 -- Reimplement the `prepareAppReqs` function using the imported `ExceptT`

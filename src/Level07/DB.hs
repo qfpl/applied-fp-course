@@ -31,7 +31,7 @@ import           Level07.Types                     (Comment, CommentText,
                                                      DBFilePath (getDBFilePath),
                                                      Error (DBError),
                                                      FirstAppDB (FirstAppDB, dbConn),
-                                                     Topic, fromDbComment,
+                                                     Topic, fromDBComment,
                                                      getCommentText, getTopic,
                                                      mkTopic)
 

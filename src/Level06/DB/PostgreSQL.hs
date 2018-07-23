@@ -19,8 +19,8 @@ import           Level06.Types
 
 -- This is a bit more configuration available to the PostgreSQL package so we
 -- have a bit more work to do.
-newtype DbName = DbName
-  { getDbName :: String }
+newtype DBName = DBName
+  { getDBName :: String }
   deriving Show
 
 newtype UserName = UserName
@@ -31,25 +31,25 @@ data FirstAppDB = FirstAppDB
   { dbConn  :: Connection
   }
 
-closeDb
+closeDB
   :: FirstAppDB
   -> IO ()
-closeDb =
+closeDB =
   PG.close . dbConn
 
-initDb
+initDB
   :: UserName
-  -> DbName
+  -> DBName
   -> Table
   -> IO FirstAppDB
-initDb un dbN tab = do
+initDB un dbN tab = do
   -- The ConnectInfo type from PostgreSQL has extra configuration options if your local setup is a bit different
   -- https://hackage.haskell.org/package/postgresql-simple-0.5.3.0/docs/Database-PostgreSQL-Simple.html#v:defaultConnectInfo
   --
   -- Use the info to adjust the default connection options.
   let info = PG.defaultConnectInfo
              { PG.connectUser     = getUserName un
-             , PG.connectDatabase = getDbName dbN
+             , PG.connectDatabase = getDBName dbN
              }
   -- Initialise the connection to the DB...
   -- - What could go wrong here?
@@ -94,7 +94,7 @@ getComments db t = do
   -- to convert our DB storage type into something we're going to share with the
   -- outside world. Checking again for things like empty Topic or CommentText
   -- values.
-  pure $ traverse fromDbComment res
+  pure $ traverse fromDBComment res
   -- Note that because of the use of traverse, this function will fail at the
   -- first record that is invalid and discard any successful values.
 
@@ -113,7 +113,7 @@ addCommentToTopic db t c = do
   -- that is returned. The execute function will still return the number of rows
   -- affected by the query, which in our case should always be 1.
   res <- PG.execute (dbConn db) q (getTopic t, getCommentText c, nowish)
-  -- An alternative is to write a returning query to get the Id of the DbComment
+  -- An alternative is to write a returning query to get the Id of the DBComment
   -- we've created. We're being pretty lazy right now so check we've
   -- affected a single row and move on.
   pure $ if res == 1 then Right ()

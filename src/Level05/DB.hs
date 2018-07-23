@@ -26,7 +26,7 @@ import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import           Level05.Types                      (Comment, CommentText,
                                                      Error (DBError), Topic,
-                                                     fromDbComment,
+                                                     fromDBComment,
                                                      getCommentText, getTopic,
                                                      mkTopic)
 

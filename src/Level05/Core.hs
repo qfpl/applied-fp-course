@@ -44,7 +44,7 @@ import           Level05.Types                      (ContentType (..),
 -- interesting ways. But we also want to be able to capture these errors in a
 -- single type so that we can deal with the entire start-up process as a whole.
 data StartUpError
-  = DbInitErr SQLiteResponse
+  = DBInitErr SQLiteResponse
   deriving Show
 
 runApp :: IO ()

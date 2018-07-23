@@ -13,7 +13,7 @@ import           Control.Exception          (try)
 
 import           Data.Aeson                 (FromJSON, Object)
 
-import qualified Data.Aeson                 as Aeson
+import qualified Data.Aeson                 as A
 
 import           Level06.Types              (ConfigError,
                                              PartialConf (PartialConf))

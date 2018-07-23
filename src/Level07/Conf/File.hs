@@ -12,10 +12,10 @@ import           Control.Exception          (try)
 
 import           Data.Aeson                 (FromJSON, Object, (.:))
 
-import qualified Data.Aeson                 as Aeson
-import qualified Data.Aeson.Types           as Aeson
+import qualified Data.Aeson                 as A
+import qualified Data.Aeson.Types           as A
 
-import           Level07.Types             (ConfigError (..), PartialConf)
+import           Level07.Types              (ConfigError (..), PartialConf)
 
 -- Doctest setup section
 -- $setup
@@ -41,4 +41,4 @@ parseJSONConfigFile
   :: FilePath
   -> IO ( Either ConfigError PartialConf )
 parseJSONConfigFile fp =
-  (first JSONDecodeError . Aeson.eitherDecode =<<) <$> readConfFile fp
+  (first JSONDecodeError . A.eitherDecode =<<) <$> readConfFile fp

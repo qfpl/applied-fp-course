@@ -44,7 +44,7 @@ closeDB
   :: FirstAppDB
   -> IO ()
 closeDB =
-  error "closeDb not implemented"
+  error "closeDB not implemented"
 
 -- Given a `FilePath` to our SQLite DB file, initialise the database and ensure
 -- our Table is there by running a query to create it, if it doesn't exist
@@ -53,7 +53,7 @@ initDB
   :: FilePath
   -> IO ( Either SQLiteResponse FirstAppDB )
 initDB fp =
-  error "initDb not implemented"
+  error "initDB not implemented"
   where
   -- Query has an `IsString` instance so string literals like this can be
   -- converted into a `Query` type when the `OverloadedStrings` language
@@ -61,11 +61,11 @@ initDB fp =
     createTableQ = "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time TEXT)"
 
 -- Note that we don't store the `Comment` in the DB, it is the type we build
--- to send to the outside world. We will be loading our `DbComment` type from
+-- to send to the outside world. We will be loading our `DBComment` type from
 -- the FirstApp.DB.Types module before converting trying to convert it to a
 -- `Comment`.
 --
--- To go from a DbComment to a Comment, we need to use ``fromDbComment`` that is
+-- To go from a DBComment to a Comment, we need to use ``fromDBComment`` that is
 -- defined in FirstApp.Types.
 --
 -- HINT: You can use '?' or named place-holders as query parameters. Have a look
@@ -78,8 +78,8 @@ getComments =
   let
     sql = "SELECT id,topic,comment,time FROM comments WHERE topic = ?"
   -- There are several possible implementations of this function. Particularly
-  -- there may be a trade-off between deciding to throw an Error if a DbComment
-  -- cannot be converted to a Comment, or simply ignoring any DbComment that is
+  -- there may be a trade-off between deciding to throw an Error if a DBComment
+  -- cannot be converted to a Comment, or simply ignoring any DBComment that is
   -- not valid.
   in
     error "getComments not implemented"

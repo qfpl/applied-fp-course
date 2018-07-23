@@ -14,7 +14,7 @@ module Level05.Types
   , mkCommentText
   , getCommentText
   , renderContentType
-  , fromDbComment
+  , fromDBComment
   ) where
 
 import           GHC.Generics                       (Generic)
@@ -38,7 +38,7 @@ import qualified Data.Aeson                         as A
 import qualified Data.Aeson.Types                   as A
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
-import           Level05.DB.Types                   (DbComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
+import           Level05.DB.Types                   (DBComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
 import           Level05.Types.CommentText          (CommentText,
                                                      getCommentText,
                                                      mkCommentText)
@@ -91,15 +91,15 @@ instance ToJSON Comment where
              { A.fieldLabelModifier = modFieldLabel
              }
 
--- For safety we take our stored DbComment and try to construct a Comment that
+-- For safety we take our stored DBComment and try to construct a Comment that
 -- we would be okay with showing someone. However unlikely it may be, this is a
 -- nice method for separating out the back and front end of a web app and
 -- providing greater guarantees about data cleanliness.
 
-fromDbComment
-  :: DbComment
+fromDBComment
+  :: DBComment
   -> Either Error Comment
-fromDbComment dbc =
+fromDBComment dbc =
   Comment (CommentId     $ dbCommentId dbc)
       <$> (mkTopic       $ dbCommentTopic dbc)
       <*> (mkCommentText $ dbCommentComment dbc)

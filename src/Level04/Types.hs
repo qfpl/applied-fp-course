@@ -13,7 +13,7 @@ module Level04.Types
   , mkCommentText
   , getCommentText
   , renderContentType
-  , fromDbComment
+  , fromDBComment
   ) where
 
 import           GHC.Generics              (Generic)
@@ -90,15 +90,15 @@ instance ToJSON Comment where
              { A.fieldLabelModifier = modFieldLabel
              }
 
--- For safety we take our stored `DbComment` and try to construct a `Comment`
+-- For safety we take our stored `DBComment` and try to construct a `Comment`
 -- that we would be okay with showing someone. However unlikely it may be, this
 -- is a nice method for separating out the back and front end of a web app and
 -- providing greater guarantees about data cleanliness.
-fromDbComment
+fromDBComment
   :: DBComment
   -> Either Error Comment
-fromDbComment =
-  error "fromDbComment not yet implemented"
+fromDBComment =
+  error "fromDBComment not yet implemented"
 
 data RqType
   = AddRq Topic CommentText

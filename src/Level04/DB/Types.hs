@@ -11,7 +11,7 @@ import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
 -- store in the database. In this instance, it is the raw types that make up a
 -- comment.
 
--- Complete in the DbComment type below so it is a record type that matches the
+-- Complete in the DBComment type below so it is a record type that matches the
 -- Comment type, but without the newtype wrappers for each value. To get started,
 -- just copy the new definition for the `Comment` type from Level04.Types.
 data DBComment = DBComment

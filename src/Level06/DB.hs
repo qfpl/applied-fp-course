@@ -28,7 +28,7 @@ import           Level06.AppM                       (AppM, liftEither)
 
 import           Level06.Types                      (Comment, CommentText,
                                                      Error (DBError), Topic,
-                                                     fromDbComment,
+                                                     fromDBComment,
                                                      getCommentText, getTopic,
                                                      mkTopic)
 
@@ -83,7 +83,7 @@ getComments db t = do
   -- To be doubly and triply sure we've no garbage in our response, we take care
   -- to convert our DB storage type into something we're going to share with the
   -- outside world. Checking again for things like empty Topic or CommentText values.
-  runDB (traverse fromDbComment) $ Sql.query (dbConn db) q (Sql.Only . getTopic $ t)
+  runDB (traverse fromDBComment) $ Sql.query (dbConn db) q (Sql.Only . getTopic $ t)
 
 addCommentToTopic
   :: FirstAppDB
@@ -104,7 +104,7 @@ addCommentToTopic db t c = do
   -- that is returned. The execute function will still return the number of rows
   -- affected by the query, which in our case should always be 1.
   runDB Right $ Sql.execute (dbConn db) q (getTopic t, getCommentText c, nowish)
-  -- An alternative is to write a returning query to get the Id of the DbComment
+  -- An alternative is to write a returning query to get the Id of the DBComment
   -- we've created. We're being lazy (hah!) for now, so assume awesome and move on.
 
 getTopics
