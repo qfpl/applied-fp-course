@@ -18,7 +18,13 @@ import           Level07.Types.Error    (Error)
 -- are values, we're able to pass them around and place them on records like any
 -- other type.
 data Env = Env
+
+  -- We will add a function to take some 'Text' input and print it to the
+  -- console as a crude form of logging. Construct a function that matches this
+  -- type so you can include it when you create the 'Env'.
   { envLoggingFn :: Text -> AppM ()
+
+  -- We're able to nest records to keep things neat and tidy.
   , envConfig    :: Conf
   , envDB        :: FirstAppDB
   }
