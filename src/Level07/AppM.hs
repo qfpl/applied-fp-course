@@ -96,10 +96,10 @@ instance MonadIO AppM where
   liftIO :: IO a -> AppM a
   liftIO = error "liftIO for AppM not implemented"
 
--- Move on to ``src/Level07/DB.hs`` after this
-
 liftEither
   :: Either Error a
   -> AppM a
 liftEither =
   error "throwLeft not implemented"
+
+-- Move on to ``src/Level07/DB.hs`` after this

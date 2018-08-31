@@ -237,3 +237,6 @@ instance Monoid PartialConf where
 -- data structure.
 instance FromJSON PartialConf where
   parseJSON = error "parseJSON for PartialConf not implemented yet."
+
+-- Go to 'src/Level06/Conf/File.hs' next
+

@@ -95,3 +95,5 @@ deleteTopic
   -> AppM ()
 deleteTopic =
   error "Copy your completed 'deleteTopic' and refactor to match the new type signature"
+
+-- Go on to 'src/Level07/Core.hs' next.
