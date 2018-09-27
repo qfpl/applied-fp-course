@@ -44,7 +44,8 @@ extra-source-files:  changelog.md
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >=1.10
 
-tested-with:       GHC==8.4.1
+tested-with:       GHC==8.6.1
+                 , GHC==8.4.3
                  , GHC==8.2.2
                  , GHC==8.0.2
                  , GHC==7.10.3
@@ -110,7 +111,7 @@ library
                        -ferror-spans
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.12
+  build-depends:       base >=4.8 && <4.13
                      , wai == 3.2.*
                      , warp == 3.2.*
                      , http-types >= 0.9 && < 0.13
@@ -144,7 +145,7 @@ test-suite app-fp-tests
                      , Level06Tests
                      , Level07Tests
 
-  build-depends:       base >= 4.8 && <4.12
+  build-depends:       base >= 4.8 && <4.13
                      , applied-fp-course
                      , wai == 3.2.*
                      , wai-extra == 3.0.*
@@ -167,12 +168,12 @@ test-suite doctests
   ghc-options:         -threaded
   main-is:             doctests.hs
   hs-source-dirs:      tests
-  build-depends:       base >= 4.8 && <4.12
+  build-depends:       base >= 4.8 && <4.13
                      , applied-fp-course
                      , mtl == 2.2.*
                      , hspec >= 2.2 && < 3.0
                      , hspec-wai >= 0.6 && < 0.10
-                     , doctest >= 0.11 && < 0.16
+                     , doctest >= 0.11 && < 0.17
 
 -- Level Executables
 executable level01-exe
@@ -181,7 +182,7 @@ executable level01-exe
   -- Directories containing source files.
   hs-source-dirs:      exe
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.12
+  build-depends:       base >=4.8 && <4.13
                      , applied-fp-course
   -- Base language which the package is written in.
   default-language:    Haskell2010
@@ -192,7 +193,7 @@ executable level02-exe
   -- Directories containing source files.
   hs-source-dirs:      exe
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.12
+  build-depends:       base >=4.8 && <4.13
                      , applied-fp-course
   -- Base language which the package is written in.
   default-language:    Haskell2010
@@ -203,7 +204,7 @@ executable level03-exe
   -- Directories containing source files.
   hs-source-dirs:      exe
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.12
+  build-depends:       base >=4.8 && <4.13
                      , applied-fp-course
   -- Base language which the package is written in.
   default-language:    Haskell2010
@@ -214,7 +215,7 @@ executable level04-exe
   -- Directories containing source files.
   hs-source-dirs:      exe
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.12
+  build-depends:       base >=4.8 && <4.13
                      , applied-fp-course
   -- Base language which the package is written in.
   default-language:    Haskell2010
@@ -225,7 +226,7 @@ executable level05-exe
   -- Directories containing source files.
   hs-source-dirs:      exe
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.12
+  build-depends:       base >=4.8 && <4.13
                      , applied-fp-course
   -- Base language which the package is written in.
   default-language:    Haskell2010
@@ -236,7 +237,7 @@ executable level06-exe
   -- Directories containing source files.
   hs-source-dirs:      exe
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.12
+  build-depends:       base >=4.8 && <4.13
                      , applied-fp-course
   -- Base language which the package is written in.
   default-language:    Haskell2010
@@ -247,7 +248,7 @@ executable level07-exe
   -- Directories containing source files.
   hs-source-dirs:      exe
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.12
+  build-depends:       base >=4.8 && <4.13
                      , applied-fp-course
   -- Base language which the package is written in.
   default-language:    Haskell2010
