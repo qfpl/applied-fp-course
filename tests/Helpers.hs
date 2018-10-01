@@ -12,8 +12,6 @@ module Helpers
   , rqWithBody
   ) where
 
-import           Test.Tasty.HUnit        (Assertion, assertFailure, (@=?))
-
 import qualified System.Exit             as Exit
 
 import qualified Control.Exception       as E
@@ -56,12 +54,13 @@ rqWithBody
 rqWithBody mth rpath =
   WT.SRequest (rq mth rpath)
 
-runTestsFor :: Application -> TestM a -> IO a
-runTestsFor app m = do
+runTestsFor :: Application -> String -> TestM a -> IO a
+runTestsFor app nm m = do
+  putStrLn $ "Running Tests For: " <> nm
   testMV <- MVar.newEmptyMVar
   a      <- runSess testMV
   test   <- MVar.readMVar testMV
-  either (sad test) (const Exit.exitSuccess) a
+  either (sad test) pure a
   where
     runSess mv = E.try
       $ WT.runSession (runReaderT m mv) app

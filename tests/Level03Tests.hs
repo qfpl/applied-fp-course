@@ -13,7 +13,7 @@ import           Helpers            (assertBody, assertStatus, get, runTestsFor)
 import qualified Level03.Core       as Core
 
 unitTests :: IO ()
-unitTests = runTestsFor Core.app $ do
+unitTests = runTestsFor Core.app "Level 03 Tests" $ do
   -- Using the functions from ``Helpers`` this actions a GET request on the
   -- "/list" route and compares the response body and status code to our
   -- expectations
