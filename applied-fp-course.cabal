@@ -159,6 +159,7 @@ test-suite app-fp-tests
                      , text == 1.2.*
                      , mtl == 2.2.*
                      , semigroups == 0.18.*
+                     , mmorph
 
 test-suite doctests
   -- Base language which the package is written in.
@@ -187,6 +188,7 @@ test-suite doctests
                      , wai == 3.2.*
                      , wai-extra == 3.0.*
                      , http-types >= 0.9 && < 0.13
+                     , mmorph
 
 -- Level Executables
 executable level01-exe

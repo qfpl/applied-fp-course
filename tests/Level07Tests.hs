@@ -5,14 +5,20 @@ module Level07Tests
   ) where
 
 import           Control.Monad.Reader (ask, reader)
+import           Control.Monad.IO.Class (liftIO)
 
 import           Control.Monad        (join)
 
+import           Data.Foldable          (traverse_)
 import           Data.Monoid          ((<>))
 import           Data.String          (IsString)
 
 import           Test.Hspec
-import           Test.Hspec.Wai
+
+import           Network.HTTP.Types     as HTTP
+
+import           Helpers                (TestM, assertBody, assertStatus, get,
+                                         post, runTestsFor)
 
 import qualified System.Exit          as Exit
 
@@ -40,51 +46,50 @@ unitTests = do
     testTopic :: IsString s => s
     testTopic = "fudge"
 
-  -- Keeping everything in sync with out larger application changes.
   reqsE <- Core.prepareAppReqs
   case reqsE of
-
     Left err -> dieWith err
+    Right e -> runTestsFor (Core.app e) "Level 07 API Tests" $ do
 
-    Right env -> do
-      let app' = pure ( Core.app env )
+      let
+        flushTopic :: TestM ()
+        flushTopic = liftIO .
+          -- Clean up and yell about our errors
+          (traverse_ (either dieWith pure) =<<) .
+          -- Include the runner to handle our new 'AppM'
+          flip AppM.runAppM e .
+          -- Purge all of the comments for this topic for our tests
+          traverse DB.deleteTopic
+          -- We don't export the constructor so even for known values we have
+          -- to play by the rules. There is no - "Oh just this one time.", do it right.
+          $ Types.mkTopic "fudge"
 
-          flushTopic :: IO ()
-          flushTopic = either dieWith pure =<< AppM.runAppM
-            (AppM.liftEither =<< traverse DB.deleteTopic ( Types.mkTopic testTopic ))
-            env
+        -- Run a test and then flush the db
+        test t = t >> flushTopic
 
-      -- We can't run the tests for our AppM in the same stage as our
-      -- application, because of the use of the 'with' function. As it expects
-      -- to be able to execute our tests by applying it to our 'Application'.
-      hspec $ appMTests env
+        topicR = "/fudge/"
 
-      -- Run the tests with a DB topic flush between each spec
-      hspec . with ( flushTopic >> app' ) $ do
+        addToTopic =
+          post "Add Topic" (topicR <> "add") "Fred"
 
-        -- Save us a bit of repetition
-        let pOST = post ( "/" <> testTopic <> "/add" )
+      -- AddRq Spec
+      -- it should return 200 with well formed request
+      test $ addToTopic >>= assertBody "Success"
 
-        -- AddRq Spec
-        describe "POST /topic/add" $ do
-          it "Should return 200 with well formed request" $
-            pOST "Is super tasty." `shouldRespondWith` "Success"
+      -- it should 400 on empty input
+      test $ post "Empty Input" (topicR <> "add") ""
+        >>= assertStatus HTTP.status400
 
-          it "Should 400 on empty input" $
-            pOST "" `shouldRespondWith` 400
+      -- ViewRq Spec
+      -- it should return 200 with
+      test $ addToTopic
+        >> get "View topic" (topicR <> "view")
+        >>= assertStatus HTTP.status200
 
-        -- ViewRq Spec
-        describe "GET /topic/view" $
-          it "Should return 200 with content" $ do
-            _ <- pOST "Is super tasty."
-            get ( "/" <> testTopic <> "/view" ) `shouldRespondWith` 200
-
-        -- ListRq Spec
-        describe "GET /list" $
-          it "Should return 200 with content" $ do
-            _ <- pOST "Is super tasty."
-            get "/list" `shouldRespondWith` "[\"fudge\"]"
-
+      -- ListRq Spec
+      test $ addToTopic
+        >> get "List topics" "/list"
+        >>= assertBody "[\"fudge\"]"
 
 -- These tests ensure that our AppM will do we want it to, with respect to the
 -- behaviour of 'ask', 'reader', and use in a Monad.
@@ -93,13 +98,13 @@ appMTests env = describe "AppM Tests" $ do
 
   it "ask should retrieve the Env" $ do
     r <- AppM.runAppM ask env
-    ( (AppM.envConfig <$> r) == (Right $ AppM.envConfig env) ) `shouldBe` True
+    ( (AppM.envConfig <$> r) == Right (AppM.envConfig env) ) `shouldBe` True
 
   it "reader should run a function on the Env" $ do
     let getDBfilepath = Types.dbFilePath . AppM.envConfig
 
     r <- AppM.runAppM ( reader getDBfilepath ) env
-    r `shouldBe` (Right $ getDBfilepath env)
+    r `shouldBe` Right (getDBfilepath env)
 
   it "should let us run IO functions" $ do
     let fn = do
