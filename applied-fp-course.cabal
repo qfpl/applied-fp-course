@@ -159,6 +159,7 @@ test-suite app-fp-tests
                      , text == 1.2.*
                      , mtl == 2.2.*
                      , semigroups == 0.18.*
+                     , transformers >= 0.4 && < 0.6
                      , mmorph
 
 test-suite doctests
