@@ -182,7 +182,7 @@ test-suite doctests
                      , mtl == 2.2.*
                      , hspec >= 2.2 && < 3.0
                      , hspec-wai >= 0.6 && < 0.10
-                     , doctest >= 0.11 && < 0.16
+                     , doctest >= 0.11 && < 0.17
                      , semigroups == 0.18.*
                      , tasty >= 0.8 && < 1.2
                      , tasty-hunit >= 0.9 && < 0.11
