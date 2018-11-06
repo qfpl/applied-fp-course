@@ -4,14 +4,14 @@ module Level07Tests
   , doctests
   ) where
 
-import           Control.Monad.Reader (ask, reader)
 import           Control.Monad.IO.Class (liftIO)
+import           Control.Monad.Reader   (ask, reader)
 
-import           Control.Monad        (join)
+import           Control.Monad          (join)
 
 import           Data.Foldable          (traverse_)
-import           Data.Monoid          ((<>))
-import           Data.String          (IsString)
+import           Data.Monoid            ((<>))
+import           Data.String            (IsString)
 
 import           Test.Hspec
 
@@ -20,14 +20,14 @@ import           Network.HTTP.Types     as HTTP
 import           Helpers                (TestM, assertBody, assertStatus, get,
                                          post, runTestsFor)
 
-import qualified System.Exit          as Exit
+import qualified System.Exit            as Exit
 
-import           Level07.AppM         (Env)
-import qualified Level07.AppM         as AppM
+import           Level07.AppM           (Env)
+import qualified Level07.AppM           as AppM
 
-import qualified Level07.Core         as Core
-import qualified Level07.DB           as DB
-import qualified Level07.Types        as Types
+import qualified Level07.Core           as Core
+import qualified Level07.DB             as DB
+import qualified Level07.Types          as Types
 
 doctests :: [FilePath]
 doctests =

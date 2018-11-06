@@ -4,21 +4,22 @@ module Level04Tests
   , doctests
   ) where
 
-import           Control.Monad  (join)
-import Control.Monad.IO.Class (liftIO)
+import           Control.Monad          (join)
+import           Control.Monad.IO.Class (liftIO)
 
-import qualified System.Exit    as Exit
+import qualified System.Exit            as Exit
 
-import Data.Foldable (traverse_)
-import Data.Semigroup ((<>))
+import           Data.Foldable          (traverse_)
+import           Data.Semigroup         ((<>))
 
-import           Network.HTTP.Types as HTTP
+import           Network.HTTP.Types     as HTTP
 
-import           Helpers            (TestM, assertBody, assertStatus, get, post, runTestsFor)
+import           Helpers                (TestM, assertBody, assertStatus, get,
+                                         post, runTestsFor)
 
-import qualified Level04.Core   as Core
-import qualified Level04.DB     as DB
-import qualified Level04.Types  as Types
+import qualified Level04.Core           as Core
+import qualified Level04.DB             as DB
+import qualified Level04.Types          as Types
 
 -- Don't forget to uncomment these functions in @tests/Test.hs@ otherwise your
 -- tests won't be run.
