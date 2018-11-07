@@ -4,20 +4,26 @@ module Level06Tests
   , unitTests
   ) where
 
-import           Control.Monad  (join)
+import           Control.Monad          (join)
+import           Control.Monad.IO.Class (liftIO)
 
-import           Data.Monoid    ((<>))
-import           Data.String    (IsString)
+import           Data.Foldable          (traverse_)
+import           Data.Monoid            ((<>))
+import           Data.String            (IsString)
+
+import           Network.HTTP.Types     as HTTP
 
 import           Test.Hspec
-import           Test.Hspec.Wai
 
-import qualified System.Exit    as Exit
+import           Helpers                (TestM, assertBody, assertStatus, get,
+                                         post, runTestsFor)
 
-import qualified Level06.AppM   as AppM
-import qualified Level06.Core   as Core
-import qualified Level06.DB     as DB
-import qualified Level06.Types  as Types
+import qualified System.Exit            as Exit
+
+import qualified Level06.AppM           as AppM
+import qualified Level06.Core           as Core
+import qualified Level06.DB             as DB
+import qualified Level06.Types          as Types
 
 doctests :: [FilePath]
 doctests =
@@ -38,37 +44,45 @@ unitTests = do
 
   reqsE <- Core.prepareAppReqs
   case reqsE of
-
     Left err -> dieWith err
+    Right (cfg, db) -> runTestsFor (Core.app cfg db) "Level 06 Tests" $ do
 
-    Right ( cfg, db ) -> do
-      let app' = pure (Core.app cfg db)
+      let
+        flushTopic :: TestM ()
+        flushTopic = liftIO .
+          -- Clean up and yell about our errors
+          (traverse_ (either dieWith pure) =<<) .
+          -- Include the runner to handle our new 'AppM'
+          AppM.runAppM .
+          -- Purge all of the comments for this topic for our tests
+          traverse ( DB.deleteTopic db )
+          -- We don't export the constructor so even for known values we have
+          -- to play by the rules. There is no - "Oh just this one time.", do it right.
+          $ Types.mkTopic "fudge"
 
-          flushTopic :: IO ()
-          flushTopic = either dieWith pure =<< AppM.runAppM
-            (AppM.liftEither (Types.mkTopic testTopic) >>= DB.deleteTopic db)
+        -- Run a test and then flush the db
+        test t = t >> flushTopic
 
-      -- Run the tests with a DB topic flush between each spec
-      hspec . with ( flushTopic >> app' ) $ do
-        -- Save us a bit of repetition
-        let pOST = post ( "/" <> testTopic <> "/add" )
+        topicR = "/fudge/"
 
-        -- AddRq Spec
-        describe "POST /topic/add" $ do
-          it "Should return 200 with well formed request" $
-            pOST "Is super tasty." `shouldRespondWith` "Success"
+        addToTopic =
+          post "Add Topic" (topicR <> "add") "Fred"
 
-          it "Should 400 on empty input" $
-            pOST "" `shouldRespondWith` 400
+      -- AddRq Spec
+      -- it should return 200 with well formed request
+      test $ addToTopic >>= assertBody "Success"
 
-        -- ViewRq Spec
-        describe "GET /topic/view" $
-          it "Should return 200 with content" $ do
-            _ <- pOST "Is super tasty."
-            get ( "/" <> testTopic <> "/view" ) `shouldRespondWith` 200
+      -- it should 400 on empty input
+      test $ post "Empty Input" (topicR <> "add") ""
+        >>= assertStatus HTTP.status400
 
-        -- ListRq Spec
-        describe "GET /list" $
-          it "Should return 200 with content" $ do
-            _ <- pOST "Is super tasty."
-            get "/list" `shouldRespondWith` "[\"fudge\"]"
+      -- ViewRq Spec
+      -- it should return 200 with
+      test $ addToTopic
+        >> get "View topic" (topicR <> "view")
+        >>= assertStatus HTTP.status200
+
+      -- ListRq Spec
+      test $ addToTopic
+        >> get "List topics" "/list"
+        >>= assertBody "[\"fudge\"]"

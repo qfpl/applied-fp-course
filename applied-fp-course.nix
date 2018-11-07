@@ -1,7 +1,7 @@
 { mkDerivation, aeson, base, bytestring, doctest, hspec, hspec-wai
 , http-types, mtl, optparse-applicative, semigroups, sqlite-simple
-, sqlite-simple-errors, stdenv, text, time, transformers, wai
-, wai-extra, warp
+, sqlite-simple-errors, stdenv, tasty, tasty-hunit, text, time
+, transformers, wai, wai-extra, warp, mmorph
 }:
 mkDerivation {
   pname = "applied-fp-course";
@@ -16,7 +16,8 @@ mkDerivation {
   ];
   executableHaskellDepends = [ base ];
   testHaskellDepends = [
-    base bytestring doctest hspec hspec-wai mtl text wai wai-extra
+    base bytestring doctest hspec hspec-wai http-types mtl tasty
+    tasty-hunit text wai wai-extra mmorph
   ];
   description = "Simplest of web apps for educational purposes";
   license = stdenv.lib.licenses.bsd3;
