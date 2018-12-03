@@ -39,7 +39,7 @@ data Env = Env
 -- will do something involving IO. It's another form of documentation and type
 -- safety. AppM only has one definition and so we can easily understand what it
 -- implies when used in our application.
-newtype AppM a = AppM ( Env -> IO (Either Error a) )
+newtype AppM' e a = AppM' ( Env -> IO (Either e a) )
   -- Quite often, GHC is able to write the code for us. In this case we just
   -- tell GHC that we want a Functor instance for our newtype, and it is able to
   -- correctly derive what is needed.
@@ -48,52 +48,50 @@ newtype AppM a = AppM ( Env -> IO (Either Error a) )
   -- "magic" what is otherwise straight-forward implementations. You are here to
   -- learn after all.
 
-runAppM
-  :: AppM a
-  -> Env
-  -> IO (Either Error a)
-runAppM =
-  error "runAppM not implemented"
+type AppM = AppM' Error
 
-instance Applicative AppM where
-  pure :: a -> AppM a
-  pure = error "pure for AppM not implemented"
+runAppM :: AppM a -> Env -> IO (Either Error a)
+runAppM = error "runAppM not implemented"
 
-  (<*>) :: AppM (a -> b) -> AppM a -> AppM b
-  (<*>) = error "spaceship for AppM not implemented"
+instance Applicative (AppM' e) where
+  pure :: a -> AppM' e a
+  pure = error "pure for AppM' e not implemented"
 
-instance Monad AppM where
-  return :: a -> AppM a
-  return = error "return for AppM not implemented"
+  (<*>) :: AppM' e (a -> b) -> AppM' e a -> AppM' e b
+  (<*>) = error "spaceship for AppM' e not implemented"
 
-  -- When it comes to running functions in AppM as a Monad, this will take care
+instance Monad (AppM' e) where
+  return :: a -> AppM' e a
+  return = error "return for AppM' e not implemented"
+
+  -- When it comes to running functions in (AppM' e) as a Monad, this will take care
   -- of passing the Env from one function to the next.
-  (>>=) :: AppM a -> (a -> AppM b) -> AppM b
-  (>>=) = error "bind for AppM not implemented"
+  (>>=) :: AppM' e a -> (a -> AppM' e b) -> AppM' e b
+  (>>=) = error "bind for AppM' e not implemented"
 
-instance MonadError Error AppM where
-  throwError :: Error -> AppM a
-  throwError = error "throwError for AppM not implemented"
+instance MonadError Error (AppM' e) where
+  throwError :: Error -> AppM' e a
+  throwError = error "throwError for AppM' e not implemented"
 
-  catchError :: AppM a -> (Error -> AppM a) -> AppM a
-  catchError = error "catchError for AppM not implemented"
+  catchError :: AppM' e a -> (Error -> AppM' e a) -> AppM' e a
+  catchError = error "catchError for AppM' e not implemented"
 
-instance MonadReader Env AppM where
+instance MonadReader Env (AppM' e) where
   -- Return the current Env from the AppM.
-  ask :: AppM Env
-  ask = error "ask for AppM not implemented"
+  ask :: AppM' e Env
+  ask = error "ask for AppM' e not implemented"
 
-  -- Run a AppM inside of the current one using a modified Env value.
-  local :: (Env -> Env) -> AppM a -> AppM a
-  local = error "local for AppM not implemented"
+  -- Run a (AppM' e) inside of the current one using a modified Env value.
+  local :: (Env -> Env) -> AppM' e a -> AppM' e a
+  local = error "local for AppM' e not implemented"
 
   -- This will run a function on the current Env and return the result.
-  reader :: (Env -> a) -> AppM a
-  reader = error "reader for AppM not implemented"
+  reader :: (Env -> a) -> AppM' e a
+  reader = error "reader for AppM' e not implemented"
 
-instance MonadIO AppM where
-  -- Take a type of 'IO a' and lift it into our AppM.
-  liftIO :: IO a -> AppM a
+instance MonadIO (AppM' e) where
+  -- Take a type of 'IO a' and lift it into our (AppM' e).
+  liftIO :: IO a -> AppM' e a
   liftIO = error "liftIO for AppM not implemented"
 
 liftEither

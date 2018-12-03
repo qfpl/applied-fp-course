@@ -1,5 +1,7 @@
 # Level 04
 
+#### Database Integration
+
 We need a place to store our Comments/Topics, so we're going to add a database
 to our application, specifically the SQLite database. We've chosen SQLite
 because it was the simplest to have up and running for the purposes of the
@@ -16,21 +18,41 @@ For reference, the packages we will use to talk to our database are:
 You will also need the [SQLite](https://www.sqlite.org/) database application
 installed and available on your system.
 
-Also we will not necessarily provide all of the required imports any more, there
-may be other things you have to bring into scope.
+#### JSON Encoding
+
+Now that we have a place to keep our `Topic`s and `Comment`s, we need to be able
+to encode this data in a way that is acceptable for other systems to consume.
+JSON is de rigueur so we won't buck the trend just yet.
+
+We will be using the [waargonaut](https://hackage.haskell.org/package/waargonaut)
+package to do the heavy lifting for us. You are required to write the encoder
+functions necessary to describe our types to Waargonaut.
+
+We will be building an `Encoder` for our `Topic`, `CommentText`, and `Comment`
+types.
+
+## NB: We will not necessarily provide all of the required imports!
+
+There may be other things you have to bring into scope. So if you see a compiler
+error of the sort: "X is not in scope." then you may need to import a type or
+function into the module scope.
 
 The steps for this level:
 1) ``src/Level04/DB/Types.hs``
-2) ``src/Level04/Types.hs``
-3) ``src/Level04/DB.hs``
-4) ``src/Level04/Core.hs``
+2) ``src/Level04/DB.hs``
+3) ``src/Level04/Types/Topic.hs``
+4) ``src/Level04/Types/CommentText.hs``
+5) ``src/Level04/Types.hs``
+6) ``src/Level04/Core.hs``
 
 For the sake of simplicity, any configuration requirements will be hardcoded in
-``Level04/Conf.hs`` for now. We will return to that in the next level.
+``Level04/Conf.hs`` for now. We will return to that in a future level.
 
 NB: The PostgreSQL example module is in ``src/Level04/DB/PostgreSQL.hs``.
 
 # Useful Typeclasses
+
+## [Contravariant](http://hackage.haskell.org/package/contravariant/docs/Data-Functor-Contravariant.html)
 
 ## [Traversable](https://hackage.haskell.org/package/base/docs/Data-Traversable.html)
 

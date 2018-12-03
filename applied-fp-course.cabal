@@ -103,6 +103,19 @@ library
                          , Level07.Types.Error
                          , Level07.Types.Topic
 
+                         -- , Level08.AppM
+                         -- , Level08.Conf
+                         -- , Level08.Conf.CommandLine
+                         -- , Level08.Conf.File
+                         -- , Level08.DB
+                         -- , Level08.DB.Types
+                         -- , Level08.Core
+                         -- , Level08.Responses
+                         -- , Level08.Types
+                         -- , Level08.Types.CommentText
+                         -- , Level08.Types.Error
+                         -- , Level08.Types.Topic
+
   ghc-options:         -Wall
                        -fno-warn-unused-binds
                        -fno-warn-unused-do-bind
@@ -118,13 +131,17 @@ library
                      , bytestring == 0.10.*
                      , text == 1.2.*
                      , optparse-applicative >= 0.13 && < 0.15
-                     , aeson == 1.*
                      , mtl == 2.2.*
                      , time >= 1.4 && < 1.10
+                     , old-locale
+                     , contravariant
                      , sqlite-simple == 0.4.*
                      , sqlite-simple-errors == 0.6.*
                      , semigroups == 0.18.*
                      , transformers >= 0.4 && < 0.6
+                     , lens
+                     , waargonaut >= 0.4.2 && < 0.5
+                     , attoparsec
 
   -- Directories containing source files.
   hs-source-dirs:      src
@@ -155,7 +172,6 @@ test-suite app-fp-tests
                      , tasty >= 0.8 && < 1.2
                      , tasty-hunit >= 0.9 && < 0.11
                      , hspec >= 2.2 && < 3.0
-                     , hspec-wai >= 0.6 && < 0.10
                      , bytestring == 0.10.*
                      , text == 1.2.*
                      , mtl == 2.2.*
@@ -181,7 +197,6 @@ test-suite doctests
                      , applied-fp-course
                      , mtl == 2.2.*
                      , hspec >= 2.2 && < 3.0
-                     , hspec-wai >= 0.6 && < 0.10
                      , doctest >= 0.11 && < 0.17
                      , semigroups == 0.18.*
                      , tasty >= 0.8 && < 1.2

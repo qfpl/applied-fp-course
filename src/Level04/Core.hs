@@ -27,10 +27,10 @@ import           Data.Semigroup                     ((<>))
 import           Data.Text                          (Text)
 import           Data.Text.Encoding                 (decodeUtf8)
 
-import           Data.Aeson                         (ToJSON)
-import qualified Data.Aeson                         as A
-
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
+
+import           Waargonaut.Encode                  (Encoder')
+import qualified Waargonaut.Encode                  as E
 
 import           Level04.Conf                       (Conf, firstAppConfig)
 import qualified Level04.DB                         as DB
@@ -101,11 +101,12 @@ resp500 =
   mkResponse status500
 
 resp200Json
-  :: ToJSON a
-  => a
+  :: Encoder' a
+  -> a
   -> Response
-resp200Json =
-  mkResponse status200 JSON . A.encode
+resp200Json e =
+  mkResponse status200 JSON .
+  E.simplePureEncodeNoSpaces e
 
 -- |
 app
@@ -124,6 +125,15 @@ app db rq cb = do
     handleRErr :: Either Error RqType -> IO (Either Error Response)
     handleRErr = either ( pure . Left ) ( handleRequest db )
 
+-- | Handle each of the different types of request. See how the types have helped narrow our focus
+-- to only those types of request that we care about. Along with ensuring that once the data has
+-- reached this point, we don't have to continually check if it is valid or usable. The types and
+-- data structures that we created have taken care of that for us at an earlier stage, simplifying
+-- this function.
+--
+-- For both the 'ViewRq' and 'ListRq' functions, we'll need to pass the current 'Encoder' to the
+-- 'resp200Json' function. By this point you will have implemented the 'Encoder' functions for the
+-- specific types. The encoder functions in Waargonaut build upon one another.
 handleRequest
   :: DB.FirstAppDB
   -> RqType

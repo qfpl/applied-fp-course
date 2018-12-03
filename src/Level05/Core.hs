@@ -6,6 +6,7 @@ module Level05.Core
   , prepareAppReqs
   ) where
 
+import qualified Control.Exception                  as Ex
 import           Control.Monad.IO.Class             (liftIO)
 
 import           Network.Wai                        (Application, Request,
@@ -26,10 +27,10 @@ import           Data.Monoid                        ((<>))
 import           Data.Text                          (Text)
 import           Data.Text.Encoding                 (decodeUtf8)
 
-import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
+import           Waargonaut.Encode                  (Encoder')
+import qualified Waargonaut.Encode                  as E
 
-import           Data.Aeson                         (ToJSON)
-import qualified Data.Aeson                         as A
+import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import           Level05.AppM                       (AppM, liftEither, runAppM)
 import qualified Level05.Conf                       as Conf
@@ -37,6 +38,7 @@ import qualified Level05.DB                         as DB
 import           Level05.Types                      (ContentType (..),
                                                      Error (..),
                                                      RqType (AddRq, ListRq, ViewRq),
+                                                     encodeComment, encodeTopic,
                                                      mkCommentText, mkTopic,
                                                      renderContentType)
 
@@ -53,8 +55,15 @@ runApp = do
   cfgE <- prepareAppReqs
   -- Loading the configuration can fail, so we have to take that into account now.
   case cfgE of
-    Left err   -> undefined
-    Right _cfg -> run undefined undefined
+    Left err   ->
+      -- We can't run our app at all! Display the message and exit the application.
+      undefined
+    Right cfg ->
+      -- We have a valid config! We can now complete the various pieces needed to run our
+      -- application. This function 'finally' will execute the first 'IO a', and then, even in the
+      -- case of that value throwing an exception, execute the second 'IO b'. We do this to ensure
+      -- that our DB connection will always be closed when the application finishes, or crashes.
+      Ex.finally (run undefined undefined) (DB.closeDB cfg)
 
 -- We need to complete the following steps to prepare our app requirements:
 --
@@ -106,11 +115,13 @@ resp500 =
   mkResponse status500
 
 resp200Json
-  :: ToJSON a
-  => a
+  :: Encoder' a
+  -> a
   -> Response
-resp200Json =
-  resp200 JSON . A.encode
+resp200Json e =
+  resp200 JSON .
+  E.simplePureEncodeNoSpaces e
+
 -- |
 
 -- How has this implementation changed, now that we have an AppM to handle the
@@ -130,8 +141,8 @@ handleRequest db rqType = case rqType of
   -- handles all of that for us. Such is the pleasant nature of these
   -- abstractions.
   AddRq t c -> resp200 PlainText "Success" <$ DB.addCommentToTopic db t c
-  ViewRq t  -> resp200Json <$> DB.getComments db t
-  ListRq    -> resp200Json <$> DB.getTopics db
+  ViewRq t  -> resp200Json (E.list encodeComment) <$> DB.getComments db t
+  ListRq    -> resp200Json (E.list encodeTopic)   <$> DB.getTopics db
 
 mkRequest
   :: Request

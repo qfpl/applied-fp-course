@@ -8,7 +8,18 @@ let
                       then pkgs.haskellPackages
                       else pkgs.haskell.packages.${compiler};
 
-  drv = haskellPackages.callPackage ./applied-fp-course.nix {};
+  waarg = import ./nix/waargonaut.nix;
+  waarg-deps = import "${waarg}/waargonaut-deps.nix";
+
+  modifiedHaskellPackages = haskellPackages.override (old: {
+    overrides = pkgs.lib.composeExtensions
+      (old.overrides or (_: _: {}))
+      (self: super: (waarg-deps pkgs self super) // {
+        waargonaut = self.callPackage (import "${waarg}/waargonaut.nix") {};
+      });
+  });
+
+  drv = modifiedHaskellPackages.callPackage ./applied-fp-course.nix {};
 
 in
-  if pkgs.lib.inNixShell then drv.env else drv
+  drv

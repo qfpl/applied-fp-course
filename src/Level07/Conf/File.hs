@@ -1,21 +1,21 @@
 module Level07.Conf.File where
 
-import           Data.ByteString.Lazy       (ByteString)
-import qualified Data.ByteString.Lazy.Char8 as LBS
+import           Data.ByteString            (ByteString)
+import qualified Data.ByteString.Char8      as LBS
 
-import           Data.Text                  (Text)
+import           Data.Text                  (pack)
 
 import           Data.Bifunctor             (first)
-import           Data.Monoid                (Last (Last))
+
+import qualified Data.Attoparsec.ByteString as AB
+
+import           Waargonaut                 (Json, parseWaargonaut)
+import qualified Waargonaut.Decode          as D
+import           Waargonaut.Decode.Error    (DecodeError (ParseFailed))
 
 import           Control.Exception          (try)
 
-import           Data.Aeson                 (FromJSON, Object, (.:))
-
-import qualified Data.Aeson                 as A
-import qualified Data.Aeson.Types           as A
-
-import           Level07.Types              (ConfigError (..), PartialConf)
+import           Level07.Types              (ConfigError (..), PartialConf, partialConfDecoder)
 
 -- Doctest setup section
 -- $setup
@@ -35,10 +35,15 @@ readConfFile
 readConfFile fp =
   first ConfigFileReadError <$> try (LBS.readFile fp)
 
--- Construct the function that will take a ``FilePath``, read it in, decode it,
+-- | Construct the function that will take a ``FilePath``, read it in, decode it,
 -- and construct our ``PartialConf``.
 parseJSONConfigFile
   :: FilePath
   -> IO ( Either ConfigError PartialConf )
 parseJSONConfigFile fp =
-  (first JSONDecodeError . A.eitherDecode =<<) <$> readConfFile fp
+  (>>= first BadConfFile . doDecode) <$> readConfFile fp
+  where
+    doDecode = D.runPureDecode partialConfDecoder parseFunc . D.mkCursor
+
+    parseFunc :: ByteString -> Either DecodeError Json
+    parseFunc = first (ParseFailed . pack . show) . AB.parseOnly parseWaargonaut

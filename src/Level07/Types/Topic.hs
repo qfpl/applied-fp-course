@@ -1,14 +1,23 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+module Level07.Types.Topic
+  ( Topic
+  , mkTopic
+  , getTopic
+  , encodeTopic
+  ) where
 
-module Level07.Types.Topic (Topic, mkTopic, getTopic) where
+import           Waargonaut.Encode          (Encoder)
+import qualified Waargonaut.Encode          as E
 
-import Level07.Types.Error (Error(EmptyTopic), nonEmptyText)
+import           Data.Functor.Contravariant ((>$<))
+import           Data.Text                  (Text)
 
-import Data.Text (Text)
-import Data.Aeson (ToJSON)
+import           Level07.Types.Error        (Error (EmptyTopic), nonEmptyText)
 
 newtype Topic = Topic Text
-  deriving (Show, ToJSON)
+  deriving (Show)
+
+encodeTopic :: Applicative f => Encoder f Topic
+encodeTopic = getTopic >$< E.text
 
 mkTopic
   :: Text

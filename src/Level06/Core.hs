@@ -6,7 +6,10 @@ module Level06.Core
   , prepareAppReqs
   ) where
 
+import qualified Control.Exception                  as Ex
 import           Control.Monad.IO.Class             (liftIO)
+
+import           Control.Monad.Except               (catchError,throwError)
 
 import           Network.Wai                        (Application, Request,
                                                      Response, pathInfo,
@@ -20,6 +23,7 @@ import           Network.HTTP.Types                 (Status, hContentType,
 
 import qualified Data.ByteString.Lazy               as LBS
 
+import Data.Bifunctor (first)
 import           Data.Either                        (either)
 import           Data.Monoid                        ((<>))
 
@@ -28,35 +32,33 @@ import           Data.Text.Encoding                 (decodeUtf8)
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import           Data.Aeson                         (ToJSON)
-import qualified Data.Aeson                         as A
+import           Waargonaut.Encode                  (Encoder')
+import qualified Waargonaut.Encode                  as E
 
-import           Level06.AppM                       (AppM, liftEither, runAppM)
+import           Level06.AppM                       (AppM, AppM' (..),
+                                                     liftEither, runAppM)
 import qualified Level06.Conf                       as Conf
 import qualified Level06.DB                         as DB
-import           Level06.Types                      (Conf, ContentType (..),
+import           Level06.Types                      (Conf, ConfigError,
+                                                     ContentType (..),
                                                      Error (..),
                                                      RqType (AddRq, ListRq, ViewRq),
+                                                     encodeComment, encodeTopic,
                                                      mkCommentText, mkTopic,
                                                      renderContentType)
 
--- Our start-up is becoming more complicated and could fail in new and
+-- | Our start-up is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
 -- single type so that we can deal with the entire start-up process as a whole.
 data StartUpError
   = DBInitErr SQLiteResponse
+  | ConfErr ConfigError
   deriving Show
 
 runApp :: IO ()
-runApp = do
-  -- Load our configuration
-  cfgE <- prepareAppReqs
-  -- Loading the configuration can fail, so we have to take that into account now.
-  case cfgE of
-    Left err   -> undefined
-    Right _cfg -> run undefined undefined
+runApp = error "copy your previous 'runApp' implementation and refactor as needed"
 
--- We need to complete the following steps to prepare our app requirements:
+-- | We need to complete the following steps to prepare our app requirements:
 --
 -- 1) Load the configuration.
 -- 2) Attempt to initialise the database.
@@ -64,10 +66,12 @@ runApp = do
 --
 -- The file path for our application config is: "files/appconfig.json"
 --
-prepareAppReqs
-  :: IO ( Either StartUpError ( Conf, DB.FirstAppDB ) )
-prepareAppReqs =
-  error "copy your prepareAppReqs from the previous level."
+-- The config loading process is starting to become unweildly. We will re-use
+-- our generalised AppM to also remove the problem of handling errors on start
+-- up!
+--
+prepareAppReqs :: AppM' StartUpError (Conf, DB.FirstAppDB)
+prepareAppReqs = error "copy your prepareAppReqs from the previous level."
 
 -- | Some helper functions to make our lives a little more DRY.
 mkResponse
@@ -107,14 +111,14 @@ resp500 =
   mkResponse status500
 
 resp200Json
-  :: ToJSON a
-  => a
+  :: Encoder' a
+  -> a
   -> Response
-resp200Json =
-  resp200 JSON . A.encode
--- |
+resp200Json e =
+  resp200 JSON .
+  E.simplePureEncodeNoSpaces e
 
--- Now that we have our configuration, pass it where it needs to go.
+-- | Now that we have our configuration, pass it where it needs to go.
 app
   :: Conf
   -> DB.FirstAppDB
@@ -131,10 +135,9 @@ handleRequest
   -> AppM Response
 handleRequest db rqType =
   case rqType of
-    -- Exercise for later: Could this be generalised to clean up the repetition ?
-    AddRq t c -> resp200 PlainText "Success" <$ DB.addCommentToTopic db t c
-    ViewRq t  -> resp200Json <$> DB.getComments db t
-    ListRq    -> resp200Json <$> DB.getTopics db
+    AddRq t c -> resp200 PlainText "Success"        <$  DB.addCommentToTopic db t c
+    ViewRq t  -> resp200Json (E.list encodeComment) <$> DB.getComments db t
+    ListRq    -> resp200Json (E.list encodeTopic)   <$> DB.getTopics db
 
 mkRequest
   :: Request

@@ -1,18 +1,23 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-
 module Level07.Types.CommentText
   ( CommentText
   , mkCommentText
   , getCommentText
+  , encodeCommentText
   ) where
 
-import Level07.Types.Error (Error(EmptyCommentText), nonEmptyText)
+import           Waargonaut.Encode          (Encoder)
+import qualified Waargonaut.Encode          as E
 
-import Data.Text (Text)
-import Data.Aeson (ToJSON)
+import           Data.Functor.Contravariant ((>$<))
+import           Data.Text                  (Text)
+
+import Level07.Types.Error (Error (EmptyCommentText), nonEmptyText)
 
 newtype CommentText = CommentText Text
-  deriving (Show, ToJSON)
+  deriving (Show)
+
+encodeCommentText :: Applicative f => Encoder f CommentText
+encodeCommentText = getCommentText >$< E.text
 
 mkCommentText
   :: Text
