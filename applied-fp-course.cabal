@@ -60,8 +60,6 @@ library
                            Level01.Core
                          , Level02.Core
                          , Level02.Types
-                         , Level03.Core
-                         , Level03.Types
                          , Level04.Conf
                          , Level04.DB
                          , Level04.DB.Types
@@ -201,17 +199,6 @@ executable level01-exe
 executable level02-exe
   -- .hs or .lhs file containing the Main module.
   main-is:             Level02.hs
-  -- Directories containing source files.
-  hs-source-dirs:      exe
-  -- Other library packages from which modules are imported.
-  build-depends:       base >=4.8 && <4.13
-                     , applied-fp-course
-  -- Base language which the package is written in.
-  default-language:    Haskell2010
-
-executable level03-exe
-  -- .hs or .lhs file containing the Main module.
-  main-is:             Level03.hs
   -- Directories containing source files.
   hs-source-dirs:      exe
   -- Other library packages from which modules are imported.
