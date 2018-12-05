@@ -8,3 +8,5 @@ extra-deps:
 - hw-parser-0.1.0.0
 - natural-0.3.0.3
 - tagged-0.8.6
+- generics-sop-0.3.2.0
+- witherable-0.2

@@ -101,19 +101,6 @@ library
                          , Level07.Types.Error
                          , Level07.Types.Topic
 
-                         -- , Level08.AppM
-                         -- , Level08.Conf
-                         -- , Level08.Conf.CommandLine
-                         -- , Level08.Conf.File
-                         -- , Level08.DB
-                         -- , Level08.DB.Types
-                         -- , Level08.Core
-                         -- , Level08.Responses
-                         -- , Level08.Types
-                         -- , Level08.Types.CommentText
-                         -- , Level08.Types.Error
-                         -- , Level08.Types.Topic
-
   ghc-options:         -Wall
                        -fno-warn-unused-binds
                        -fno-warn-unused-do-bind
