@@ -8,14 +8,19 @@ let
                       then pkgs.haskellPackages
                       else pkgs.haskell.packages.${compiler};
 
-  waarg = import ./nix/waargonaut.nix;
-  waarg-deps = import "${waarg}/waargonaut-deps.nix";
+  sources = {
+    tasty-wai = import ./nix/tasty-wai.nix;
+    waarg = import ./nix/waargonaut.nix;
+  };
+
+  waarg-deps = import "${sources.waarg}/waargonaut-deps.nix";
 
   modifiedHaskellPackages = haskellPackages.override (old: {
     overrides = pkgs.lib.composeExtensions
       (old.overrides or (_: _: {}))
       (self: super: (waarg-deps pkgs self super) // {
-        waargonaut = self.callPackage (import "${waarg}/waargonaut.nix") {};
+        tasty-wai = self.callCabal2nix "tasty-wai" sources.tasty-wai {};
+        waargonaut = self.callCabal2nix "waargonaut" sources.waarg {};
       });
   });
 

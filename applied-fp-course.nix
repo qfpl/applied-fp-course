@@ -1,7 +1,9 @@
-{ mkDerivation, attoparsec, base, bytestring, doctest, hspec
-, http-types, lens, mmorph, mtl, optparse-applicative, semigroups
-, sqlite-simple, sqlite-simple-errors, stdenv, tasty, tasty-hunit
-, text, time, transformers, waargonaut, wai, wai-extra, warp
+{ mkDerivation, attoparsec, base, bytestring, contravariant
+, doctest, hedgehog, http-types, lens, mmorph, mtl, old-locale
+, optparse-applicative, semigroups, sqlite-simple
+, sqlite-simple-errors, stdenv, tasty, tasty-hedgehog, tasty-hunit
+, tasty-wai, text, time, transformers, waargonaut, wai, wai-extra
+, warp
 }:
 mkDerivation {
   pname = "applied-fp-course";
@@ -10,14 +12,15 @@ mkDerivation {
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    attoparsec base bytestring http-types lens mtl optparse-applicative
-    semigroups sqlite-simple sqlite-simple-errors text time
-    transformers waargonaut wai warp
+    attoparsec base bytestring contravariant http-types lens mtl
+    old-locale optparse-applicative semigroups sqlite-simple
+    sqlite-simple-errors text time transformers waargonaut wai warp
   ];
   executableHaskellDepends = [ base ];
   testHaskellDepends = [
-    base bytestring doctest hspec http-types mmorph mtl semigroups
-    tasty tasty-hunit text transformers wai wai-extra
+    base bytestring doctest hedgehog http-types mmorph mtl semigroups
+    tasty tasty-hedgehog tasty-hunit tasty-wai text transformers wai
+    wai-extra
   ];
   description = "Simplest of web apps for educational purposes";
   license = stdenv.lib.licenses.bsd3;

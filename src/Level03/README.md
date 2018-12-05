@@ -4,15 +4,54 @@ In this exercise we're going to add some tests to our application. Because types
 are awesome, and tests are pretty good. But types AND tests is pretty much
 perfect.
 
-These tests will not be awe inspiring, this exercise is primarily to introduce
-you to adding tests to your Haskell application. The setup of the Cabal file is
-already completed for you, but will be covered.
+This exercise is to introduce you to testing your Haskell application. The setup
+of the Cabal file is already completed for you, but will be covered.
 
-As is to be expected, there are multiple testing frameworks and packages
-available but we will only cover one here. We will use the [HSpec] framework,
-with the [hspec-wai] package to make our lives a bit easier.
+As might be expected, there are multiple testing frameworks and packages
+available. We will use the [tasty] framework, it is an established framework
+that has widespread use. There are also several packages that extend [tasty]
+with additional functionality, such as:
 
-### Including Test Library Dependencies and Running the Tests
+* `tasty-hunit` — for unit tests (based on HUnit)
+* `tasty-golden` — for golden tests, which are unit tests whose results are kept in files
+* `tasty-hedgehog` — for randomized property-based testing (based on Hedgehog)
+
+We will be using the [tasty-wai] package to test our `Application`, as it takes
+care of constructing the `Request`s. As well as providing a collection of
+assertion functions we will use to verify our expectations.
+
+For testing individual functions, there is the [tasty-hunit] package. It
+provides functions for creating test cases and for checking your assertions
+
+## NB: UNLIKE OTHER LEVELS
+
+This level is not an isolated module to complete. This level exists as one
+starting module: `test/Test.hs`. Which you are to import your most recently
+completed `Application` to be tested.
+
+As you progress through the course, you are encouraged to return to this
+`test/Test.hs` and update it so you're able to be confident that your
+application will behave as you expect. You may also write your tests before you
+write your functions, this can be useful when trying to think through a problem.
+
+#### Property-Based Testing [Optional]
+
+For more advanced testing, there is the [hedgehog] property-based testing
+package, and the [tasty] integration component [tasty-hedgehog]. 
+
+Property based testing is a technique of testing whereby you specify the
+properties that your function satisfies. Hedgehog then generates random input to
+verify that your properties hold.
+
+If there are inputs that cause your properties to _not_ hold, then Hedgehog will
+attempt to shrink down the size of the inputs that broke your test, to try to
+find the 'minimum' input required.
+
+Property based testing is immensely effective at locating bugs and unexpected
+behaviour and has lead to the notion of "property driven development".
+
+
+#### Including Test Library Dependencies and Running the Tests
 
 To run the tests we first need to uncomment the required functions in
 `test/Test.hs` otherwise nothing will be run! We do this so you don't have to
@@ -58,8 +97,9 @@ in the REPL:
 *Main> :main
 ```
 
-Start in ``tests/Level03Tests.hs``.
+Start in ``tests/Test.hs``.
 
-[HSpec]: (http://hspec.github.io/)
-[hspec-wai]: (https://hackage.haskell.org/package/hspec-wai)
+[tasty]: (https://hackage.haskell.org/package/tasty)
+[tasty-wai]: (https://hackage.haskell.org/package/tasty-wai)
 [doctest]: (https://hackage.haskell.org/package/doctest)
+
