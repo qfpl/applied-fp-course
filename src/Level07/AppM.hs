@@ -98,6 +98,6 @@ liftEither
   :: Either Error a
   -> AppM a
 liftEither =
-  error "throwLeft not implemented"
+  error "liftEither not implemented"
 
 -- Move on to ``src/Level07/DB.hs`` after this
