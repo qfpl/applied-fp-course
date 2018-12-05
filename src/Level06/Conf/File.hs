@@ -16,17 +16,13 @@ import           Waargonaut                 (Json, parseWaargonaut)
 import qualified Waargonaut.Decode          as D
 import           Waargonaut.Decode.Error    (DecodeError (ParseFailed))
 
-import           Level06.AppM               (AppM')
 import           Level06.Types              (ConfigError (BadConfFile),
                                              PartialConf (PartialConf))
 -- $setup
 -- >>> :set -XOverloadedStrings
 
--- | We're trying to avoid complications when selecting a configuration file
--- package from Hackage. We'll use an encoding that you are probably familiar
--- with, for better or worse, and write a small parser to pull out the bits we
--- need. The package we're using is the ``aeson`` package to parse some JSON and
--- we'll pick the bits off the Object.
+-- | The configuration file is in the JSON format, so we need to write a
+-- 'waargonaut' 'Decoder' to go from JSON to our 'PartialConf'.
 --
 -- Update these tests when you've completed this function.
 --

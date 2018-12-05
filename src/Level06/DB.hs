@@ -24,7 +24,7 @@ import qualified Database.SQLite.Simple             as Sql
 import qualified Database.SQLite.SimpleErrors       as Sql
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import           Level06.AppM                       (AppM, liftEither)
+import           Level06.AppM                       (App, liftEither)
 
 import           Level06.Types                      (Comment, CommentText,
                                                      Error (DBError), Topic,
@@ -68,7 +68,7 @@ initDB fp = Sql.runDBAction $ do
 runDB
   :: (a -> Either Error b)
   -> IO a
-  -> AppM b
+  -> App b
 runDB f a = do
   r <- liftIO $ first DBError <$> Sql.runDBAction a
   liftEither $ f =<< r
@@ -76,7 +76,7 @@ runDB f a = do
 getComments
   :: FirstAppDB
   -> Topic
-  -> AppM [Comment]
+  -> App [Comment]
 getComments db t = do
   -- Write the query with an icky string and remember your placeholders!
   let q = "SELECT id,topic,comment,time FROM comments WHERE topic = ?"
@@ -89,7 +89,7 @@ addCommentToTopic
   :: FirstAppDB
   -> Topic
   -> CommentText
-  -> AppM ()
+  -> App ()
 addCommentToTopic db t c = do
   -- Record the time this comment was created.
   nowish <- liftIO getCurrentTime
@@ -109,7 +109,7 @@ addCommentToTopic db t c = do
 
 getTopics
   :: FirstAppDB
-  -> AppM [Topic]
+  -> App [Topic]
 getTopics db =
   let q = "SELECT DISTINCT topic FROM comments"
   in
@@ -118,7 +118,7 @@ getTopics db =
 deleteTopic
   :: FirstAppDB
   -> Topic
-  -> AppM ()
+  -> App ()
 deleteTopic db t =
   let q = "DELETE FROM comments WHERE topic = ?"
   in

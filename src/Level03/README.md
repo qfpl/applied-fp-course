@@ -26,13 +26,24 @@ provides functions for creating test cases and for checking your assertions
 ## NB: UNLIKE OTHER LEVELS
 
 This level is not an isolated module to complete. This level exists as one
-starting module: `test/Test.hs`. Which you are to import your most recently
-completed `Application` to be tested.
+module: `tests/Test.hs`, into which you are to import your most recently
+completed `Application`.
 
 As you progress through the course, you are encouraged to return to this
-`test/Test.hs` and update it so you're able to be confident that your
+`tests/Test.hs` and update it so you're able to be confident that your
 application will behave as you expect. You may also write your tests before you
 write your functions, this can be useful when trying to think through a problem.
+
+For example, we will assume that you have just completed `Level04`. In order to
+test it you will need to update the imports in `tests/Test.hs`:
+
+```haskell
+-- FROM:
+import qualified Level02.Core as Core
+
+-- TO:
+import qualified Level04.Core as Core
+```
 
 #### Property-Based Testing [Optional]
 

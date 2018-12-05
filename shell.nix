@@ -13,8 +13,8 @@ let
     [ # Include the SQLite Database application
       nixpkgs.sqlite
 
-      # Optionally include the 'ghcid' auto reloading tool
-      # nixpkgs.haskellPackages.ghcid
+      # 'ghcid' auto reloading tool
+      nixpkgs.haskellPackages.ghcid
     ]
   # We don't want nix to build the thing, we want the environment so we can
   # build the thing.

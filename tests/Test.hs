@@ -45,7 +45,6 @@ import           Network.HTTP.Types as HTTP
 -- you move forward, come back and import your latest 'Application' so that you
 -- can test your work as you progress.
 import qualified Level02.Core       as Core
-import qualified Level02.Types      as Types
 
 main :: IO ()
 main = defaultMain $ testGroup "Applied FP Course - Tests"

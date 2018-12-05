@@ -25,7 +25,7 @@ import qualified Database.SQLite.Simple             as Sql
 import qualified Database.SQLite.SimpleErrors       as Sql
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import           Level07.AppM                      (AppM, Env (envDB))
+import           Level07.AppM                      (App, Env (envDB))
 
 import           Level07.Types                     (Comment, CommentText,
                                                      DBFilePath (getDBFilePath),
@@ -61,38 +61,38 @@ initDB fp = Sql.runDBAction $ do
       "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY, topic TEXT, comment TEXT, time INTEGER)"
 
 getDBConn
-  :: AppM Connection
+  :: App Connection
 getDBConn =
   error "getDBConn not implemented"
 
 runDB
   :: (a -> Either Error b)
   -> (Connection -> IO a)
-  -> AppM b
+  -> App b
 runDB =
   error "runDB not re-implemented"
 
 getComments
   :: Topic
-  -> AppM [Comment]
+  -> App [Comment]
 getComments =
   error "Copy your completed 'getComments' and refactor to match the new type signature"
 
 addCommentToTopic
   :: Topic
   -> CommentText
-  -> AppM ()
+  -> App ()
 addCommentToTopic =
   error "Copy your completed 'appCommentToTopic' and refactor to match the new type signature"
 
 getTopics
-  :: AppM [Topic]
+  :: App [Topic]
 getTopics =
   error "Copy your completed 'getTopics' and refactor to match the new type signature"
 
 deleteTopic
   :: Topic
-  -> AppM ()
+  -> App ()
 deleteTopic =
   error "Copy your completed 'deleteTopic' and refactor to match the new type signature"
 

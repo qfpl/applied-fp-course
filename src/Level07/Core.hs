@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Level07.Core
-  ( runApp
+  ( runApplication
   , prepareAppReqs
   , app
   ) where
@@ -39,21 +39,21 @@ import qualified Level07.Conf                       as Conf
 import qualified Level07.DB                         as DB
 
 import qualified Level07.Responses                  as Res
-import           Level07.Types                      (Conf,
-                                                     ConfigError,
+import           Level07.Types                      (Conf, ConfigError,
                                                      ContentType (PlainText),
                                                      Error (..), RqType (..),
                                                      confPortToWai,
                                                      encodeComment, encodeTopic,
                                                      mkCommentText, mkTopic)
 
-import           Level07.AppM                       (AppM, Env (..), liftEither)
+import           Level07.AppM                       (App, Env (..), liftEither,
+                                                     runApp)
 
--- We're going to use the `mtl` ExceptT monad transformer to make the loading of
+-- | We're going to use the `mtl` ExceptT monad transformer to make the loading of
 -- our `Conf` a bit more straight-forward.
 import           Control.Monad.Except               (ExceptT (..), runExceptT)
 
--- Our start-up is becoming more complicated and could fail in new and
+-- | Our start-up is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
 -- single type so that we can deal with the entire start-up process as a whole.
 data StartUpError
@@ -61,8 +61,8 @@ data StartUpError
   | ConfErr ConfigError
   deriving Show
 
-runApp :: IO ()
-runApp = do
+runApplication :: IO ()
+runApplication = do
   appE <- runExceptT prepareAppReqs
   either print runWithDBConn appE
   where
@@ -74,11 +74,12 @@ runApp = do
 
 -- | Our AppM is no longer useful for implementing this function. Can you explain why?
 --
--- We wil reimplement this function using `ExceptT`. It is From the 'mtl' package and it's the very
--- general form of the AppM we implemented previously. It has all of the useful instances written
--- for us, along with many utility functions.
+-- We will reimplement this function using `ExceptT`. It is from the 'mtl'
+-- package and it's the very general form of the AppM we implemented previously.
+-- It has all of the useful instances written for us, along with many utility
+-- functions.
 --
--- https://hackage.haskell.org/package/mtl
+-- 'mtl' on Hackage: https://hackage.haskell.org/package/mtl
 --
 prepareAppReqs :: ExceptT StartUpError IO Env
 prepareAppReqs = error "prepareAppReqs not reimplemented with ExceptT"
@@ -86,9 +87,9 @@ prepareAppReqs = error "prepareAppReqs not reimplemented with ExceptT"
   -- condition you have to explain to the person next to you what you've done and why it works.
 
 -- | Now that our request handling and response creating functions operate
--- within our AppM context, we need to run the AppM to get our IO action out
+-- within our App context, we need to run the App to get our IO action out
 -- to be run and handed off to the callback function. We've already written
--- the function for this so include the 'runAppM' with the Env.
+-- the function for this so include the 'runApp' with the Env.
 app
   :: Env
   -> Application
@@ -97,7 +98,7 @@ app =
 
 handleRequest
   :: RqType
-  -> AppM Response
+  -> App Response
 handleRequest rqType = case rqType of
   AddRq t c -> Res.resp200 PlainText "Success" <$ DB.addCommentToTopic t c
   ViewRq t  -> Res.resp200Json (E.list encodeComment) <$> DB.getComments t
@@ -105,7 +106,7 @@ handleRequest rqType = case rqType of
 
 mkRequest
   :: Request
-  -> AppM RqType
+  -> App RqType
 mkRequest rq =
   liftEither =<< case ( pathInfo rq, requestMethod rq ) of
     -- Commenting on a given topic

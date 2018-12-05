@@ -19,7 +19,7 @@ import           Level06.Types          (Error)
 -- Our new 'AppM'' will also use the record syntax to define our 'runAppM' function. This is a more
 -- common definition of this kind of newtype.
 --
-newtype AppM' e a = AppM'
+newtype AppM e a = AppM
   { runAppM' :: IO (Either e a)
   }
 
@@ -27,14 +27,14 @@ newtype AppM' e a = AppM'
 -- declare that on every signature. We're able to use a type _alias_ to avoid this problem. We can
 -- define this type alias to make the error type variable concrete as 'Error'.
 --
-type AppM = AppM' Error
+type App = AppM Error
 
 -- | We're able to reuse the existing 'runAppM' function as well. The definition is even simpler
 -- than before. If someone near you is up to the same section, try to explain to each other why this
 -- works.
 --
-runAppM :: AppM a -> IO (Either Error a)
-runAppM = runAppM'
+runApp :: App a -> IO (Either Error a)
+runApp = runAppM'
 
 -- | You may copy your previously completed AppM instances here and then refactor them to suit the
 -- more generalised type of AppM'.
@@ -43,34 +43,34 @@ runAppM = runAppM'
 -- | Copy from previous level and refactor, or reimplement to practice. The choice is yours.
 -- | -----------------------------------------------------------------------------------------------
 
-instance Functor (AppM' e) where
-  fmap :: (a -> b) -> AppM' e a -> AppM' e b
-  fmap = error "fmap for (AppM' e) not implemented"
+instance Functor (AppM e) where
+  fmap :: (a -> b) -> AppM e a -> AppM e b
+  fmap = error "fmap for (AppM e) not implemented"
 
-instance Applicative (AppM' e) where
-  pure :: a -> AppM' e a
-  pure  = error "pure for (AppM' e) not implemented"
+instance Applicative (AppM e) where
+  pure :: a -> AppM e a
+  pure  = error "pure for (AppM e) not implemented"
 
-  (<*>) :: AppM' e (a -> b) -> AppM' e a -> AppM' e b
-  (<*>) = error "spaceship for (AppM' e) not implemented"
+  (<*>) :: AppM e (a -> b) -> AppM e a -> AppM e b
+  (<*>) = error "spaceship for (AppM e) not implemented"
 
-instance Monad (AppM' e) where
-  return :: a -> AppM' e a
-  return = error "return for (AppM' e) not implemented"
+instance Monad (AppM e) where
+  return :: a -> AppM e a
+  return = error "return for (AppM e) not implemented"
 
-  (>>=) :: AppM' e a -> (a -> AppM' e b) -> AppM' e b
-  (>>=)  = error "bind for (AppM' e) not implemented"
+  (>>=) :: AppM e a -> (a -> AppM e b) -> AppM e b
+  (>>=)  = error "bind for (AppM e) not implemented"
 
-instance MonadIO (AppM' e) where
-  liftIO :: IO a -> AppM' e a
-  liftIO = error "liftIO for (AppM' e) not implemented"
+instance MonadIO (AppM e) where
+  liftIO :: IO a -> AppM e a
+  liftIO = error "liftIO for (AppM e) not implemented"
 
-instance MonadError e (AppM' e) where
-  throwError :: e -> AppM' e a
-  throwError = error "throwError for (AppM' e) not implemented"
+instance MonadError e (AppM e) where
+  throwError :: e -> AppM e a
+  throwError = error "throwError for (AppM e) not implemented"
 
-  catchError :: AppM' e a -> (e -> AppM' e a) -> AppM' e a
-  catchError = error "catchError for (AppM' e) not implemented"
+  catchError :: AppM e a -> (e -> AppM e a) -> AppM e a
+  catchError = error "catchError for (AppM e) not implemented"
 
 --  This is a helper function that will `lift` an Either value into our new AppM
 -- by applying `throwError` to the Left value, and using `pure` to lift the
@@ -79,5 +79,5 @@ instance MonadError e (AppM' e) where
 -- throwError :: MonadError e m => e -> m a
 -- pure :: Applicative m => a -> m a
 --
-liftEither :: Either e a -> AppM' e a
+liftEither :: Either e a -> AppM e a
 liftEither = error "throwLeft not implemented"

@@ -54,6 +54,43 @@ NB: The PostgreSQL example module is in ``src/Level04/DB/PostgreSQL.hs``.
 
 ## [Contravariant](http://hackage.haskell.org/package/contravariant/docs/Data-Functor-Contravariant.html)
 
+The `Contravariant` typeclass provides the following function:
+
+```haskell
+contramap :: Contravariant f => (a -> b) -> f b -> f a
+```
+
+This might seem super wild, but if you take a moment, follow the types, and
+perhaps squint a bit. We're able to discern that:
+
+1) If we provide some way of going from an `a` to a `b`: `(a -> b)` and a `f b`.
+
+2) Then we're able to create some `f a`: By applying the `(a -> b)` to the `a`,
+so that we then have a `b`, such that we're able to use the `f b` we had in the
+first place
+
+We will work through a small example. Copied from the `Contravariant` documentation on Hackage:
+https://hackage.haskell.org/package/contravariant-1.5/docs/Data-Functor-Contravariant.html#t:Contravariant.
+
+As an example, consider the type of predicate functions a -> Bool. One such
+predicate might be negative x = x < 0, which classifies integers as to whether
+they are negative. However, given this predicate, we can re-use it in other
+situations, providing we have a way to map values to integers. For instance, we
+can use the negative predicate on a person's bank balance to work out if they
+are currently overdrawn:
+
+```haskell
+newtype Predicate a = Predicate { getPredicate :: a -> Bool }
+
+instance Contravariant Predicate where
+  contramap f (Predicate p) = Predicate (p . f)
+                                         |   `- First, map the input...
+                                         `----- then apply the predicate.
+
+overdrawn :: Predicate Person
+overdrawn = contramap personBankBalance negative
+```
+
 ## [Traversable](https://hackage.haskell.org/package/base/docs/Data-Traversable.html)
 
 This typeclass provides a function called ``traverse``, which is for

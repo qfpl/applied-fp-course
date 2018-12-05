@@ -54,7 +54,16 @@ resp400
 resp400 =
   error "resp400 not implemented"
 
--- | These next few functions will take raw request information and construct one of our types.
+-- |----------------------------------------------------------------------------------
+-- These next few functions will take raw request information and construct         --
+-- one of our types.                                                                --
+--                                                                                  --
+-- By breaking out these smaller functions, we're able to isolate our               --
+-- validation requirements into smaller components that are simpler to maintain     --
+-- and verify. It also allows for greater reuse and it also means that              --
+-- validation is not duplicated across the application, maybe incorrectly.          --
+--------------------------------------------------------------------------------------
+
 mkAddRequest
   :: Text
   -> LBS.ByteString
@@ -66,10 +75,6 @@ mkAddRequest =
     lazyByteStringToStrictText =
       decodeUtf8 . LBS.toStrict
 
--- | By breaking out these smaller functions, we're able to isolate our
--- validation requirements into smaller components that are simpler to maintain
--- and verify. It also allows for greater reuse and it also means that
--- validation is not duplicated across the application, maybe incorrectly.
 mkViewRequest
   :: Text
   -> Either Error RqType
@@ -80,6 +85,10 @@ mkListRequest
   :: Either Error RqType
 mkListRequest =
   error "mkListRequest not implemented"
+
+-- |----------------------------------
+-- end of RqType creation functions --
+--------------------------------------
 
 mkErrorResponse
   :: Error

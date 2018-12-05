@@ -9,7 +9,7 @@ import           GHC.Word                 (Word16)
 import           Data.Bifunctor           (first)
 import           Data.Monoid              ((<>))
 
-import           Level06.AppM             (AppM')
+import           Level06.AppM             (AppM)
 import           Level06.Types            (Conf, ConfigError,
                                            DBFilePath (DBFilePath), PartialConf,
                                            Port (Port))

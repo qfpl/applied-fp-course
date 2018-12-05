@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-unused-matches #-}
 module Level06.Core
-  ( runApp
+  ( runApplication
   , app
   , prepareAppReqs
   ) where
@@ -9,7 +9,7 @@ module Level06.Core
 import qualified Control.Exception                  as Ex
 import           Control.Monad.IO.Class             (liftIO)
 
-import           Control.Monad.Except               (catchError,throwError)
+import           Control.Monad.Except               (catchError, throwError)
 
 import           Network.Wai                        (Application, Request,
                                                      Response, pathInfo,
@@ -23,7 +23,7 @@ import           Network.HTTP.Types                 (Status, hContentType,
 
 import qualified Data.ByteString.Lazy               as LBS
 
-import Data.Bifunctor (first)
+import           Data.Bifunctor                     (first)
 import           Data.Either                        (either)
 import           Data.Monoid                        ((<>))
 
@@ -35,8 +35,8 @@ import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 import           Waargonaut.Encode                  (Encoder')
 import qualified Waargonaut.Encode                  as E
 
-import           Level06.AppM                       (AppM, AppM' (..),
-                                                     liftEither, runAppM)
+import           Level06.AppM                       (App, AppM (..),
+                                                     liftEither, runApp)
 import qualified Level06.Conf                       as Conf
 import qualified Level06.DB                         as DB
 import           Level06.Types                      (Conf, ConfigError,
@@ -55,8 +55,8 @@ data StartUpError
   | ConfErr ConfigError
   deriving Show
 
-runApp :: IO ()
-runApp = error "copy your previous 'runApp' implementation and refactor as needed"
+runApplication :: IO ()
+runApplication = error "copy your previous 'runApp' implementation and refactor as needed"
 
 -- | We need to complete the following steps to prepare our app requirements:
 --
@@ -70,7 +70,7 @@ runApp = error "copy your previous 'runApp' implementation and refactor as neede
 -- our generalised AppM to also remove the problem of handling errors on start
 -- up!
 --
-prepareAppReqs :: AppM' StartUpError (Conf, DB.FirstAppDB)
+prepareAppReqs :: AppM StartUpError (Conf, DB.FirstAppDB)
 prepareAppReqs = error "copy your prepareAppReqs from the previous level."
 
 -- | Some helper functions to make our lives a little more DRY.
@@ -124,7 +124,7 @@ app
   -> DB.FirstAppDB
   -> Application
 app cfg db rq cb =
-  runAppM (handleRequest db =<< mkRequest rq) >>= cb . handleRespErr
+  runApp (handleRequest db =<< mkRequest rq) >>= cb . handleRespErr
   where
     handleRespErr :: Either Error Response -> Response
     handleRespErr = either mkErrorResponse id
@@ -132,7 +132,7 @@ app cfg db rq cb =
 handleRequest
   :: DB.FirstAppDB
   -> RqType
-  -> AppM Response
+  -> App Response
 handleRequest db rqType =
   case rqType of
     AddRq t c -> resp200 PlainText "Success"        <$  DB.addCommentToTopic db t c
@@ -141,7 +141,7 @@ handleRequest db rqType =
 
 mkRequest
   :: Request
-  -> AppM RqType
+  -> App RqType
 mkRequest rq =
   liftEither =<< case ( pathInfo rq, requestMethod rq ) of
     -- Commenting on a given topic
