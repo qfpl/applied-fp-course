@@ -119,13 +119,15 @@ install:
   - |
     case "$BUILD" in
       stack)
+        cabal --version
+        ghc --version
         # Add in extra-deps for older snapshots, as necessary
-        stack --no-terminal --install-ghc $ARGS build --bench --dry-run || ( \
-          stack --no-terminal $ARGS build cabal-install && \
+        stack --no-terminal $ARGS build --bench --dry-run || ( \
           stack --no-terminal $ARGS solver --update-config)
+          # stack --no-terminal $ARGS build cabal-install && \
 
         # Build the dependencies
-        stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
+        stack --no-terminal $ARGS test --bench --only-dependencies
         ;;
       cabal)
         cabal --version
