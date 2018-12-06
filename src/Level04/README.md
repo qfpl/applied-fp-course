@@ -18,6 +18,28 @@ For reference, the packages we will use to talk to our database are:
 You will also need the [SQLite](https://www.sqlite.org/) database application
 installed and available on your system.
 
+#### Testing with a database
+
+When testing your application it is wise to use a database that is created
+explicitly for testing. When using `sqlite-simple`, we can either specify a
+different file path to the database file we want to use. Alternatively we can
+use a purely "in-memory" database, that won't persist and will always be able to
+be created for our tests.
+
+To do this, provide the special file path `":memory:"`. The `sqlite-simple`
+package will pass this to SQLite and it will create a table in memory. You may
+also provide an empty string, although that is a bit ambiguous.
+
+More information can be found at:
+
+- [Hackage docs for open](https://hackage.haskell.org/package/sqlite-simple-0.4.16.0/docs/Database-SQLite-Simple.html#v:open)
+- [SQLite Documentation](https://www.sqlite.org/inmemorydb.html)
+
+This should suffice for our needs in the course, but when it comes to larger
+applications that have tests that hit a database. You will want to more
+explicitly manage a separate database that does persist. In case you want to
+examine the data for debugging.
+
 #### JSON Encoding
 
 Now that we have a place to keep our `Topic`s and `Comment`s, we need to be able
@@ -36,6 +58,8 @@ types.
 There may be other things you have to bring into scope. So if you see a compiler
 error of the sort: "X is not in scope." then you may need to import a type or
 function into the module scope.
+
+## Steps for this level:
 
 The steps for this level:
 1) ``src/Level04/DB/Types.hs``
