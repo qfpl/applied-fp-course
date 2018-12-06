@@ -51,7 +51,10 @@ package to do the heavy lifting for us. You are required to write the encoder
 functions necessary to describe our types to Waargonaut.
 
 We will be building an `Encoder` for our `Topic`, `CommentText`, and `Comment`
-types.
+types. The `Encoder` and `Decoder` functions can be combined to handle more
+complicated structures built of smaller components. An `Encoder` for `Text` can
+be combined with the `Encoder` for `[]` to create an `Encoder` for `[Text]`, for
+example.
 
 ## NB: We will not necessarily provide all of the required imports!
 
@@ -72,8 +75,6 @@ The steps for this level:
 For the sake of simplicity, any configuration requirements will be hardcoded in
 ``Level04/Conf.hs`` for now. We will return to that in a future level.
 
-NB: The PostgreSQL example module is in ``src/Level04/DB/PostgreSQL.hs``.
-
 # Useful Typeclasses
 
 ## [Contravariant](http://hackage.haskell.org/package/contravariant/docs/Data-Functor-Contravariant.html)
@@ -87,11 +88,12 @@ contramap :: Contravariant f => (a -> b) -> f b -> f a
 This might seem super wild, but if you take a moment, follow the types, and
 perhaps squint a bit. We're able to discern that:
 
-1) If we provide some way of going from an `a` to a `b`: `(a -> b)` and a `f b`.
+1) If we provide:
+  * some way of going from an `a` to a `b`: `(a -> b)` 
+  * and a `f b`
 
-2) Then we're able to create some `f a`: By applying the `(a -> b)` to the `a`,
-so that we then have a `b`, such that we're able to use the `f b` we had in the
-first place
+2) We're able to create `f a` by applying the `(a -> b)` to the `a` so that we
+   then have a `b`
 
 We will work through a small example. Copied from the `Contravariant` documentation on Hackage:
 https://hackage.haskell.org/package/contravariant-1.5/docs/Data-Functor-Contravariant.html#t:Contravariant.

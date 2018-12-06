@@ -47,21 +47,10 @@ getCommentText (CommentText t) =
 -- instances of the structure we're trying to create may provide a handy
 -- shortcut.
 --
--- In this case the `Encoder` type has an instance of `Contravariant`. Which has
--- the following function:
---
--- @
--- contramap :: Contravariant f => (a -> b) -> f b -> f a
--- @
---
--- This might seem super wild, but if you take a moment and follow the types,
--- you can see:
---
--- If we provide some way of going from an 'a' to a 'b': (a -> b) and a 'f b'.
---
--- Then we're able to create some 'f a': By applying the (a -> b) to the 'a', so
--- that we then have a 'b', such that we're able to use the 'f b' we had in the
--- first place
+-- In this case the `Encoder` type has an instance of `Contravariant`. That
+-- typeclass has a function that comes in very handy when writing these
+-- functions. There is a quick introduction to `Contravariant` in the `README`
+-- for this level.
 --
 encodeCommentText :: Applicative f => Encoder f CommentText
 encodeCommentText = -- Try using 'contramap' and 'E.text'.

@@ -11,7 +11,8 @@ import qualified Waargonaut.Encode          as E
 import           Data.Functor.Contravariant ((>$<))
 import           Data.Text                  (Text)
 
-import Level07.Types.Error (Error (EmptyCommentText), nonEmptyText)
+import           Level07.Types.Error        (Error (EmptyCommentText),
+                                             nonEmptyText)
 
 newtype CommentText = CommentText Text
   deriving (Show)

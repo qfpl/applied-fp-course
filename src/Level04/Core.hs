@@ -131,9 +131,8 @@ app db rq cb = do
 -- data structures that we created have taken care of that for us at an earlier stage, simplifying
 -- this function.
 --
--- For both the 'ViewRq' and 'ListRq' functions, we'll need to pass the current 'Encoder' to the
--- 'resp200Json' function. By this point you will have implemented the 'Encoder' functions for the
--- specific types. The encoder functions in Waargonaut build upon one another.
+-- For both the 'ViewRq' and 'ListRq' functions, we'll need to pass the correct 'Encoder' to the
+-- 'resp200Json' function.
 handleRequest
   :: DB.FirstAppDB
   -> RqType

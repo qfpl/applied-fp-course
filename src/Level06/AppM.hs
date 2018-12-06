@@ -8,19 +8,15 @@ import           Control.Monad.IO.Class (MonadIO (..))
 
 import           Level06.Types          (Error)
 
--- | We're going to upgrade the capability of our AppM by generalising the type of the errors that it
--- handles. This means that we'll be able to reuse our 'AppM' in more places that maybe have an
+-- | We're going to upgrade the capability of our AppM by generalising the type of the errors that
+-- it handles. This means that we'll be able to reuse our 'AppM' in more places that maybe have an
 -- overabundance of 'IO (Either e a)' types.
-
--- | The first step is to add the type parameter to our 'AppM', which we will also rename to
--- 'AppM'', pronounced "AppM prime". We do this because we don't want to have to refactor our entire
--- application to simply repeat our 'Error' type everywhere. We have a far simpler solution.
 --
 -- Our new 'AppM'' will also use the record syntax to define our 'runAppM' function. This is a more
 -- common definition of this kind of newtype.
 --
 newtype AppM e a = AppM
-  { runAppM' :: IO (Either e a)
+  { runAppM :: IO (Either e a)
   }
 
 -- | Predominantly our application has only one error type: 'Error'. It would be tedious to have to
@@ -29,15 +25,15 @@ newtype AppM e a = AppM
 --
 type App = AppM Error
 
--- | We're able to reuse the existing 'runAppM' function as well. The definition is even simpler
--- than before. If someone near you is up to the same section, try to explain to each other why this
--- works.
+-- | We need to refactor the 'runAppM' function as now the name conflicts, and it needs to suit the
+-- specialised 'App' type. The definition is even simpler than before. If someone near you is up to
+-- the same section, try to explain to each other why this works.
 --
 runApp :: App a -> IO (Either Error a)
-runApp = runAppM'
+runApp = runAppM
 
 -- | You may copy your previously completed AppM instances here and then refactor them to suit the
--- more generalised type of AppM'.
+-- more generalised type of AppM.
 
 -- | -----------------------------------------------------------------------------------------------
 -- | Copy from previous level and refactor, or reimplement to practice. The choice is yours.

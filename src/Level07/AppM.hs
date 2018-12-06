@@ -13,13 +13,13 @@ import           Data.Text              (Text)
 import           Level07.Types          (Conf, FirstAppDB)
 import           Level07.Types.Error    (Error)
 
--- First, let's clean up our (Conf,FirstAppDB) with an application Env type. We
--- will add a general purpose logging function as well. Remember that functions
--- are values, we're able to pass them around and place them on records like any
--- other type.
+-- | First, let's clean up our (Conf,FirstAppDB) with an application Env type.
+-- We will add a general purpose logging function as well. Remember that
+-- functions are values, we're able to pass them around and place them on
+-- records like any other type.
 data Env = Env
 
-  -- We will add a function to take some 'Text' input and print it to the
+  -- | We will add a function to take some 'Text' input and print it to the
   -- console as a crude form of logging. Construct a function that matches this
   -- type so you can include it when you create the 'Env'.
   { envLoggingFn :: Text -> App ()
@@ -29,9 +29,9 @@ data Env = Env
   , envDB        :: FirstAppDB
   }
 
--- It would be nice to remove the need to pass around our Env to every function
--- that needs it. Wouldn't it be great to have our functions run where we could
--- simply ask for the current Env?
+-- | It would be nice to remove the need to pass around our Env to every
+-- function that needs it. Wouldn't it be great to have our functions run where
+-- we could simply ask for the current Env?
 --
 -- We can create this by wrapping a function in a newtype like so:
 --
@@ -39,14 +39,16 @@ data Env = Env
 -- will do something involving IO. It's another form of documentation and type
 -- safety. AppM only has one definition and so we can easily understand what it
 -- implies when used in our application.
-newtype AppM e a = AppM ( Env -> IO (Either e a) )
-  -- Quite often, GHC is able to write the code for us. In this case we just
+newtype AppM e a = AppM
+  { runAppM :: Env -> IO (Either e a)
+  }
+  -- | Quite often, GHC is able to write the code for us. In this case we just
   -- tell GHC that we want a Functor instance for our newtype, and it is able to
   -- correctly derive what is needed.
   deriving Functor
-  -- We could do this for the rest of these instances, but that would turn into
-  -- "magic" what is otherwise straight-forward implementations. You are here to
-  -- learn after all.
+  -- | We could do this for the rest of these instances, but that would turn
+  -- into "magic" what is otherwise straight-forward implementations. You are
+  -- here to learn after all.
 
 type App = AppM Error
 
@@ -64,8 +66,9 @@ instance Monad (AppM e) where
   return :: a -> AppM e a
   return = error "return for AppM e not implemented"
 
-  -- When it comes to running functions in (AppM e) as a Monad, this will take care
-  -- of passing the Env from one function to the next.
+  -- | When it comes to running functions in (AppM e) as a Monad, this will take
+  -- care of passing the Env from one function to the next whilst preserving the
+  -- error handling behaviour.
   (>>=) :: AppM e a -> (a -> AppM e b) -> AppM e b
   (>>=) = error "bind for AppM e not implemented"
 
@@ -94,7 +97,7 @@ instance MonadIO (AppM e) where
   liftIO :: IO a -> AppM e a
   liftIO = error "liftIO for AppM not implemented"
 
---  This is a helper function that will `lift` an Either value into our new AppM
+-- | This is a helper function that will `lift` an Either value into our new AppM
 -- by applying `throwError` to the Left value, and using `pure` to lift the
 -- Right value into the AppM.
 --

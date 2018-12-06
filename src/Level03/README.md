@@ -61,12 +61,7 @@ find the 'minimum' input required.
 Property based testing is immensely effective at locating bugs and unexpected
 behaviour and has lead to the notion of "property driven development".
 
-
-#### Including Test Library Dependencies and Running the Tests
-
-To run the tests we first need to uncomment the required functions in
-`test/Test.hs` otherwise nothing will be run! We do this so you don't have to
-worry about tests you haven't written yet.
+#### Running the Tests
 
 For a cabal sandbox:
 
