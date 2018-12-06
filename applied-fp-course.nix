@@ -1,4 +1,4 @@
-{ mkDerivation, appar, attoparsec, base, bytestring, contravariant
+{ mkDerivation, attoparsec, base, bytestring, contravariant
 , doctest, hedgehog, http-types, lens, mtl, old-locale
 , optparse-applicative, semigroups, sqlite-simple
 , sqlite-simple-errors, stdenv, tasty, tasty-hedgehog, tasty-hunit
@@ -12,7 +12,7 @@ mkDerivation {
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    appar attoparsec base bytestring contravariant http-types lens mtl
+    attoparsec base bytestring contravariant http-types lens mtl
     old-locale optparse-applicative semigroups sqlite-simple
     sqlite-simple-errors text time transformers waargonaut wai warp
   ];
