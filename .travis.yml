@@ -30,10 +30,10 @@ before_cache:
 
 matrix:
   include:
-  - env: BUILD=cabal
-    compiler: "ghc-7.10.3"
+  # - env: BUILD=cabal
+    # compiler: "ghc-7.10.3"
     # env: TEST=--disable-tests BENCH=--disable-benchmarks
-    addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-7.10.3], sources: [hvr-ghc]}}
+    # addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-7.10.3], sources: [hvr-ghc]}}
 
   - env: BUILD=cabal
     compiler: "ghc-8.0.2"
@@ -46,13 +46,13 @@ matrix:
     addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.2.2], sources: [hvr-ghc]}}
 
   - env: BUILD=cabal
-    compiler: "ghc-8.4.3"
+    compiler: "ghc-8.4.4"
     # env: TEST=--disable-tests BENCH=--disable-benchmarks
-    addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.4.3], sources: [hvr-ghc]}}
+    addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.4.4], sources: [hvr-ghc]}}
   - env: BUILD=cabal
-    compiler: "ghc-8.6.1"
+    compiler: "ghc-8.6.2"
     # env: TEST=--disable-tests BENCH=--disable-benchmarks
-    addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.6.1], sources: [hvr-ghc]}}
+    addons: {apt: {packages: [ghc-ppa-tools,cabal-install-2.4,ghc-8.6.2], sources: [hvr-ghc]}}
 
     # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
     # variable, such as using --stack-yaml to point to a different file.
@@ -60,16 +60,8 @@ matrix:
     compiler: ": #stack default"
     addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: BUILD=stack ARGS="--resolver lts-6"
-    compiler: ": #stack 7.10.3"
-    addons: {apt: {packages: [libgmp-dev]}}
-
-  - env: BUILD=stack ARGS="--resolver lts-9"
-    compiler: ": #stack 8.0.2"
-    addons: {apt: {packages: [libgmp-dev]}}
-
-  - env: BUILD=stack ARGS="--resolver lts-10"
-    compiler: ": #stack 8.2.2"
+  - env: BUILD=stack ARGS="--resolver lts-12"
+    compiler: ": #stack 8.4.4"
     addons: {apt: {packages: [libgmp-dev]}}
 
   # Nightly builds are allowed to fail
@@ -82,17 +74,8 @@ matrix:
     compiler: ": #stack default osx"
     os: osx
 
-  # Travis includes an macOS which is incompatible with GHC 7.8.4
-  - env: BUILD=stack ARGS="--resolver lts-6"
-    compiler: ": #stack 7.10.3 osx"
-    os: osx
-
-  - env: BUILD=stack ARGS="--resolver lts-9"
-    compiler: ": #stack 8.0.2 osx"
-    os: osx
-
-  - env: BUILD=stack ARGS="--resolver lts-10"
-    compiler: ": #stack 8.2.2 osx"
+  - env: BUILD=stack ARGS="--resolver lts-12"
+    compiler: ": #stack 8.4.4 osx"
     os: osx
 
   - env: BUILD=stack ARGS="--resolver nightly"
@@ -100,7 +83,6 @@ matrix:
     os: osx
 
   allow_failures:
-  #- env: BUILD=stack ARGS="--resolver lts-6"
   - env: BUILD=stack ARGS="--resolver nightly"
 
 before_install:
@@ -134,13 +116,15 @@ install:
   - |
     case "$BUILD" in
       stack)
+        cabal --version
+        ghc --version
         # Add in extra-deps for older snapshots, as necessary
-        stack --no-terminal --install-ghc $ARGS build --bench --dry-run || ( \
-          stack --no-terminal $ARGS build cabal-install && \
+        stack --no-terminal $ARGS --install-ghc build --bench --dry-run || ( \
+          stack --no-terminal $ARGS --install-ghc build cabal-install && \
           stack --no-terminal $ARGS solver --update-config)
 
         # Build the dependencies
-        stack --no-terminal --install-ghc $ARGS test --bench --only-dependencies
+        stack --no-terminal $ARGS test --bench --only-dependencies
         ;;
       cabal)
         cabal --version

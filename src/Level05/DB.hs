@@ -70,7 +70,12 @@ runDB
   -> IO a
   -> AppM b
 runDB =
+  -- This function is intended to abstract away the running of DB functions and
+  -- the catching of any errors. As well as the process of running some
+  -- processing function over those results.
   error "Write 'runDB' to match the type signature"
+  -- Move your use of DB.runDBAction to this function to avoid repeating
+  -- yourself in the various DB functions.
 
 getComments
   :: FirstAppDB

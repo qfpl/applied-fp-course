@@ -4,9 +4,9 @@
 
 <img src="https://i.imgur.com/0h9dFhl.png" height="200" width="320" />
 
-This is a brand new course, so there are going to be rough edges. We invite
-you to submit issues or pull requests if you find errors or have suggestions
-on how to improve it.
+This is a new course, so there are going to be rough edges. We invite you to
+submit issues or pull requests if you find errors or have suggestions on how to
+improve it.
 
 This course is designed to be run in a class room with instructors, but we
 would like to make it suitable for self-study as well. Although undertaking
@@ -123,8 +123,8 @@ instructions about what the goal is for that specific level.
 * Level 06 : Add some flexible configuration
 * Level 07 : ReaderT & refactoring
 
--- Coming Soon...
-* Level 08 : (Bonus Round) Lenses & Refactoring
+-- In Development...
+* Level 08 : Lenses & "classy mtl" monad transformers
 
 -- Maybe...
 * Level 09 : Add session controls (login, logout) and a protected route. So we

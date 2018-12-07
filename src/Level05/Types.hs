@@ -15,16 +15,19 @@ module Level05.Types
   , getCommentText
   , renderContentType
   , fromDBComment
+  , encodeComment
+  , encodeTopic
   ) where
 
 import           GHC.Generics                       (Generic)
 import           GHC.Word                           (Word16)
 
 import           Data.ByteString                    (ByteString)
-import           Data.Text                          (Text)
+import           Data.Text                          (Text, pack)
 
 import           System.IO.Error                    (IOError)
 
+import           Data.Functor.Contravariant         ((>$<))
 import           Data.Monoid                        (Last,
                                                      Monoid (mappend, mempty))
 import           Data.Semigroup                     (Semigroup ((<>)))
@@ -32,21 +35,28 @@ import           Data.Semigroup                     (Semigroup ((<>)))
 import           Data.List                          (stripPrefix)
 import           Data.Maybe                         (fromMaybe)
 import           Data.Time                          (UTCTime)
-
-import           Data.Aeson                         (FromJSON (..), ToJSON)
-import qualified Data.Aeson                         as A
-import qualified Data.Aeson.Types                   as A
+import qualified Data.Time.Format                   as TF
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
+
+import           Waargonaut.Encode                  (Encoder)
+import qualified Waargonaut.Encode                  as E
+
 import           Level05.DB.Types                   (DBComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
+
 import           Level05.Types.CommentText          (CommentText,
+                                                     encodeCommentText,
                                                      getCommentText,
                                                      mkCommentText)
 import           Level05.Types.Error                (Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute))
-import           Level05.Types.Topic                (Topic, getTopic, mkTopic)
+import           Level05.Types.Topic                (Topic, encodeTopic,
+                                                     getTopic, mkTopic)
 
 newtype CommentId = CommentId Int
-  deriving (Show, ToJSON)
+  deriving (Show)
+
+encodeCommentId :: Applicative f => Encoder f CommentId
+encodeCommentId = (\(CommentId i) -> i) >$< E.int
 
 data Comment = Comment
   { commentId    :: CommentId
@@ -54,42 +64,20 @@ data Comment = Comment
   , commentText  :: CommentText
   , commentTime  :: UTCTime
   }
-  -- Generic has been added to our deriving list.
-  deriving ( Show, Generic )
+  deriving Show
 
--- Strip the prefix (which may fail if the prefix isn't present), fall
--- back to the original label if need be, then camel-case the name.
+encodeISO8601DateTime :: Applicative f => Encoder f UTCTime
+encodeISO8601DateTime = pack . TF.formatTime tl fmt >$< E.text
+  where
+    fmt = TF.iso8601DateFormat (Just "%H:%M:%S")
+    tl = TF.defaultTimeLocale { TF.knownTimeZones = [] }
 
--- | modFieldLabel
--- >>> modFieldLabel "commentId"
--- "id"
--- >>> modFieldLabel "topic"
--- "topic"
--- >>> modFieldLabel ""
--- ""
-modFieldLabel
-  :: String
-  -> String
-modFieldLabel l =
-  A.camelTo2 '_'
-  . fromMaybe l
-  $ stripPrefix "comment" l
-
-instance ToJSON Comment where
-  -- This is one place where we can take advantage of our Generic instance. Aeson
-  -- already has the encoding functions written for anything that implements the
-  -- Generic typeclass. So we don't have to write our encoding, we tell Aeson to
-  -- build it.
-  toEncoding = A.genericToEncoding opts
-    where
-      -- These options let us make some minor adjustments to how Aeson treats
-      -- our type. Our only adjustment is to alter the field names a little, to
-      -- remove the 'comment' prefix and use an Aeson function to handle the
-      -- rest of the name. This accepts any 'String -> String' function but it's
-      -- wise to keep the modifications simple.
-      opts = A.defaultOptions
-             { A.fieldLabelModifier = modFieldLabel
-             }
+encodeComment :: Applicative f => Encoder f Comment
+encodeComment = E.mapLikeObj $ \c ->
+  E.atKey' "id"    encodeCommentId       (commentId c) .
+  E.atKey' "topic" encodeTopic           (commentTopic c) .
+  E.atKey' "text"  encodeCommentText     (commentText c) .
+  E.atKey' "time"  encodeISO8601DateTime (commentTime c)
 
 -- For safety we take our stored DBComment and try to construct a Comment that
 -- we would be okay with showing someone. However unlikely it may be, this is a

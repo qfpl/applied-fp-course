@@ -6,4 +6,4 @@ import qualified Level06.Core as Core
 -- executable. So our ``exe/Main.hs`` is a straightforward and unremarkable
 -- affair.
 main :: IO ()
-main = Core.runApp
+main = Core.runApplication
