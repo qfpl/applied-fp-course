@@ -2,7 +2,13 @@
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE InstanceSigs          #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-module Level07.AppM where
+module Level07.AppM
+  ( AppM (..)
+  , App
+  , Env (..)
+  , liftEither
+  , runApp
+  ) where
 
 import           Control.Monad.Except   (MonadError (..))
 import           Control.Monad.IO.Class (MonadIO (..))

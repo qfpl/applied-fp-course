@@ -16,6 +16,7 @@ import           Waargonaut                 (Json, parseWaargonaut)
 import qualified Waargonaut.Decode          as D
 import           Waargonaut.Decode.Error    (DecodeError (ParseFailed))
 
+import           Level06.AppM               (AppM)
 import           Level06.Types              (ConfigError (BadConfFile),
                                              PartialConf (PartialConf))
 -- $setup
@@ -33,7 +34,7 @@ import           Level06.Types              (ConfigError (BadConfFile),
 --
 readConfFile
   :: FilePath
-  -> IO (Either ConfigError ByteString)
+  -> AppM ConfigError ByteString
 readConfFile =
   error "readConfFile not implemented"
 
@@ -41,7 +42,7 @@ readConfFile =
 -- and construct our ``PartialConf``.
 parseJSONConfigFile
   :: FilePath
-  -> IO (Either ConfigError PartialConf)
+  -> AppM ConfigError PartialConf
 parseJSONConfigFile =
   error "parseJSONConfigFile not implemented"
   where

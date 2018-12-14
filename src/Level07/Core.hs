@@ -69,8 +69,9 @@ runApplication = do
     runWithDBConn env =
       appWithDB env >> DB.closeDB (envDB env)
 
-    appWithDB env =
-      Ex.finally (run ( confPortToWai $ envConfig env ) (app env)) (DB.closeDB (envDB env))
+    appWithDB env = Ex.finally
+      (run ( confPortToWai . envConfig $ env ) (app env))
+      $ DB.closeDB (envDB env)
 
 -- | Our AppM is no longer useful for implementing this function. Can you explain why?
 --

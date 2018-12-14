@@ -46,7 +46,7 @@ makeConfig =
 --
 parseOptions
   :: FilePath
-  -> IO (Either ConfigError Conf)
+  -> AppM ConfigError Conf
 parseOptions =
   -- Parse the options from the config file: "files/appconfig.json"
   -- Parse the options from the commandline using 'commandLineParser'

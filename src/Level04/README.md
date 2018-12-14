@@ -65,11 +65,11 @@ function into the module scope.
 ## Steps for this level:
 
 The steps for this level:
-1) ``src/Level04/DB/Types.hs``
-2) ``src/Level04/DB.hs``
-3) ``src/Level04/Types/Topic.hs``
-4) ``src/Level04/Types/CommentText.hs``
-5) ``src/Level04/Types.hs``
+1) ``src/Level04/Types/Topic.hs``
+2) ``src/Level04/Types/CommentText.hs``
+3) ``src/Level04/DB/Types.hs``
+4) ``src/Level04/Types.hs``
+5) ``src/Level04/DB.hs``
 6) ``src/Level04/Core.hs``
 
 For the sake of simplicity, any configuration requirements will be hardcoded in
