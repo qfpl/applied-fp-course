@@ -44,7 +44,7 @@ The starting point for this exercise is the ``src/Level02/Types.hs``.
 
 ```bash
 # Using cabal
-$ cabal run level02-exe
+$ cabal new-run level02-exe
 
 # Using stack
 $ stack exec level02-exe

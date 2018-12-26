@@ -18,7 +18,7 @@ To run the application:
 
 ```bash
 # With Cabal
-$ cabal run level01-exe
+$ cabal new-run level01-exe
 
 # With Stack
 $ stack exec level01-exe
