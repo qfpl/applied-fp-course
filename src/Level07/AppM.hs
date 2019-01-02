@@ -78,11 +78,11 @@ instance Monad (AppM e) where
   (>>=) :: AppM e a -> (a -> AppM e b) -> AppM e b
   (>>=) = error "bind for AppM e not implemented"
 
-instance MonadError Error (AppM e) where
-  throwError :: Error -> AppM e a
+instance MonadError e (AppM e) where
+  throwError :: e -> AppM e a
   throwError = error "throwError for AppM e not implemented"
 
-  catchError :: AppM e a -> (Error -> AppM e a) -> AppM e a
+  catchError :: AppM e a -> (e -> AppM e a) -> AppM e a
   catchError = error "catchError for AppM e not implemented"
 
 instance MonadReader Env (AppM e) where
