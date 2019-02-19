@@ -101,4 +101,4 @@ encodeISO8601DateTime = pack . TF.formatTime loc fmt >$< E.text
     fmt = TF.iso8601DateFormat (Just "%H:%M:%S")
     loc = TF.defaultTimeLocale { TF.knownTimeZones = [] }
 
--- | Move on to ``src/Level04/Core.hs`` next.
+-- | Move on to ``src/Level04/DB.hs`` next.
