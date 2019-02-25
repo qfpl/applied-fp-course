@@ -43,7 +43,4 @@ parseJSONConfigFile
 parseJSONConfigFile fp =
   (>>= first BadConfFile . doDecode) <$> readConfFile fp
   where
-    doDecode = D.runPureDecode partialConfDecoder parseFunc . D.mkCursor
-
-    parseFunc :: ByteString -> Either DecodeError Json
-    parseFunc = first (ParseFailed . pack . show) . AB.parseOnly parseWaargonaut
+    doDecode = D.pureDecodeFromByteString AB.parseOnly partialConfDecoder

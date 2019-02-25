@@ -12,7 +12,7 @@ import           Control.Exception          (try)
 
 import qualified Data.Attoparsec.ByteString as AB
 
-import           Waargonaut                 (Json, parseWaargonaut)
+import           Waargonaut                 (Json)
 import qualified Waargonaut.Decode          as D
 import           Waargonaut.Decode.Error    (DecodeError (ParseFailed))
 
@@ -45,8 +45,5 @@ parseJSONConfigFile
   -> AppM ConfigError PartialConf
 parseJSONConfigFile =
   error "parseJSONConfigFile not implemented"
-  where
-    parseFunc :: ByteString -> Either DecodeError Json
-    parseFunc = first (ParseFailed . pack . show) . AB.parseOnly parseWaargonaut
 
 -- Go to 'src/Level06/Conf.hs' next.

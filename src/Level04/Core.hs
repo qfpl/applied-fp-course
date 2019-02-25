@@ -26,6 +26,7 @@ import           Data.Either                        (Either (Left, Right),
 import           Data.Semigroup                     ((<>))
 import           Data.Text                          (Text)
 import           Data.Text.Encoding                 (decodeUtf8)
+import           Data.Text.Lazy.Encoding            (encodeUtf8)
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
@@ -105,8 +106,8 @@ resp200Json
   -> a
   -> Response
 resp200Json e =
-  mkResponse status200 JSON .
-  E.simplePureEncodeNoSpaces e
+  mkResponse status200 JSON . encodeUtf8 .
+  E.simplePureEncodeTextNoSpaces e
 
 -- |
 app
