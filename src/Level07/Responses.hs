@@ -7,6 +7,8 @@ import           Network.HTTP.Types         (Status, hContentType, status200,
 
 import qualified Data.ByteString.Lazy.Char8 as LBS
 
+import           Data.Text.Lazy.Encoding    (encodeUtf8)
+
 import           Waargonaut.Encode          (Encoder')
 import qualified Waargonaut.Encode          as E
 
@@ -55,5 +57,5 @@ resp200Json
   -> a
   -> Response
 resp200Json e =
-  resp200 JSON .
-  E.simplePureEncodeNoSpaces e
+  resp200 JSON . encodeUtf8 .
+  E.simplePureEncodeTextNoSpaces e

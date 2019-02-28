@@ -124,7 +124,7 @@ library
                      , semigroups == 0.18.*
                      , transformers >= 0.4 && < 0.6
                      , lens >= 4.15 && < 4.18 
-                     , waargonaut >= 0.4.2 && < 0.5
+                     , waargonaut >= 0.6 && < 0.7
                      , attoparsec >= 0.13 && < 0.15
 
   -- Directories containing source files.

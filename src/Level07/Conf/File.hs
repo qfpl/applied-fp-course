@@ -1,21 +1,18 @@
 module Level07.Conf.File where
 
-import           Data.ByteString            (ByteString)
-import qualified Data.ByteString.Char8      as LBS
+import           Data.ByteString       (ByteString)
+import qualified Data.ByteString.Char8 as LBS
 
-import           Data.Text                  (pack)
+import           Data.Text             (pack)
 
-import           Data.Bifunctor             (first)
+import           Data.Bifunctor        (first)
 
-import qualified Data.Attoparsec.ByteString as AB
+import           Waargonaut.Attoparsec (pureDecodeAttoparsecByteString)
 
-import           Waargonaut                 (Json, parseWaargonaut)
-import qualified Waargonaut.Decode          as D
-import           Waargonaut.Decode.Error    (DecodeError (ParseFailed))
+import           Control.Exception     (try)
 
-import           Control.Exception          (try)
-
-import           Level07.Types              (ConfigError (..), PartialConf, partialConfDecoder)
+import           Level07.Types         (ConfigError (..), PartialConf,
+                                        partialConfDecoder)
 
 -- Doctest setup section
 -- $setup
@@ -41,9 +38,6 @@ parseJSONConfigFile
   :: FilePath
   -> IO ( Either ConfigError PartialConf )
 parseJSONConfigFile fp =
-  (>>= first BadConfFile . doDecode) <$> readConfFile fp
+  (first BadConfFile . runDecode =<<) <$> readConfFile fp
   where
-    doDecode = D.runPureDecode partialConfDecoder parseFunc . D.mkCursor
-
-    parseFunc :: ByteString -> Either DecodeError Json
-    parseFunc = first (ParseFailed . pack . show) . AB.parseOnly parseWaargonaut
+    runDecode = pureDecodeAttoparsecByteString partialConfDecoder

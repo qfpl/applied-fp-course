@@ -1,12 +1,13 @@
 resolver: lts-12.21
 extra-deps:
-- tasty-wai-0.1.0.1
-- waargonaut-0.4.2.0
+- tasty-wai-0.1.1.0
+- waargonaut-0.6.0.0
 - digit-0.7
 - hoist-error-0.2.1.0
 - hw-json-0.9.0.1
 - hw-parser-0.1.0.0
 - natural-0.3.0.3
 - tagged-0.8.6
-- generics-sop-0.3.2.0
+- sop-core-0.4.0.0
+- generics-sop-0.4.0.1
 - witherable-0.2

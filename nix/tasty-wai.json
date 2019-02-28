@@ -1,7 +1,7 @@
 {
   "url": "https://github.com/qfpl/tasty-wai",
-  "rev": "17ae906f318a222eb30a22b6b334399a0ca436a9",
-  "date": "2018-12-04T14:31:04+10:00",
-  "sha256": "16j3qbpwxbl4n2pvck91k6gz2541pkfdpxn4l47nf1s9jx9yaa7f",
+  "rev": "1e65232f9c3b9c7293c81929fdebcda32a93b3c1",
+  "date": "2019-01-09T08:40:28+10:00",
+  "sha256": "1i2qh6kd76vkpbq0hjj21jwkfxn0ws750z10g2d6hvc7pjl0fz80",
   "fetchSubmodules": true
 }
