@@ -9,7 +9,10 @@ let
   # Override the basic derivation so we can have a more fully feature
   # environment for hacking on the course material
   courseDevEnv = (pkgs.haskell.lib.addBuildTools course
-    [ # Include the SQLite Database application
+    [ # Cabal
+      pkgs.cabal-install
+
+      # Include the SQLite Database application
       pkgs.sqlite
 
       # 'ghcid' auto reloading tool
