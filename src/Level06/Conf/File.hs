@@ -16,7 +16,7 @@ import           Waargonaut                 (Json)
 import qualified Waargonaut.Decode          as D
 import           Waargonaut.Decode.Error    (DecodeError (ParseFailed))
 
-import           Level06.AppM               (AppM)
+import           Level06.AppM               (AppM (runAppM))
 import           Level06.Types              (ConfigError (BadConfFile),
                                              PartialConf (PartialConf))
 -- $setup
@@ -27,15 +27,22 @@ import           Level06.Types              (ConfigError (BadConfFile),
 --
 -- Update these tests when you've completed this function.
 --
--- >>> readConfFile "badFileName.no"
--- Left (undefined "badFileName.no: openBinaryFile: does not exist (No such file or directory)")
--- >>> readConfFile "files/test.json"
+-- >>> runAppM $ readConfFile "badFileName.no"
+-- Left (<YourErrorConstructorHere> "badFileName.no: openBinaryFile: does not exist (No such file or directory)")
+-- >>> runAppM $ readConfFile "files/test.json"
 -- Right "{\n  \"foo\": 33\n}\n"
 --
 readConfFile
   :: FilePath
   -> AppM ConfigError ByteString
 readConfFile =
+  -- Reading a file may throw an exception for any number of
+  -- reasons. Use the 'try' function from 'Control.Exception' to catch
+  -- the exception and turn it into an error value that is thrown as
+  -- part of our 'AppM' transformer.
+  --
+  -- No exceptions from reading the file should escape this function.
+  --
   error "readConfFile not implemented"
 
 -- | Construct the function that will take a ``FilePath``, read it in, decode it,
