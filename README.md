@@ -46,8 +46,7 @@ you may come find us on IRC on [Freenode](https://freenode.net/) in #qfpl or
 Each level is a self-contained Haskell module, containing incomplete, or as yet
 undefined, data types and functions.
 
-We recommend using either a cabal sandbox, or a ``nix-shell``, depending on your
-preference.
+We recommend using a ``nix-shell``, but it is not required.
 
 #### Cabal
 
