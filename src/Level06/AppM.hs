@@ -91,4 +91,4 @@ instance Bifunctor AppM where
 -- pure :: Applicative m => a -> m a
 --
 liftEither :: Either e a -> AppM e a
-liftEither = error "throwLeft not implemented"
+liftEither = error "liftEither not implemented"
