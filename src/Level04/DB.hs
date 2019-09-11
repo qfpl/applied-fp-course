@@ -24,9 +24,9 @@ import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 import           Level04.Types                      (Comment, CommentText,
                                                      Error, Topic)
 
--- ------------------------------------------------------------------------|
--- You'll need the documentation for sqlite-simple ready for this section! |
--- ------------------------------------------------------------------------|
+-- ------------------------------------------------------------------------------|
+-- You'll need the documentation for sqlite-simple & sqlite-simple-errors handy! |
+-- ------------------------------------------------------------------------------|
 
 -- We have a data type to simplify passing around the information we need to run
 -- our database queries. This also allows things to change over time without
@@ -53,7 +53,7 @@ initDB
   :: FilePath
   -> IO ( Either SQLiteResponse FirstAppDB )
 initDB fp =
-  error "initDB not implemented"
+  error "initDB not implemented (use Sql.runDBAction to catch exceptions)"
   where
   -- Query has an `IsString` instance so string literals like this can be
   -- converted into a `Query` type when the `OverloadedStrings` language
@@ -82,7 +82,7 @@ getComments =
   -- cannot be converted to a Comment, or simply ignoring any DBComment that is
   -- not valid.
   in
-    error "getComments not implemented"
+    error "getComments not implemented (use Sql.runDBAction to catch exceptions)"
 
 addCommentToTopic
   :: FirstAppDB
@@ -93,7 +93,7 @@ addCommentToTopic =
   let
     sql = "INSERT INTO comments (topic,comment,time) VALUES (?,?,?)"
   in
-    error "addCommentToTopic not implemented"
+    error "addCommentToTopic not implemented (use Sql.runDBAction to catch exceptions)"
 
 getTopics
   :: FirstAppDB
@@ -102,7 +102,7 @@ getTopics =
   let
     sql = "SELECT DISTINCT topic FROM comments"
   in
-    error "getTopics not implemented"
+    error "getTopics not implemented (use Sql.runDBAction to catch exceptions)"
 
 deleteTopic
   :: FirstAppDB
@@ -112,4 +112,4 @@ deleteTopic =
   let
     sql = "DELETE FROM comments WHERE topic = ?"
   in
-    error "deleteTopic not implemented"
+    error "deleteTopic not implemented (use Sql.runDBAction to catch exceptions)"
