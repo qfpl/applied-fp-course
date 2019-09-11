@@ -69,9 +69,6 @@ instance Applicative (AppM e) where
   (<*>) = error "spaceship for AppM e not implemented"
 
 instance Monad (AppM e) where
-  return :: a -> AppM e a
-  return = error "return for AppM e not implemented"
-
   -- | When it comes to running functions in (AppM e) as a Monad, this will take
   -- care of passing the Env from one function to the next whilst preserving the
   -- error handling behaviour.

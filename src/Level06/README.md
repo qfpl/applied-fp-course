@@ -17,5 +17,5 @@ The steps for this level:
 
 The packages we will use for this are:
 
-- [Waargonaut](http://hackage.haskell.org/package/waargonaut)
-- [Optparse Applicative](http://hackage.haskell.org/package/optparse-applicative)
+- [Waargonaut](https://hackage.haskell.org/package/waargonaut)
+- [Optparse Applicative](https://hackage.haskell.org/package/optparse-applicative)

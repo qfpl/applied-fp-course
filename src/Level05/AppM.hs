@@ -82,9 +82,6 @@ instance Applicative AppM where
   (<*>) = error "spaceship for AppM not implemented"
 
 instance Monad AppM where
-  return :: a -> AppM a
-  return = error "return for AppM not implemented"
-
   (>>=) :: AppM a -> (a -> AppM b) -> AppM b
   (>>=)  = error "bind for AppM not implemented"
 
