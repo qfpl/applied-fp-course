@@ -36,9 +36,7 @@ import           Data.Text                          (Text, pack)
 
 import           System.IO.Error                    (IOError)
 
-import           Data.Monoid                        (Last (..),
-                                                     Monoid (mappend, mempty))
-import           Data.Semigroup                     (Semigroup ((<>)))
+import           Data.Semigroup                     (Last (..), Semigroup ((<>)))
 
 import           Data.Functor.Contravariant         ((>$<))
 import           Data.List                          (stripPrefix)
@@ -203,8 +201,8 @@ data ConfigError
 -- ``Last`` wrapped values. We can then define a ``Monoid`` instance for it and
 -- have our ``Conf`` be a known good configuration.
 data PartialConf = PartialConf
-  { pcPort       :: Last Port
-  , pcDBFilePath :: Last DBFilePath
+  { pcPort       :: Maybe (Last Port)
+  , pcDBFilePath :: Maybe (Last DBFilePath)
   }
 
 -- Before we can define our ``Monoid`` instance for ``PartialConf``, we'll have
@@ -215,13 +213,6 @@ instance Semigroup PartialConf where
     { pcPort       = error "pcPort (<>) not implemented"
     , pcDBFilePath = error "pcDBFilePath (<>) not implemented"
     }
-
--- We now define our ``Monoid`` instance for ``PartialConf``. Allowing us to
--- define our always empty configuration, which would always fail our
--- requirements. We just define `mappend` to be an alias of ``(<>)``
-instance Monoid PartialConf where
-  mempty = PartialConf mempty mempty
-  mappend = (<>)
 
 -- | When it comes to reading the configuration options from the command-line, we
 -- use the 'optparse-applicative' package. This part of the exercise has already

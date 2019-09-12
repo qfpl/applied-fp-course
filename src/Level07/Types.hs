@@ -32,8 +32,7 @@ import           Data.ByteString                    (ByteString)
 import           Data.Text                          (pack)
 
 import           Data.Functor.Contravariant         ((>$<))
-import           Data.Monoid                        (Last (Last))
-import           Data.Semigroup                     (Semigroup ((<>)))
+import           Data.Semigroup                     (Last (Last), Semigroup ((<>)))
 
 import           Data.Time                          (UTCTime)
 import qualified Data.Time.Format                   as TF
@@ -187,8 +186,8 @@ data ConfigError
 -- ``Last`` wrapped values. We can then define a ``Monoid`` instance for it and
 -- have our ``Conf`` be a known good configuration.
 data PartialConf = PartialConf
-  { pcPort       :: Last Port
-  , pcDBFilePath :: Last DBFilePath
+  { pcPort       :: Maybe (Last Port)
+  , pcDBFilePath :: Maybe (Last DBFilePath)
   }
 
 -- Before we can define our ``Monoid`` instance for ``PartialConf``, we'll have
@@ -199,13 +198,6 @@ instance Semigroup PartialConf where
     { pcPort       = pcPort a <> pcPort b
     , pcDBFilePath = pcDBFilePath a <> pcDBFilePath b
     }
-
--- We now define our ``Monoid`` instance for ``PartialConf``. Allowing us to
--- define our always empty configuration, which would always fail our
--- requirements. We just define `mappend` to be an alias of ``(<>)``
-instance Monoid PartialConf where
-  mempty = PartialConf mempty mempty
-  mappend = (<>)
 
 -- When it comes to reading the configuration options from the command-line, we
 -- use the 'optparse-applicative' package. This part of the exercise has already
@@ -221,7 +213,7 @@ partialConfDecoder = PartialConf
   <$> lastAt "port" D.integral Port
   <*> lastAt "dbFilePath" D.string DBFilePath
   where
-    lastAt k d c = Last . fmap c <$> D.atKeyOptional k d
+    lastAt k d c = fmap (Last . c) <$> D.atKeyOptional k d
 
 -- We have a data type to simplify passing around the information we need to run
 -- our database queries. This also allows things to change over time without

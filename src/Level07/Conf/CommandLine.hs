@@ -2,7 +2,7 @@ module Level07.Conf.CommandLine
   ( commandLineParser
   ) where
 
-import           Data.Monoid         (Last (Last), (<>))
+import           Data.Semigroup      (Last (Last), (<>))
 
 import           Options.Applicative (Parser, eitherReader, execParser,
                                       fullDesc, header, help, helper, info,
@@ -36,7 +36,7 @@ partialConfParser =
 
 -- Parse the Port value off the command line args and into a Last wrapper.
 portParser
-  :: Parser (Last Port)
+  :: Parser (Maybe (Last Port))
 portParser =
   let
     mods = long "port"
@@ -46,11 +46,11 @@ portParser =
     -- A custom parser to turn a String into a Word16, before putting it into a Port
     portReader = eitherReader (fmap Port . readEither)
   in
-    Last <$> optional (option portReader mods)
+    optional $ Last <$> (option portReader mods)
 
 -- Parse the DBFilePath from the input string into our type and into a Last wrapper.
 dbFilePathParser
-  :: Parser (Last DBFilePath)
+  :: Parser (Maybe (Last DBFilePath))
 dbFilePathParser =
   let
     mods = long "db-filepath"
@@ -58,4 +58,4 @@ dbFilePathParser =
            <> metavar "DBFILEPATH"
            <> help "File path for our SQLite Database file."
   in
-    Last <$> optional (DBFilePath <$> strOption mods)
+    optional $ Last <$> fmap DBFilePath (strOption mods)
