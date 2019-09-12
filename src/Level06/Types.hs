@@ -170,8 +170,8 @@ confPortToWai
 confPortToWai =
   error "confPortToWai not implemented"
 
--- Similar to when we were considering our application types. We can add to this sum type as we
--- build our application and the compiler can help us out.
+-- Similar to when we were considering our application types. We can add to this sum type
+-- as we build our application and the compiler can help us out.
 data ConfigError
   = BadConfFile DecodeError
   deriving Show
@@ -187,27 +187,25 @@ data ConfigError
 
 -- ``defaults <> file <> commandLine``
 
--- We can use the ``Monoid`` typeclass to handle combining the ``Conf`` records
+-- We can use the ``Semigroup`` typeclass to handle combining the ``Conf`` records
 -- together, and the ``Last`` type to wrap up our values to handle the desired
 -- precedence. The ``Last`` type is a wrapper for Maybe that when used with its
--- ``Monoid`` instance will always preference the last ``Just`` value that it
--- has:
+-- ``Semigroup`` instance will always preference the last value that it has:
 
 -- Last (Just 3) <> Last (Just 1) = Last (Just 1)
 -- Last Nothing  <> Last (Just 1) = Last (Just 1)
 -- Last (Just 1) <> Last Nothing  = Last (Just 1)
 
--- To make this easier, we'll make a new type ``PartialConf`` that will have our
--- ``Last`` wrapped values. We can then define a ``Monoid`` instance for it and
--- have our ``Conf`` be a known good configuration.
+-- To make this easier, we'll make a new type ``PartialConf`` that will have our ``Last``
+-- wrapped values. We can then define a ``Semigroup`` instance for it and have our
+-- ``Conf`` be a known good configuration.
 data PartialConf = PartialConf
   { pcPort       :: Maybe (Last Port)
   , pcDBFilePath :: Maybe (Last DBFilePath)
   }
 
--- Before we can define our ``Monoid`` instance for ``PartialConf``, we'll have
--- to define a Semigroup instance. We define our ``(<>)`` function to lean
--- on the ``Semigroup`` instance for Last to always get the last value.
+-- We need to define a ``Semigroup`` instance for ``PartialConf``. We define our ``(<>)``
+-- function to lean on the ``Semigroup`` instance for Last to always get the last value.
 instance Semigroup PartialConf where
   _a <> _b = PartialConf
     { pcPort       = error "pcPort (<>) not implemented"

@@ -11,7 +11,7 @@ import           Options.Applicative (Parser, eitherReader, execParser,
 
 import           Text.Read           (readEither)
 
-import           Level07.Types      (DBFilePath (DBFilePath),
+import           Level07.Types       (DBFilePath (DBFilePath),
                                       PartialConf (PartialConf), Port (Port))
 
 -- | Command Line Parsing
@@ -46,7 +46,7 @@ portParser =
     -- A custom parser to turn a String into a Word16, before putting it into a Port
     portReader = eitherReader (fmap Port . readEither)
   in
-    optional $ Last <$> (option portReader mods)
+    fmap Last <$> optional (option portReader mods)
 
 -- Parse the DBFilePath from the input string into our type and into a Last wrapper.
 dbFilePathParser
@@ -58,4 +58,4 @@ dbFilePathParser =
            <> metavar "DBFILEPATH"
            <> help "File path for our SQLite Database file."
   in
-    optional $ Last <$> fmap DBFilePath (strOption mods)
+    fmap Last <$> optional (DBFilePath <$> strOption mods)
