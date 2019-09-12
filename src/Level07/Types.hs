@@ -176,11 +176,11 @@ data ConfigError
 -- together, and the ``Last`` type to wrap up our values to handle the desired
 -- precedence. The ``Last`` type is a wrapper for Maybe that when used with its
 -- ``Semigroup`` instance will always preference the last value that it has:
-
--- Last (Just 3) <> Last (Just 1) = Last (Just 1)
--- Last Nothing  <> Last (Just 1) = Last (Just 1)
--- Last (Just 1) <> Last Nothing  = Last (Just 1)
-
+--
+-- Just (Last 3) <> Just (Last 1) = Just (Last 1)
+-- Nothing       <> Just (Last 1) = Just (Last 1)
+-- Just (Last 1) <> Nothing       = Just (Last 1)
+--
 -- To make this easier, we'll make a new type ``PartialConf`` that will have our ``Last``
 -- wrapped values. We can then define a ``Semigroup`` instance for it and have our
 -- ``Conf`` be a known good configuration.
