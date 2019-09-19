@@ -36,9 +36,7 @@ import           Data.Text                          (Text, pack)
 
 import           System.IO.Error                    (IOError)
 
-import           Data.Monoid                        (Last (..),
-                                                     Monoid (mappend, mempty))
-import           Data.Semigroup                     (Semigroup ((<>)))
+import           Data.Semigroup                     (Last (..), Semigroup ((<>)))
 
 import           Data.Functor.Contravariant         ((>$<))
 import           Data.List                          (stripPrefix)
@@ -172,8 +170,8 @@ confPortToWai
 confPortToWai =
   error "confPortToWai not implemented"
 
--- Similar to when we were considering our application types. We can add to this sum type as we
--- build our application and the compiler can help us out.
+-- Similar to when we were considering our application types. We can add to this sum type
+-- as we build our application and the compiler can help us out.
 data ConfigError
   = BadConfFile DecodeError
   deriving Show
@@ -189,39 +187,30 @@ data ConfigError
 
 -- ``defaults <> file <> commandLine``
 
--- We can use the ``Monoid`` typeclass to handle combining the ``Conf`` records
+-- We can use the ``Semigroup`` typeclass to handle combining the ``Conf`` records
 -- together, and the ``Last`` type to wrap up our values to handle the desired
 -- precedence. The ``Last`` type is a wrapper for Maybe that when used with its
--- ``Monoid`` instance will always preference the last ``Just`` value that it
--- has:
-
--- Last (Just 3) <> Last (Just 1) = Last (Just 1)
--- Last Nothing  <> Last (Just 1) = Last (Just 1)
--- Last (Just 1) <> Last Nothing  = Last (Just 1)
-
--- To make this easier, we'll make a new type ``PartialConf`` that will have our
--- ``Last`` wrapped values. We can then define a ``Monoid`` instance for it and
--- have our ``Conf`` be a known good configuration.
+-- ``Semigroup`` instance will always preference the last value that it has:
+--
+-- Just (Last 3) <> Just (Last 1) = Just (Last 1)
+-- Nothing       <> Just (Last 1) = Just (Last 1)
+-- Just (Last 1) <> Nothing       = Just (Last 1)
+--
+-- To make this easier, we'll make a new type ``PartialConf`` that will have our ``Last``
+-- wrapped values. We can then define a ``Semigroup`` instance for it and have our
+-- ``Conf`` be a known good configuration.
 data PartialConf = PartialConf
-  { pcPort       :: Last Port
-  , pcDBFilePath :: Last DBFilePath
+  { pcPort       :: Maybe (Last Port)
+  , pcDBFilePath :: Maybe (Last DBFilePath)
   }
 
--- Before we can define our ``Monoid`` instance for ``PartialConf``, we'll have
--- to define a Semigroup instance. We define our ``(<>)`` function to lean
--- on the ``Semigroup`` instance for Last to always get the last value.
+-- We need to define a ``Semigroup`` instance for ``PartialConf``. We define our ``(<>)``
+-- function to lean on the ``Semigroup`` instance for Last to always get the last value.
 instance Semigroup PartialConf where
   _a <> _b = PartialConf
     { pcPort       = error "pcPort (<>) not implemented"
     , pcDBFilePath = error "pcDBFilePath (<>) not implemented"
     }
-
--- We now define our ``Monoid`` instance for ``PartialConf``. Allowing us to
--- define our always empty configuration, which would always fail our
--- requirements. We just define `mappend` to be an alias of ``(<>)``
-instance Monoid PartialConf where
-  mempty = PartialConf mempty mempty
-  mappend = (<>)
 
 -- | When it comes to reading the configuration options from the command-line, we
 -- use the 'optparse-applicative' package. This part of the exercise has already

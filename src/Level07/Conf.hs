@@ -7,7 +7,7 @@ module Level07.Conf
 import           GHC.Word                  (Word16)
 
 import           Data.Bifunctor            (first)
-import           Data.Monoid               (Last (..), (<>))
+import           Data.Semigroup            (Last (..), (<>))
 
 import           Level07.Types            (Conf (..), ConfigError (..),
                                             DBFilePath (DBFilePath),
@@ -21,8 +21,8 @@ import           Level07.Conf.File        (parseJSONConfigFile)
 defaultConf
   :: PartialConf
 defaultConf = PartialConf
-  (pure (Port 3000))
-  (pure (DBFilePath "app_db.db"))
+  (pure (Last $ Port 3000))
+  (pure (Last $ DBFilePath "app_db.db"))
 
 -- We need something that will take our PartialConf and see if can finally build
 -- a complete Conf record. Also we need to highlight any missing config values
@@ -39,10 +39,10 @@ makeConfig pc = Conf
     -- like to be explicit in your intentions.
     lastToEither
       :: ConfigError
-      -> (PartialConf -> Last b)
+      -> (PartialConf -> Maybe (Last b))
       -> Either ConfigError b
     lastToEither e g =
-      (maybe (Left e) Right . getLast . g) pc
+      maybe (Left e) (Right . getLast) . g $ pc 
 
 -- This is the function we'll actually export for building our configuration.
 -- Since it wraps all our efforts to read information from the command line, and
