@@ -1,11 +1,9 @@
 let
-  hostNix = import <nixpkgs> {};
-  nixpkgsPin = hostNix.pkgs.lib.importJSON ./nixpkgs.json;
+  nixpkgsPin = builtins.fromJSON (builtins.readFile ./nixpkgs.json);
 
-  pinnedPkgs = hostNix.pkgs.fetchFromGitHub {
-    owner = "NixOS";
-    repo  = "nixpkgs-channels";
-    inherit (nixpkgsPin) rev sha256;
+  pinnedPkgs = builtins.fetchTarball {
+    url = "${nixpkgsPin.url}/archive/${nixpkgsPin.rev}.tar.gz";
+    inherit (nixpkgsPin) sha256;
   };
 in
-  pinnedPkgs
+import pinnedPkgs {}
