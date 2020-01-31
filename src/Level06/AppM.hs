@@ -87,5 +87,8 @@ instance Bifunctor AppM where
 -- throwError :: MonadError e m => e -> m a
 -- pure :: Applicative m => a -> m a
 --
+-- Once you have this working with `throwError` and `pure`, you should
+-- be able to factor it down into an equivalent but radically simpler
+-- implementation.
 liftEither :: Either e a -> AppM e a
 liftEither = error "liftEither not implemented"

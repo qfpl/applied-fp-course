@@ -24,7 +24,7 @@ you may come find us on IRC on [Freenode](https://freenode.net/) in #qfpl or
 * Have a few months self-study to your name.
 * Want to know how to build larger applications with statically typed FP.
 * Are willing to accept that a web application is a sufficient choice.
-* Can write the canonical function of type: ``Applicative f => [f a] -> f [a]``
+* Can write the canonical function of type: `Applicative f => [f a] -> f [a]`
 
 ### We:
 
@@ -46,12 +46,12 @@ you may come find us on IRC on [Freenode](https://freenode.net/) in #qfpl or
 Each level is a self-contained Haskell module, containing incomplete, or as yet
 undefined, data types and functions.
 
-We recommend using a ``nix-shell``, but it is not required.
+We recommend using a `nix-shell`, but it is not required.
 
 #### Cabal
 
-If you're using a version of Cabal that is >=2.0 (use ``cabal --version`` to
-find out), then you can use the ``new-*`` commands and you don't need a sandbox:
+If you're using a version of Cabal that is >=2.0 (use `cabal --version` to
+find out), then you can use the `new-*` commands and you don't need a sandbox:
 
 ```bash
 $ cd path/to/applied-fp-course
@@ -91,8 +91,8 @@ $ cabal new-build <levelN>-exe
 $ $EDITOR src/<LevelN>/README.md
 ```
 
-Once that completes you will be in a ``nix-shell`` environment with all the
-tools required to work through the course. 
+Once that completes you will be in a `nix-shell` environment with all the
+tools required to work through the course.
 
 #### Stack
 
@@ -111,7 +111,7 @@ free [WebChat client](https://webchat.freenode.net).
 
 #### Subsequent lessons may contain spoilers, don't cheat yourself out of the experience!
 
-There is a ``README.md`` file in each Level module folder that will provide
+There is a `README.md` file in each Level module folder that will provide
 instructions about what the goal is for that specific level.
 
 * Level 01 : Simple hello world web app.

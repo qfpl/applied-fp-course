@@ -2,7 +2,7 @@
 , compiler ? "default"
 }:
 let
-  pkgs = import nixpkgs {};
+  inherit (nixpkgs) pkgs;
   # Grab our course derivation
   course = import ./. { inherit nixpkgs compiler; };
 
