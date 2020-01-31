@@ -48,7 +48,7 @@ import qualified Level04.Core as Core
 #### Property-Based Testing [Optional]
 
 For more advanced testing, there is the [hedgehog] property-based testing
-package, and the [tasty] integration component [tasty-hedgehog]. 
+package, and the [tasty] integration component [tasty-hedgehog].
 
 Property based testing is a technique of testing whereby you specify the
 properties that your function satisfies. Hedgehog then generates random input to
@@ -63,21 +63,12 @@ behaviour and has lead to the notion of "property driven development".
 
 #### Running the Tests
 
-For a cabal sandbox:
+If you're using cabal or greater:
 
 ```shell
-$ cabal sandbox init
-$ cabal install --only-dependencies --enable-tests
-$ cabal configure --enable-tests
-$ cabal test
-```
-
-If you're using Cabal 2.0 or greater (You can check your cabal version with `$ cabal --version`):
-
-```shell
-$ cabal new-configure --enable-tests
-$ cabal new-build --enable-tests
-$ cabal new-test
+$ cabal v2-configure --enable-tests
+$ cabal v2-build --enable-tests
+$ cabal v2-test
 ```
 
 For a stack environment:
@@ -90,7 +81,7 @@ To load the tests in the REPL:
 
 ```shell
 # Cabal
-$ cabal new-repl app-fp-tests
+$ cabal v2-repl app-fp-tests
 
 # Stack
 $ stack ghci applied-fp-course:test:app-fp-tests
@@ -108,4 +99,3 @@ Start in ``tests/Test.hs``.
 [tasty]: (https://hackage.haskell.org/package/tasty)
 [tasty-wai]: (https://hackage.haskell.org/package/tasty-wai)
 [doctest]: (https://hackage.haskell.org/package/doctest)
-
