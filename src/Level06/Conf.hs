@@ -1,36 +1,39 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-missing-methods #-}
+
 module Level06.Conf
-    ( parseOptions
-    ) where
+  ( parseOptions,
+  )
+where
 
-import           GHC.Word                 (Word16)
-
-import           Data.Bifunctor           (first)
-import           Data.Monoid              ((<>))
-
-import           Level06.AppM             (AppM)
-import           Level06.Types            (Conf, ConfigError,
-                                           DBFilePath (DBFilePath), PartialConf,
-                                           Port (Port))
-
-import           Level06.Conf.CommandLine (commandLineParser)
-import           Level06.Conf.File        (parseJSONConfigFile)
+import Data.Bifunctor (first)
+import Data.Monoid ((<>))
+import GHC.Word (Word16)
+import Level06.AppM (AppM)
+import Level06.Conf.CommandLine (commandLineParser)
+import Level06.Conf.File (parseJSONConfigFile)
+import Level06.Types
+  ( Conf,
+    ConfigError,
+    DBFilePath (DBFilePath),
+    PartialConf,
+    Port (Port),
+  )
 
 -- | For the purposes of this application we will encode some default values to
 -- ensure that our application continues to function in the event of missing
 -- configuration values from either the file or command line inputs.
-defaultConf
-  :: PartialConf
+defaultConf ::
+  PartialConf
 defaultConf =
   error "defaultConf not implemented"
 
 -- | We need something that will take our PartialConf and see if can finally build
 -- a complete ``Conf`` record. Also we need to highlight any missing values by
 -- providing the relevant error.
-makeConfig
-  :: PartialConf
-  -> Either ConfigError Conf
+makeConfig ::
+  PartialConf ->
+  Either ConfigError Conf
 makeConfig =
   error "makeConfig not implemented"
 
@@ -43,10 +46,9 @@ makeConfig =
 -- records. By now we should be able to write something like this:
 --
 -- ``defaults <> file <> commandLine``
---
-parseOptions
-  :: FilePath
-  -> AppM ConfigError Conf
+parseOptions ::
+  FilePath ->
+  AppM ConfigError Conf
 parseOptions =
   -- Parse the options from the config file: "files/appconfig.json"
   -- Parse the options from the commandline using 'commandLineParser'

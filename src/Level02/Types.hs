@@ -1,20 +1,22 @@
-{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-dodgy-exports #-}
-module Level02.Types
-  ( Topic
-  , CommentText
-  , ContentType (..)
-  , RqType (..)
-  , Error (..)
-  , mkTopic
-  , getTopic
-  , mkCommentText
-  , getCommentText
-  , renderContentType
-  ) where
 
-import           Data.ByteString (ByteString)
-import           Data.Text       (Text)
+module Level02.Types
+  ( Topic,
+    CommentText,
+    ContentType (..),
+    RqType (..),
+    Error (..),
+    mkTopic,
+    getTopic,
+    mkCommentText,
+    getCommentText,
+    renderContentType,
+  )
+where
+
+import Data.ByteString (ByteString)
+import Data.Text (Text)
 
 -- Working through the specification for our application, what are the
 -- types of requests we're going to handle?
@@ -44,11 +46,11 @@ import           Data.Text       (Text)
 
 -- Topic
 newtype Topic = Topic Text
-  deriving Show
+  deriving (Show)
 
 -- CommentText
 newtype CommentText = CommentText Text
-  deriving Show
+  deriving (Show)
 
 -- Using these convenient definitions, we can create the following constructors
 -- for our RqType:
@@ -64,7 +66,6 @@ data RqType
 
 -- Fill in the error constructors as you need them.
 data Error
-
 
 -- Provide the constructors for a sum type to specify the `ContentType` Header,
 -- to be used when we build our Response type. Our application will be simple,
@@ -85,9 +86,9 @@ data ContentType
 -- - plain text = "text/plain"
 -- - json       = "application/json"
 --
-renderContentType
-  :: ContentType
-  -> ByteString
+renderContentType ::
+  ContentType ->
+  ByteString
 renderContentType =
   error "renderContentType not implemented"
 
@@ -99,28 +100,27 @@ renderContentType =
 -- The export list at the top of this file demonstrates how to export a type,
 -- but not export the constructor.
 
-mkTopic
-  :: Text
-  -> Either Error Topic
+mkTopic ::
+  Text ->
+  Either Error Topic
 mkTopic =
   error "mkTopic not implemented"
 
-getTopic
-  :: Topic
-  -> Text
+getTopic ::
+  Topic ->
+  Text
 getTopic =
   error "getTopic not implemented"
 
-mkCommentText
-  :: Text
-  -> Either Error CommentText
+mkCommentText ::
+  Text ->
+  Either Error CommentText
 mkCommentText =
   error "mkCommentText not implemented"
 
-getCommentText
-  :: CommentText
-  -> Text
+getCommentText ::
+  CommentText ->
+  Text
 getCommentText =
   error "getCommentText not implemented"
-
 ---- Go to `src/Level02/Core.hs` next

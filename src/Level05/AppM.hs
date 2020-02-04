@@ -1,20 +1,19 @@
-{-# LANGUAGE FlexibleInstances     #-}
-{-# LANGUAGE InstanceSigs          #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+
 module Level05.AppM
-  ( AppM
-  , liftEither
-  , runAppM
-  ) where
+  ( AppM,
+    liftEither,
+    runAppM,
+  )
+where
 
-import           Control.Monad.Except   (MonadError (..))
-import           Control.Monad.IO.Class (MonadIO (..))
-
-import           Data.Text              (Text)
-
-import           Level05.Types          (Error)
-
-import           Data.Bifunctor         (first)
+import Control.Monad.Except (MonadError (..))
+import Control.Monad.IO.Class (MonadIO (..))
+import Data.Bifunctor (first)
+import Data.Text (Text)
+import Level05.Types (Error)
 
 -- We're going to add a very useful abstraction to our application. We'll
 -- automate away the explicit error handling and inspection of our Either values
@@ -49,6 +48,7 @@ import           Data.Bifunctor         (first)
 -- encountered, the structure of our AppM will automatically handle it for us.
 
 newtype AppM a = AppM (IO (Either Error a))
+
 -- This structure allows us to start writing our functions in terms of
 -- constraints. As an example, if we wanted to abstract over IO and indicate
 -- that instead of the concrete type we wanted a constraint that allows for IO
@@ -64,9 +64,9 @@ newtype AppM a = AppM (IO (Either Error a))
 --
 -- AppM e m a = AppM ( m (Either e a) )
 
-runAppM
-  :: AppM a
-  -> IO (Either Error a)
+runAppM ::
+  AppM a ->
+  IO (Either Error a)
 runAppM (AppM m) =
   m
 
@@ -76,14 +76,14 @@ instance Functor AppM where
 
 instance Applicative AppM where
   pure :: a -> AppM a
-  pure  = error "pure for AppM not implemented"
+  pure = error "pure for AppM not implemented"
 
   (<*>) :: AppM (a -> b) -> AppM a -> AppM b
   (<*>) = error "spaceship for AppM not implemented"
 
 instance Monad AppM where
   (>>=) :: AppM a -> (a -> AppM b) -> AppM b
-  (>>=)  = error "bind for AppM not implemented"
+  (>>=) = error "bind for AppM not implemented"
 
 instance MonadIO AppM where
   liftIO :: IO a -> AppM a
@@ -103,10 +103,9 @@ instance MonadError Error AppM where
 -- throwError :: MonadError e m => e -> m a
 -- pure :: Applicative m => a -> m a
 --
-liftEither
-  :: Either Error a
-  -> AppM a
+liftEither ::
+  Either Error a ->
+  AppM a
 liftEither =
   error "liftEither not implemented"
-
 -- Go to 'src/Level05/DB.hs' next.

@@ -1,12 +1,20 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-unused-matches #-}
-module Level01.Core (runApp) where
 
-import           Network.Wai              (Application, Request, Response,
-                                           ResponseReceived, responseLBS)
-import           Network.Wai.Handler.Warp (run)
+module Level01.Core
+  ( runApp,
+  )
+where
 
-import           Network.HTTP.Types       (status200)
+import Network.HTTP.Types (status200)
+import Network.Wai
+  ( Application,
+    Request,
+    Response,
+    ResponseReceived,
+    responseLBS,
+  )
+import Network.Wai.Handler.Warp (run)
 
 -- Our "application" will respond to ALL incoming requests with a 200
 -- status code response and the message "Hello, World!"
@@ -28,10 +36,10 @@ import           Network.HTTP.Types       (status200)
 -- what you need.
 --
 -- We've used the non-synonym version of the `Application` type below.
-app
-  :: Request
-  -> (Response -> IO ResponseReceived)
-  -> IO ResponseReceived
+app ::
+  Request ->
+  (Response -> IO ResponseReceived) ->
+  IO ResponseReceived
 app _ cb =
   cb $ responseLBS status200 [] "Hello, World!"
 

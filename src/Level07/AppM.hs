@@ -1,39 +1,38 @@
-{-# LANGUAGE DeriveFunctor         #-}
-{-# LANGUAGE FlexibleInstances     #-}
-{-# LANGUAGE InstanceSigs          #-}
+{-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+
 module Level07.AppM
-  ( AppM (..)
-  , App
-  , Env (..)
-  , liftEither
-  , runApp
-  ) where
+  ( AppM (..),
+    App,
+    Env (..),
+    liftEither,
+    runApp,
+  )
+where
 
-import           Control.Monad.Except   (MonadError (..))
-import           Control.Monad.IO.Class (MonadIO (..))
-import           Control.Monad.Reader   (MonadReader (..))
-
-import           Data.Text              (Text)
-
-import           Level07.Types          (Conf, FirstAppDB)
-import           Level07.Types.Error    (Error)
+import Control.Monad.Except (MonadError (..))
+import Control.Monad.IO.Class (MonadIO (..))
+import Control.Monad.Reader (MonadReader (..))
+import Data.Text (Text)
+import Level07.Types (Conf, FirstAppDB)
+import Level07.Types.Error (Error)
 
 -- | First, let's clean up our (Conf,FirstAppDB) with an application Env type.
 -- We will add a general purpose logging function as well. Remember that
 -- functions are values, we're able to pass them around and place them on
 -- records like any other type.
-data Env = Env
-
-  -- | We will add a function to take some 'Text' input and print it to the
-  -- console as a crude form of logging. Construct a function that matches this
-  -- type so you can include it when you create the 'Env'.
-  { envLoggingFn :: Text -> App ()
-
-  -- We're able to nest records to keep things neat and tidy.
-  , envConfig    :: Conf
-  , envDB        :: FirstAppDB
-  }
+data Env
+  = Env
+      -- We will add a function to take some 'Text' input and print it to the
+      -- console as a crude form of logging. Construct a function that matches this
+      -- type so you can include it when you create the 'Env'.
+      { envLoggingFn :: Text -> App (),
+        -- We're able to nest records to keep things neat and tidy.
+        envConfig :: Conf,
+        envDB :: FirstAppDB
+      }
 
 -- | It would be nice to remove the need to pass around our Env to every
 -- function that needs it. Wouldn't it be great to have our functions run where
@@ -45,16 +44,18 @@ data Env = Env
 -- will do something involving IO. It's another form of documentation and type
 -- safety. AppM only has one definition and so we can easily understand what it
 -- implies when used in our application.
-newtype AppM e a = AppM
-  { runAppM :: Env -> IO (Either e a)
-  }
-  -- | Quite often, GHC is able to write the code for us. In this case we just
+newtype AppM e a
+  = AppM
+      { runAppM :: Env -> IO (Either e a)
+      }
+  -- Quite often, GHC is able to write the code for us. In this case we just
   -- tell GHC that we want a Functor instance for our newtype, and it is able to
   -- correctly derive what is needed.
-  deriving Functor
-  -- | We could do this for the rest of these instances, but that would turn
+  --
+  -- We could do this for the rest of these instances, but that would turn
   -- into "magic" what is otherwise straight-forward implementations. You are
   -- here to learn after all.
+  deriving (Functor)
 
 type App = AppM Error
 
@@ -69,9 +70,6 @@ instance Applicative (AppM e) where
   (<*>) = error "spaceship for AppM e not implemented"
 
 instance Monad (AppM e) where
-  -- | When it comes to running functions in (AppM e) as a Monad, this will take
-  -- care of passing the Env from one function to the next whilst preserving the
-  -- error handling behaviour.
   (>>=) :: AppM e a -> (a -> AppM e b) -> AppM e b
   (>>=) = error "bind for AppM e not implemented"
 
@@ -106,8 +104,6 @@ instance MonadIO (AppM e) where
 --
 -- throwError :: MonadError e m => e -> m a
 -- pure :: Applicative m => a -> m a
---
 liftEither :: Either e a -> AppM e a
 liftEither = error "throwLeft not implemented"
-
 -- Move on to ``src/Level07/DB.hs`` after this

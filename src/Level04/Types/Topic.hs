@@ -1,30 +1,29 @@
 module Level04.Types.Topic
-  ( Topic
-  , mkTopic
-  , getTopic
-  , encodeTopic
-  ) where
+  ( Topic,
+    mkTopic,
+    getTopic,
+    encodeTopic,
+  )
+where
 
-import           Waargonaut.Encode          (Encoder)
-import qualified Waargonaut.Encode          as E
-
-import           Data.Functor.Contravariant (contramap)
-import           Data.Text                  (Text)
-
-import           Level04.Types.Error        (Error (EmptyTopic), nonEmptyText)
+import Data.Functor.Contravariant (contramap)
+import Data.Text (Text)
+import Level04.Types.Error (Error (EmptyTopic), nonEmptyText)
+import Waargonaut.Encode (Encoder)
+import qualified Waargonaut.Encode as E
 
 newtype Topic = Topic Text
-  deriving Show
+  deriving (Show)
 
-mkTopic
-  :: Text
-  -> Either Error Topic
+mkTopic ::
+  Text ->
+  Either Error Topic
 mkTopic =
   nonEmptyText Topic EmptyTopic
 
-getTopic
-  :: Topic
-  -> Text
+getTopic ::
+  Topic ->
+  Text
 getTopic (Topic t) =
   t
 
@@ -58,7 +57,7 @@ getTopic (Topic t) =
 -- typeclass has a function that comes in very handy when writing these
 -- functions. There is a quick introduction to `Contravariant` in the `README`
 -- for this level.
---
 encodeTopic :: Applicative f => Encoder f Topic
-encodeTopic = -- Try using 'contramap' and 'E.text'
+encodeTopic =
+  -- Try using 'contramap' and 'E.text'
   error "topic JSON encoder not implemented"

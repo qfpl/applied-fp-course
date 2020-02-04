@@ -1,63 +1,60 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 module Level07.Types
-  ( Error (..)
-  , ConfigError (..)
-  , PartialConf (..)
-  , Port (..)
-  , DBFilePath (..)
-  , Conf (..)
-  , FirstAppDB (..)
-  , RqType (..)
-  , ContentType (..)
-  , Comment (..)
-  , Topic
-  , CommentText
-  , partialConfDecoder
-  , mkTopic
-  , getTopic
-  , mkCommentText
-  , getCommentText
-  , renderContentType
-  , fromDBComment
-  , confPortToWai
-  , encodeComment
-  , encodeTopic
-  ) where
+  ( Error (..),
+    ConfigError (..),
+    PartialConf (..),
+    Port (..),
+    DBFilePath (..),
+    Conf (..),
+    FirstAppDB (..),
+    RqType (..),
+    ContentType (..),
+    Comment (..),
+    Topic,
+    CommentText,
+    partialConfDecoder,
+    mkTopic,
+    getTopic,
+    mkCommentText,
+    getCommentText,
+    renderContentType,
+    fromDBComment,
+    confPortToWai,
+    encodeComment,
+    encodeTopic,
+  )
+where
 
-import           System.IO.Error                    (IOError)
-
-import           GHC.Word                           (Word16)
-
-import           Data.ByteString                    (ByteString)
-import           Data.Text                          (pack)
-
-import           Data.Functor.Contravariant         ((>$<))
-import           Data.Semigroup                     (Last (Last), Semigroup ((<>)))
-
-import           Data.Time                          (UTCTime)
-import qualified Data.Time.Format                   as TF
-
-import           Waargonaut.Decode                  (CursorHistory, Decoder)
-import qualified Waargonaut.Decode                  as D
-import           Waargonaut.Decode.Error            (DecodeError)
-
-import           Waargonaut.Encode                  (Encoder)
-import qualified Waargonaut.Encode                  as E
-
-import           Database.SQLite.Simple             (Connection)
-import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
-
-import           Level07.DB.Types                   (DBComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
-
-import           Level07.Types.Error                (Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute))
-
-import           Level07.Types.CommentText          (CommentText,
-                                                     encodeCommentText,
-                                                     getCommentText,
-                                                     mkCommentText)
-
-import           Level07.Types.Topic                (Topic, encodeTopic,
-                                                     getTopic, mkTopic)
+import Data.ByteString (ByteString)
+import Data.Functor.Contravariant ((>$<))
+import Data.Semigroup (Last (Last), Semigroup ((<>)))
+import Data.Text (pack)
+import Data.Time (UTCTime)
+import qualified Data.Time.Format as TF
+import Database.SQLite.Simple (Connection)
+import Database.SQLite.SimpleErrors.Types (SQLiteResponse)
+import GHC.Word (Word16)
+import Level07.DB.Types (DBComment (dbCommentComment, dbCommentId, dbCommentTime, dbCommentTopic))
+import Level07.Types.CommentText
+  ( CommentText,
+    encodeCommentText,
+    getCommentText,
+    mkCommentText,
+  )
+import Level07.Types.Error (Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute))
+import Level07.Types.Topic
+  ( Topic,
+    encodeTopic,
+    getTopic,
+    mkTopic,
+  )
+import System.IO.Error (IOError)
+import Waargonaut.Decode (CursorHistory, Decoder)
+import qualified Waargonaut.Decode as D
+import Waargonaut.Decode.Error (DecodeError)
+import Waargonaut.Encode (Encoder)
+import qualified Waargonaut.Encode as E
 
 newtype CommentId = CommentId Int
   deriving (Show)
@@ -65,39 +62,40 @@ newtype CommentId = CommentId Int
 encodeCommentId :: Applicative f => Encoder f CommentId
 encodeCommentId = (\(CommentId i) -> i) >$< E.int
 
-data Comment = Comment
-  { commentId    :: CommentId
-  , commentTopic :: Topic
-  , commentText  :: CommentText
-  , commentTime  :: UTCTime
-  }
-  deriving Show
+data Comment
+  = Comment
+      { commentId :: CommentId,
+        commentTopic :: Topic,
+        commentText :: CommentText,
+        commentTime :: UTCTime
+      }
+  deriving (Show)
 
 encodeISO8601DateTime :: Applicative f => Encoder f UTCTime
 encodeISO8601DateTime = pack . TF.formatTime tl fmt >$< E.text
   where
     fmt = TF.iso8601DateFormat (Just "%H:%M:%S")
-    tl = TF.defaultTimeLocale { TF.knownTimeZones = [] }
+    tl = TF.defaultTimeLocale {TF.knownTimeZones = []}
 
 encodeComment :: Applicative f => Encoder f Comment
 encodeComment = E.mapLikeObj $ \c ->
-  E.atKey' "id"    encodeCommentId       (commentId c) .
-  E.atKey' "topic" encodeTopic           (commentTopic c) .
-  E.atKey' "text"  encodeCommentText     (commentText c) .
-  E.atKey' "time"  encodeISO8601DateTime (commentTime c)
+  E.atKey' "id" encodeCommentId (commentId c)
+    . E.atKey' "topic" encodeTopic (commentTopic c)
+    . E.atKey' "text" encodeCommentText (commentText c)
+    . E.atKey' "time" encodeISO8601DateTime (commentTime c)
 
 -- For safety we take our stored DBComment and try to construct a Comment that
 -- we would be okay with showing someone. However unlikely it may be, this is a
 -- nice method for separating out the back and front end of a web app and
 -- providing greater guarantees about data cleanliness.
-fromDBComment
-  :: DBComment
-  -> Either Error Comment
+fromDBComment ::
+  DBComment ->
+  Either Error Comment
 fromDBComment dbc =
-  Comment (CommentId     $ dbCommentId dbc)
-      <$> (mkTopic       $ dbCommentTopic dbc)
-      <*> (mkCommentText $ dbCommentComment dbc)
-      <*> (pure          $ dbCommentTime dbc)
+  Comment (CommentId $ dbCommentId dbc)
+    <$> (mkTopic $ dbCommentTopic dbc)
+    <*> (mkCommentText $ dbCommentComment dbc)
+    <*> (pure $ dbCommentTime dbc)
 
 data RqType
   = AddRq Topic CommentText
@@ -110,11 +108,11 @@ data ContentType
   = PlainText
   | JSON
 
-renderContentType
-  :: ContentType
-  -> ByteString
+renderContentType ::
+  ContentType ->
+  ByteString
 renderContentType PlainText = "text/plain"
-renderContentType JSON      = "application/json"
+renderContentType JSON = "application/json"
 
 -----------------
 -- Config Types
@@ -124,30 +122,33 @@ renderContentType JSON      = "application/json"
 -- record and this lets you specify an unwrapping function at the same time. Which
 -- technique you choose is a matter for your specific needs and preference.
 --
-newtype Port = Port
-  { getPort :: Word16 }
+newtype Port
+  = Port
+      {getPort :: Word16}
   deriving (Eq, Show)
 
-newtype DBFilePath = DBFilePath
-  { getDBFilePath :: FilePath }
+newtype DBFilePath
+  = DBFilePath
+      {getDBFilePath :: FilePath}
   deriving (Eq, Show)
 
 -- The ``Conf`` type will need:
 -- - A customisable port number: ``Port``
 -- - A filepath for our SQLite database: ``DBFilePath``
-data Conf = Conf
-  { port       :: Port
-  , dbFilePath :: DBFilePath
-  }
-  deriving Eq
+data Conf
+  = Conf
+      { port :: Port,
+        dbFilePath :: DBFilePath
+      }
+  deriving (Eq)
 
 -- We're storing our Port as a Word16 to be more precise and prevent invalid
 -- values from being used in our application. However Wai is not so stringent.
 -- To accommodate this and make our lives a bit easier, we will write this
 -- helper function to take ``Conf`` value and convert it to an ``Int``.
-confPortToWai
-  :: Conf
-  -> Int
+confPortToWai ::
+  Conf ->
+  Int
 confPortToWai =
   fromIntegral . getPort . port
 
@@ -159,7 +160,7 @@ data ConfigError
   | MissingDBFilePath
   | JSONDecodeError String
   | ConfigFileReadError IOError
-  deriving Show
+  deriving (Show)
 
 -- Our application will be able to load configuration from both a file and command line
 -- input. We want to be able to use the command line to temporarily override the
@@ -184,18 +185,20 @@ data ConfigError
 -- To make this easier, we'll make a new type ``PartialConf`` that will have our ``Last``
 -- wrapped values. We can then define a ``Semigroup`` instance for it and have our
 -- ``Conf`` be a known good configuration.
-data PartialConf = PartialConf
-  { pcPort       :: Maybe (Last Port)
-  , pcDBFilePath :: Maybe (Last DBFilePath)
-  }
+data PartialConf
+  = PartialConf
+      { pcPort :: Maybe (Last Port),
+        pcDBFilePath :: Maybe (Last DBFilePath)
+      }
 
 -- We need to define a ``Semigroup`` instance for ``PartialConf``. We define our ``(<>)``
 -- function to lean on the ``Semigroup`` instance for Last to always get the last value.
 instance Semigroup PartialConf where
-  a <> b = PartialConf
-    { pcPort       = pcPort a <> pcPort b
-    , pcDBFilePath = pcDBFilePath a <> pcDBFilePath b
-    }
+  a <> b =
+    PartialConf
+      { pcPort = pcPort a <> pcPort b,
+        pcDBFilePath = pcDBFilePath a <> pcDBFilePath b
+      }
 
 -- When it comes to reading the configuration options from the command-line, we
 -- use the 'optparse-applicative' package. This part of the exercise has already
@@ -207,9 +210,10 @@ instance Semigroup PartialConf where
 -- have to tell waargonaut how to go about converting the JSON into our PartialConf
 -- data structure.
 partialConfDecoder :: Monad f => Decoder f PartialConf
-partialConfDecoder = PartialConf
-  <$> lastAt "port" D.integral Port
-  <*> lastAt "dbFilePath" D.string DBFilePath
+partialConfDecoder =
+  PartialConf
+    <$> lastAt "port" D.integral Port
+    <*> lastAt "dbFilePath" D.string DBFilePath
   where
     lastAt k d c = fmap (Last . c) <$> D.atKeyOptional k d
 
@@ -217,6 +221,7 @@ partialConfDecoder = PartialConf
 -- our database queries. This also allows things to change over time without
 -- having to rewrite all of the functions that need to interact with DB related
 -- things in different ways.
-newtype FirstAppDB = FirstAppDB
-  { dbConn  :: Connection
-  }
+newtype FirstAppDB
+  = FirstAppDB
+      { dbConn :: Connection
+      }

@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -fno-warn-missing-methods #-}
+
 module Level04.DB.Types where
 
-import           Data.Text                      (Text)
-import           Data.Time                      (UTCTime)
-
-import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
+import Data.Text (Text)
+import Data.Time (UTCTime)
+import Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
 
 -- To try to avoid leaking various types and expected functionality around the
 -- application, we create a stand alone type that will represent the data we
@@ -15,8 +15,9 @@ import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
 -- Comment type, but without the newtype wrappers for each value. To get started,
 -- just copy the new definition for the `Comment` type from Level04.Types.
 data DBComment = DBComment
-  -- NB: Haskell does not allow duplicate field names for records so the field
-  -- names for this type will have to be slightly different
+
+-- NB: Haskell does not allow duplicate field names for records so the field
+-- names for this type will have to be slightly different
 
 -- This Typeclass comes from the `sqlite-simple` package and describes how to
 -- decode a single row from the database into a single representation of our
@@ -24,5 +25,4 @@ data DBComment = DBComment
 -- between different packages/databases.
 instance FromRow DBComment where
   fromRow = error "FromRow DBComment instance not implemented"
-
 -- Now move to ``src/Level04/Types.hs``
