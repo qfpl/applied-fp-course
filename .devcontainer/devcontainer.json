@@ -1,0 +1,21 @@
+{
+    "name": "Haskell Container",
+    "image": "unisay/haskell-cabal:8.6.5",
+    "runArgs": [],
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    // Use 'appPort' to create a container with published ports. If the port isn't working, be sure
+    // your server accepts connections from all interfaces (0.0.0.0 or '*'), not just localhost.
+    // "appPort": [],
+    // Uncomment the next line to run commands after the container is created.
+    "postCreateCommand": "cabal new-install --only-dependencies -j4",
+    // Comment out the next line if you want to run as root instead
+    // "remoteUser": "vscode",
+    // Add the IDs of extensions you want installed when the container is created in the array below.
+    "extensions": [
+        "justusadam.language-haskell",
+        "digitalassetholdingsllc.ghcide",
+        "ilyakooo0.ormolu"
+    ]
+}
