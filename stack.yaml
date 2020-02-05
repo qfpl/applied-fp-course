@@ -1,13 +1,17 @@
-resolver: lts-12.21
+resolver: lts-14.22
 extra-deps:
-- tasty-wai-0.1.1.0
-- waargonaut-0.6.0.0
-- digit-0.7
-- hoist-error-0.2.1.0
-- hw-json-0.9.0.1
-- hw-parser-0.1.0.0
-- natural-0.3.0.3
-- tagged-0.8.6
-- sop-core-0.4.0.0
-- generics-sop-0.4.0.1
-- witherable-0.2
+  - QuickCheck-2.12.6.1
+  - digit-0.8
+  - generic-lens-1.2.0.1
+  - hoist-error-0.2.1.0
+  - hspec-2.5.9
+  - hspec-core-2.5.9
+  - hspec-discover-2.5.9
+  - hw-balancedparens-0.3.0.4
+  - hw-json-standard-cursor-0.2.1.2
+  - hw-rankselect-0.13.3.2
+  - natural-0.3.0.4
+  - tasty-wai-0.1.1.0
+  - waargonaut-0.8.0.1
+  - witherable-0.3.5
+  - witherable-class-0
