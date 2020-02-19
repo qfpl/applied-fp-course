@@ -33,6 +33,7 @@ functionality `Foo` (e.g., `Except`, `Reader`, `State`, &c):
 
 <details>
 <summary>Extensions and Imports</summary>
+
 ```haskell
 {-# OPTIONS_GHC -Wall -Wno-unused-imports #-}
 
@@ -48,6 +49,7 @@ import Control.Applicative (liftA2)
 import Data.Bifunctor (Bifunctor(..))
 import Data.Either (either)
 ```
+
 </details>
 
 ## Generalising `AppM`
@@ -105,10 +107,12 @@ instance Monad m => Monad (AppM' m e) where
 
 <details>
 <summary>Solution</summary>
+
 ```haskell ignore
 instance Monad m => Monad (AppM' m e) where
   AppM' m >>= f = AppM' $ m >>= either (pure . Left) (runAppM' . f)
 ```
+
 </details>
 
 
@@ -126,6 +130,7 @@ newtype ExceptT e m a = ExceptT { runExceptT :: m (Either e a) }
 
 <details>
 <summary>Instances</summary>
+
 ```haskell
 instance Applicative m => Applicative (ExceptT e m) where
   pure = ExceptT . pure . pure
@@ -134,6 +139,7 @@ instance Applicative m => Applicative (ExceptT e m) where
 instance Monad m => Monad (ExceptT e m) where
   ExceptT m >>= f = ExceptT $ m >>= either (pure . Left) (runExceptT . f)
 ```
+
 </details>
 
 `ExceptT e` is a _monad transformer_: if `m` is a monad, then so is
@@ -188,6 +194,7 @@ instance Monad m => Monad (ReaderT r m) where
 
 <details>
 <summary>Solution</summary>
+
 ```haskell ignore
 instance Applicative m => Applicative (ReaderT r m) where
   pure = ReaderT . pure . pure
@@ -198,6 +205,7 @@ instance Monad m => Monad (ReaderT r m) where
     a <- m r
     runReaderT (f a) r
 ```
+
 </details>
 
 
@@ -249,6 +257,7 @@ liftCatch = error "liftCatch"
 
 <details>
 <summary>Solution</summary>
+
 ```haskell ignore
 ask :: Monad m => ReaderT r m r
 ask = ReaderT pure
@@ -285,6 +294,7 @@ liftCatch
 liftCatch catch (ReaderT m) f = ReaderT $ \r ->
   catch (m r) (\e -> runReaderT (f e) r)
 ```
+
 </details>
 
 ## The `MonadTrans` Typeclass
@@ -314,6 +324,7 @@ instance MonadTrans (ExceptT e) where
 
 <details>
 <summary>Solution</summary>
+
 ```haskell ignore
 instance MonadTrans (ReaderT r) where
   lift = ReaderT . const
@@ -321,6 +332,7 @@ instance MonadTrans (ReaderT r) where
 instance MonadTrans (ExceptT e) where
   lift = ExceptT . fmap Right
 ```
+
 </details>
 
 The `MonadIO` typeclass is a special case of this, which uses the fact
@@ -345,6 +357,7 @@ instance MonadIO m => MonadIO (ExceptT e m) where
 
 <details>
 <summary>Solution</summary>
+
 ```haskell ignore
 instance MonadIO m => MonadIO (ReaderT r m) where
   liftIO = lift . liftIO
@@ -352,6 +365,7 @@ instance MonadIO m => MonadIO (ReaderT r m) where
 instance MonadIO m => MonadIO (ExceptT e m) where
   liftIO = lift . liftIO
 ```
+
 </details>
 
 
@@ -423,6 +437,7 @@ instance MonadError e m => MonadError e (ReaderT r m) where
 
 <details>
 <summary>Solution</summary>
+
 ```haskell ignore
 instance Monad m => MonadReader r (ReaderT r m) where
   ask' = ask
@@ -442,6 +457,7 @@ instance MonadError e m => MonadError e (ReaderT r m) where
   throwError' = lift . throwError'
   catchError' = liftCatch catchError'
 ```
+
 </details>
 
 
