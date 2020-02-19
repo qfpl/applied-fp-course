@@ -1,7 +1,8 @@
 # MTL - Monad Transformer Library
 
-This file is literate haskell. If you have `markdown-unlit` installed,
-you can extract the code by running the following command:
+This file is literate haskell. If you have
+[`markdown-unlit`](https://hackage.haskell.org/package/markdown-unlit)
+installed, you can extract the code by running the following command:
 
 ```
 $ markdown-unlit -h mtl.md mtl.md mtl.hs
@@ -10,10 +11,10 @@ $ markdown-unlit -h mtl.md mtl.md mtl.hs
 This will allow you to work through the exercises using GHCi.
 
 
-# Summary of the MTL Style
+# Summary of MTL Style
 
-Overall, "MTL Style" means the following things for a piece of
-functionality `Foo` (e.g., `Except`, `Reader`, `State`, &c):
+"MTL Style" means the following things for a piece of functionality
+`Foo` (e.g., `Except`, `Reader`, `State`, &c):
 
 1. A parcel of functionality bundled into a typeclasses `MonadFoo`;
 
@@ -413,9 +414,6 @@ class Monad m => MonadError e m | m -> e where
 --
 -- The first two instances implement the class operations for each transformer.
 -- You have written these functions already.
---
--- The second two instances lift the functionality of one
--- transformer through another.
 instance Monad m => MonadReader r (ReaderT r m) where
   ask' = error "ask' -- ReaderT r m"
   asks' = error "asks' -- ReaderT r m"
@@ -425,6 +423,8 @@ instance Monad m => MonadError e (ExceptT e m) where
   throwError' = error "throwError' -- ExceptT e m"
   catchError' = error "catchError' -- ExceptT e m"
 
+-- These two instances lift the functionality of one
+-- transformer through another.
 instance MonadReader r m => MonadReader r (ExceptT e m) where
   ask' = error "ask' -- lift through ExceptT"
   asks' = error "asks' -- lift through ExceptT"
@@ -502,7 +502,7 @@ runAppMtl (AppMtl m) env = runExceptT $ runReaderT m env
 ```
 
 
-## A note on Perfomance
+## A Note on Perfomance
 
 Monad transformers are a great way to rapidly set up application
 monads, and a well-placed `runFooT` call can let you temporarily pick
