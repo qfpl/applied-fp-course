@@ -129,3 +129,9 @@ instructions about what the goal is for that specific level.
 * Level 09 : Add session controls (login, logout) and a protected route. So we
   can have something that resembles application state. For the purposes of
   modelling the state machine and implementing some property based tests.
+
+### Bonus Content
+
+Extension material that doesn't feel like it belongs to the main progression
+lives in the [`bonus`](https://github.com/qfpl/applied-fp-course/tree/master/bonus)
+subdirectory.
