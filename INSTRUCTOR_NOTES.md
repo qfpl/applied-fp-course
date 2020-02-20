@@ -7,7 +7,7 @@ We're going to be building an extremely simple web server using the 'wai'
 framework. Wai is a low level HTTP implementation similar to WSGI in Python or
 Rack in Ruby.
 
-- Hackage
+* Hackage
   - Primary repository for Haskell packages and their documentation.
   - Package **Index** is extremely useful for discovering and interrogating
     packages.
@@ -27,17 +27,17 @@ Our application is starting to grow we should add another layer of assurance by
 writing some tests.
 
 We will cover:
-- How to write a ``test-suite`` in the cabal file.
-- Usage of the ``hspec`` library as our test runner and how to feed it our
+* How to write a ``test-suite`` in the cabal file.
+* Usage of the ``hspec`` library as our test runner and how to feed it our
   application.
-- We will also write some tests using the ``hspec-wai`` package to give us some
+* We will also write some tests using the ``hspec-wai`` package to give us some
   basic confidence in our error handling.
 
 # Level 4
 
 This covers adding a database to our application.
-- We use SQLite because it requires the least amount of setup on the host machine.
-- All of the SQL is provided.
+* We use SQLite because it requires the least amount of setup on the host machine.
+* All of the SQL is provided.
 
 We will have the beginnings of some configuration in our application, but we
 will simply hardcode this for the time being as we will have a better solution
@@ -63,12 +63,12 @@ The steps for this level:
 3) ``src/Level04/DB.hs``
 4) ``src/Level04/Main.hs``
 
-- Call out `Traversable` and `Bifunctor` typeclasses.
-- Call out the encoding instances & the automatic deriving of the ToJSON instances
+* Call out `Traversable` and `Bifunctor` typeclasses.
+* Call out the encoding instances & the automatic deriving of the ToJSON instances
 
 # Level 5
 
-This is the "ExceptT" level.
+This is "The `ExceptT` level".
 
 After enduring some of the annoyance of manually handling the `Either` values in various ways. This level has the students implementing their own version of the `ExceptT` monad transformer.
 
@@ -99,7 +99,7 @@ the file into a JSON Value.
 
 # Level 7
 
-This is "The ReaderT" level.
+This is "The `ReaderT` level".
 
 Students will be required to copy their completed versions of functions from
 previous levels that will then break in this level and need to be refactored.
@@ -113,15 +113,16 @@ Also there are functions in the FirstApp/Main module that will need to be
 updated to handle the new shenanigans.
 
 ## General Notes - More to add.
-- readme in each level folder.
-- monoid instance - rehash single/multiple number of possible instances. Don't let people hang too long on this point.
-- how to find the documentation for the Header / ContentType
-- more instruction that lead people to hackage documentation for Text/ByteString etc
-- mention that import lists may need to be updated for the new types
-- some editors will need to jump in and out of the different levels (close, cd, re-open)
-- Mention that it's fine to use case statements for Either handling, we make it okay at the end.
-- Mention that creating modules is easy, useful, and very helpful.
+* readme in each level folder.
+* monoid instance - rehash single/multiple number of possible instances. Don't let people hang too long on this point.
+* how to find the documentation for the Header / ContentType
+* more instruction that lead people to hackage documentation for Text/ByteString etc
+* mention that import lists may need to be updated for the new types
+* some editors will need to jump in and out of the different levels (close, cd, re-open)
+* Mention that it's fine to use case statements for Either handling, we make it okay at the end.
+* Mention that creating modules is easy, useful, and very helpful.
 
 ### IMPORTANT!
-- Stephen Diehl - What I Wish I Knew Learning Haskell
-- Ask students if they would prefer access to a prepared VM with the code & an editor or two.
+* Stephen Diehl - [What I Wish I Knew Learning Haskell](http://dev.stephendiehl.com/hask/)
+* Gabriel Gonzales - [State of the Haskell Ecosystem](https://github.com/Gabriel439/post-rfc/blob/master/sotu.md)
+* Ask students if they would prefer access to a prepared VM with the code & an editor or two.
