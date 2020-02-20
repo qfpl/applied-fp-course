@@ -11,20 +11,40 @@ $ markdown-unlit -h mtl.md mtl.md mtl.hs
 This will allow you to work through the exercises using GHCi.
 
 
-# Summary of MTL Style
+# The Payoff
 
-"MTL Style" means the following things for a piece of functionality
-`Foo` (e.g., `Except`, `Reader`, `State`, &c):
+MTL allows you to build an application monad by layering independent
+pieces of functionality (called "transformers") atop a base monad
+(usually `IO`).
 
-1. A parcel of functionality bundled into a typeclasses `MonadFoo`;
+```haskell ignore
+data Env = Env -- Dummy type for the sake of example
+
+-- This is the Level07 AppM, which also passes around an environment
+-- (Look ma, no handwritten instances!)
+newtype AppM e a = AppM (ReaderT Env (ExceptT e IO) a)
+  deriving (Functor, Applicative, Monad, MonadError e, MonadReader Env)
+
+runAppM :: AppM e a -> Env -> IO (Either e a)
+runAppM (AppM m) env = runExceptT $ runReaderT m env
+```
+
+
+# Summary of an MTL-Style API
+
+"MTL Style" means the following things are usually available for a
+piece of functionality `Foo` (e.g., `Except`, `Reader`, `State`, &c):
+
+1. A parcel of functionality bundled into a typeclass (usually called
+   `MonadFoo`);
 
 2. A monad transformer `FooT`, which provides the `MonadFoo` instance
    which actually does the work;
 
 3. Instances `MonadTrans FooT` and  `MonadIO m => MonadIO (FooT m)`;
 
-4. A type alias `type Foo = FooT Identity`, for when an underlying
-   monad is unnecessary; and
+4. If the transformer can be usefully applied to `Identity`, a type
+   alias `type Foo = FooT Identity`; and
 
 5. Instances of the form `MonadFoo m => MonadFoo (BarT m)` which lift
    `MonadFoo` functionality through other transformers.
@@ -491,14 +511,15 @@ application monad as a stack of transformers atop `IO`, and use GHC's
 immediately:
 
 ```haskell
-data Env -- Dummy type for the sake of example
+data Env = Env -- Dummy type for the sake of example
 
 -- This is the Level07 AppM, which also passes around an environment
-newtype AppMtl e a = AppMtl (ReaderT Env (ExceptT e IO) a)
+-- (Look ma, no handwritten instances!)
+newtype AppM e a = AppM (ReaderT Env (ExceptT e IO) a)
   deriving (Functor, Applicative, Monad, MonadError e, MonadReader Env)
 
-runAppMtl :: AppMtl e a -> Env -> IO (Either e a)
-runAppMtl (AppMtl m) env = runExceptT $ runReaderT m env
+runAppM :: AppM e a -> Env -> IO (Either e a)
+runAppM (AppM m) env = runExceptT $ runReaderT m env
 ```
 
 
@@ -513,3 +534,6 @@ down your program.
 Should this happen to you (and be proven by profiling), consider
 defining your application monad directly and only then implementing
 the `MonadFoo` instances by hand.
+
+As with any performance advice, profile before and after to make sure
+you're actually achieving something.
