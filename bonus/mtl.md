@@ -140,7 +140,7 @@ instance Monad m => Monad (AppM' m e) where
 
 At this point, we've found something very general, and it's no longer
 appropriate to call it `AppM`. Changing the order of the type
-variables, shows that we have rediscovered `ExceptT` from
+variables shows that we have rediscovered `ExceptT` from
 `transformers`'s `Control.Monad.Trans.Except` module:
 
 ```haskell
@@ -193,8 +193,8 @@ type Reader r = ReaderT r Identity
 stacking them atop each other, you can build up a monad for your
 needs. We will only talk about two: `ExceptT`, which we just
 discovered; and `ReaderT`, which passes around an argument for
-us. `ReaderT r` is a monad transformer: if `m` is a monad, `ReaderT r
-m` is also a monad:
+us. `ReaderT r` is another monad transformer: if `m` is a monad,
+`ReaderT r m` is also a monad:
 
 ```haskell
 newtype ReaderT r m a = ReaderT { runReaderT :: r -> m a } deriving Functor
@@ -235,6 +235,8 @@ Now that we have these general type definitions, we want to be able to
 provide useful functions alongside them.
 
 ```haskell
+-- Exercise: implement all of these.
+
 -- Return the environment.
 ask :: Monad m => ReaderT r m r
 ask = error "ask"
@@ -325,7 +327,7 @@ transformers, by ignoring the features added by the extra tranformers:
 
 ```haskell
 -- MonadTrans has the following laws, which show that `t` does indeed transform
--- `m`, and does so in a way that doesn't use the features of `t`.
+-- `m`, and does so in a way that doesn't use the features of `t`:
 --
 -- 1. lift . pure = pure
 -- 2. lift (m >>= f) = lift m >>= lift . f
@@ -403,7 +405,7 @@ other. An instance `MonadError e m` means that we can throw and catch
 errors of type `e` in our monad `m`.
 
 The other syntax that may be new here is the `| m -> r`. This is
-called a _functional dependency_ or "fundep" and tells GHC two things:
+called a _functional dependency_ or "fundep", and tells GHC two things:
 
 1. There will never be two instances for `MonadReader r m` that have
    the same `m` but different `r`.
