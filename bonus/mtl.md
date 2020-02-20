@@ -109,8 +109,7 @@ Let's look at this closely:
 3. The `Monad` instance is pattern-matching some `Either`-flavoued
    stuff, and calling `(>>=)`. It is using no `IO`-specific features.
 
-This means that we can generalise the `AppM` instance over any
-underlying monad:
+This means that we can generalise `AppM` over any underlying monad:
 
 ```haskell
 -- Exercise: What are the constraints on the Functor instance? Check with `:i`.
