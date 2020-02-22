@@ -107,7 +107,7 @@ instance forall a . Monoid (f a) => Monoid (Config f) where
 </details>
 
 <details>
-<summary>Aside: `forall a . Semigroup (f a)` vs `Alternative f`</summary>
+<summary>Aside: <code>forall a . Semigroup (f a)</code> vs <code>Alternative f</code></summary>
 
 You might well be wondering, "doesn't
 [`Alternative`](http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Applicative.html#t:Alternative)
