@@ -306,6 +306,8 @@ instance Rank2Traversable Config where
   r2traverse f (Config p db) = Config <$> f p <*> f db
 ```
 
+</details>
+
 
 ## Payoff
 
@@ -324,6 +326,8 @@ fromLast = error "fromLast"
 fromLast :: Rank2Traversable g => g Last -> Maybe (g Identity)
 fromLast = r2traverse $ r2fmap Identity . getLast
 ```
+
+</details>
 
 
 ## Other Functors
