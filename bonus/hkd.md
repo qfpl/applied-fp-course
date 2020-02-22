@@ -77,7 +77,7 @@ config :: Applicative f => Port -> FilePath -> Config f
 config = error "config"
 
 -- The forall in the constraint uses -XQuantifiedConstraints, available since
--- GHC 8.6.1 You could instead explicitly list them out instead:
+-- GHC 8.6.1 You could explicitly list them out instead:
 -- instance (Show (f Port), Show (f FilePath)) => ...
 deriving instance (forall a . Eq (f a)) => Eq (Config f)
 deriving instance (forall a . Show (f a)) => Show (Config f)
