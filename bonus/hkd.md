@@ -13,10 +13,12 @@ This will allow you to work through the exercises using GHCi.
 In this document, we will explore a pattern called "higher-kinded
 data", which is when a data structure is parameterised by a
 `Functor`. This is becoming increasingly common in libraries like
-[`dependent-sum`](https://hackage.haskell.org/package/dependent-sum)
+[`waargonaut`](https://hackage.haskell.org/package/waargonaut) (which
+we used for JSON encoding/decoding),
+[`dependent-sum`](https://hackage.haskell.org/package/dependent-sum),
 and
 [`dependent-map`](https://hackage.haskell.org/package/dependent-map),
-and so is worth knowing about.
+so it is worth knowing about.
 
 
 <details>
