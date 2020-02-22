@@ -293,7 +293,6 @@ class Rank2Functor g => Rank2Traversable g where
   r2traverse :: Applicative m => (forall a . p a -> m (q a)) -> g p -> m (g q)
   r2traverse f = r2sequence . r2fmap (Compose . f)
 
--- Exercise: implement both methods of Rank2Traversable.
 instance Rank2Traversable Config where
   r2sequence :: Applicative m => Config (Compose m p) -> m (Config p)
   r2sequence (Config p db) = Config <$> getCompose p <*> getCompose db
