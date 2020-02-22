@@ -254,7 +254,7 @@ have slightly different superclasses:
 ```haskell
 -- This is (roughly) `Rank2.Traversable` from `rank2classes`.
 class Rank2Functor g => Rank2Traversable g where
-  {-# MINIMAL sequence | traverse #-}
+  {-# MINIMAL r2sequence | r2traverse #-}
 
   -- The type of 'sequence' contains a 'Compose' because we need to make
   -- sure there's a functor underneath the `m` we use for our effects.
@@ -285,7 +285,7 @@ instance Rank2Traversable Config where
 
 ```haskell ignore
 class Rank2Functor g => Rank2Traversable g where
-  {-# MINIMAL sequence | traverse #-}
+  {-# MINIMAL r2sequence | r2traverse #-}
 
   r2sequence :: Applicative m => g (Compose m p) -> m (g p)
   r2sequence = r2traverse getCompose
