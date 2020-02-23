@@ -77,7 +77,7 @@ import Data.Either (either)
 
 Consider the `AppM` monad we defined in level 6:
 
-```haskell
+```haskell ignore
 newtype AppM e a = AppM { runAppM :: IO (Either e a) }
 
 instance Functor (AppM e) where

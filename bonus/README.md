@@ -10,3 +10,5 @@ knowledge onto real codebases.
 * [`mtl.md`](https://github.com/qfpl/applied-fp-course/blob/master/bonus/mtl.md) -
   Use the monad transformer library to build up an application monad
   instead of writing everything by hand.
+
+* [`hkd.md`](https://github.com/qfpl/applied-fp-course/blob/master/bonus/hkd.md) -
