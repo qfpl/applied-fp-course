@@ -32,7 +32,6 @@ so it is worth knowing about.
 {-# LANGUAGE NoStarIsType #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE QuantifiedConstraints #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 import Data.Functor.Compose (Compose(..))
@@ -63,8 +62,19 @@ data PartialConf = PartialConf
   }
 ```
 
-There's repeated structure here. We can generalise over the both of
-these structures by introducing a `Functor`-kinded type parameter:
+There's repeated structure here, but we have to squint to see it at
+first. Both records have a "port" and a "db file path", but it's not
+immediately clear how to abstract over it. The trick is to use the
+`Identity` functor (from `Data.Functor.Identity`) on the fields in
+`Conf`. Now that we're thinking about `Identity Port` in the `Conf`
+case, we can see the similarities between the `Port` fields: the one
+in `Conf` could be `Identity Port`, and the one in `PartialConf` could
+be `Maybe-of-Last Port`. (Technically, `Compose Maybe Last` applied to
+`Port`, using `Compose` from `Data.Functor.Compose`.)
+
+With these observations in hand, a `Functor`-kinded type parameter
+lets us write down the "shape" of a `Config` in a way that lets us
+express both `PartialConf` and `Conf`:
 
 ```haskell
 data Config f = Config
@@ -78,18 +88,13 @@ data Config f = Config
 config :: Applicative f => Port -> FilePath -> Config f
 config = error "config"
 
--- The forall in the constraint uses -XQuantifiedConstraints, available since
--- GHC 8.6.1 . You could explicitly list them out instead:
--- instance (Show (f Port), Show (f FilePath)) => ...
-deriving instance (forall a . Eq (f a)) => Eq (Config f)
-deriving instance (forall a . Show (f a)) => Show (Config f)
-
--- Exercise: implement these instances
-instance (forall a . Semigroup (f a)) => Semigroup (Config f) where
-  (<>) = error "(<>) -- Config f"
-
-instance (forall a . Monoid (f a)) => Monoid (Config f) where
-  mempty = error "mempty -- Config f"
+-- These declarations use the -XStandaloneDeriving extension, which lets us
+-- write automatically-derivable instances away from the data declaration.
+-- We need to do this here because GHC fails to work out which constraints
+-- we require in the context of the instance.
+-- Still, we get the Eq and Show instances for minimal boilerplate.
+deriving instance (Eq (f Port), Eq (f FilePath)) => Eq (Config f)
+deriving instance (Show (f Port), Show (f FilePath)) => Show (Config f)
 ```
 
 <details>
@@ -98,48 +103,24 @@ instance (forall a . Monoid (f a)) => Monoid (Config f) where
 ```haskell ignore
 config :: Applicative f => Port -> FilePath -> Config f
 config p db = Config (pure p) (pure db)
-
-instance forall a . Semigroup (f a) => Semigroup (Config f) where
-  Config p1 db1 <> Config p2 db2 = Config (p1 <> p2) (db1 <> db2)
-
-instance forall a . Monoid (f a) => Monoid (Config f) where
-  mempty = Config mempty mempty
 ```
 
 </details>
 
-<details>
-<summary>Aside: <code>forall a . Semigroup (f a)</code> vs <code>Alternative f</code></summary>
-
-You might well be wondering, "doesn't
-[`Alternative`](http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Applicative.html#t:Alternative)
-describe a monoid on applicative functors?" The answer is yes. I have
-chosen to use `Semigroup`/`Monoid` constraints in the superclass for
-a few reasons:
-
-1. `First` and `Last` have no `Alternative` instance.
-2. `Alternative` is not just a monoid on applicative functors, it is
-   also a statement of intent: it's a class with a "control structure"
-   sort of flavour. We are talking about data here, so I feel that
-   asking for `Semigroup`/`Monoid` instances more appropriate.
-
-</details>
-
-
 ## Specific `Conf`s
 
 Now that we have our `Config` structure, we can recover both full and
-partial configs by choosing an appropriate functor, and writing a
-function to (maybe) extract a full config from a partial one:
+partial configs by choosing an appropriate functor. We can also define
+`Semigroup` and `Monoid` instances for `Config f`:
 
 ```haskell
--- Conf' and PartialConf' are primed to not clash with the level 7 ones.
-type Conf' = Config Identity -- 'Identity' is defined in 'Data.Functor.Identity'
+-- Conf' and PartialConf' are primed to not clash with the names from level 7.
+type Conf' = Config Identity
 
 -- This is Data.Maybe.Last, which will eventually be deprecated and removed.
--- Using `Maybe (Last a)` is the forward-compatible recommendation but we can't
--- do that here just yet; see https://gitlab.haskell.org/ghc/ghc/issues/17859
--- for the gory details.
+-- Using `Maybe (Last a)` and the `Compose` newtype is the forward-compatible
+-- recommendation but we can't do that here just yet;
+-- see https://gitlab.haskell.org/ghc/ghc/issues/17859 for the gory details.
 newtype Last a = Last { getLast :: Maybe a }
 
 instance Semigroup (Last a) where
@@ -151,17 +132,62 @@ instance Monoid (Last a) where
 
 type PartialConf' = Config Last
 
--- Exercise: implement this
-extractConfig :: PartialConf' -> Maybe Conf'
-extractConfig = error "extractConfig"
+-- Exercise: implement these instances
+instance (Semigroup (f Port), Semigroup (f FilePath)) => Semigroup (Config f) where
+  (<>) = error "(<>) -- Config f"
+
+instance (Monoid (f Port), Monoid (f FilePath)) => Monoid (Config f) where
+  mempty = error "mempty -- Config f"
 ```
 
 <details>
 <summary>Solution</summary>
 
 ```haskell ignore
-extractConfig :: PartialConf' -> Maybe Conf'
-extractConfig (Config (Last mp) (Last mdb)) = Config <$> mp <*> mdb
+instance (Semigroup (f Port), Semigroup (f FilePath)) => Semigroup (Config f) where
+  Config p1 db1 <> Config p2 db2 = Config (p1 <> p2) (db1 <> db2)
+
+instance (Monoid (f Port), Monoid (f FilePath)) => Monoid (Config f) where
+  mempty = Config mempty mempty
+```
+
+</details>
+
+<details>
+<summary>Aside: Could we ask for <code>Alternative f</code> instead?</summary>
+
+You might well be wondering, "doesn't
+[`Alternative`](http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Applicative.html#t:Alternative)
+describe a monoid on applicative functors?" The answer is yes. I have
+chosen to use `Semigroup`/`Monoid` constraints in the superclass for
+two reasons:
+
+1. `First` and `Last` have no `Alternative` instance.
+2. `Alternative` is not just a monoid on applicative functors, it is
+   also a statement of intent: it's a class with a "control structure"
+   sort of flavour. We are talking about data here, so I feel that
+   asking for `Semigroup`/`Monoid` instances is more appropriate.
+
+</details>
+
+
+## Extracting a Full `Conf'`
+
+Now we can write a function to (maybe) extract a `Conf'` from a
+`PartialConf'`:
+
+```haskell
+-- Exercise: implement this
+fromPartialConf' :: PartialConf' -> Maybe Conf'
+fromPartialConf' = error "fromPartialConf'"
+```
+
+<details>
+<summary>Solution</summary>
+
+```haskell ignore
+fromPartialConf' :: PartialConf' -> Maybe Conf'
+fromPartialConf' (Config (Last mp) (Last mdb)) = Config <$> mp <*> mdb
 ```
 
 </details>
@@ -169,12 +195,12 @@ extractConfig (Config (Last mp) (Last mdb)) = Config <$> mp <*> mdb
 
 ## Wait a Minute...
 
-Let's look at the expanded type of `extractConfig`:
+Let's look at the expanded type of `fromPartialConf'`:
 
 ```haskell ignore
-extractConfig :: PartialConf' -> Maybe Conf'
-extractConfig :: Config Last -> Maybe (Config Identity) -- expand type synonyms
-extractConfig :: Config Maybe -> Maybe (Config Identity) -- 'Last' is representationally 'Maybe'
+fromPartialConf' :: PartialConf' -> Maybe Conf'
+fromPartialConf' :: Config Last -> Maybe (Config Identity) -- expand type synonyms
+fromPartialConf' :: Config Maybe -> Maybe (Config Identity) -- 'Last' is representationally 'Maybe'
 ```
 
 Does this remind you of something? It looks like `sequence`, but over
@@ -184,8 +210,8 @@ type of kind `Type` as its final parameter:
 ```haskell ignore
 sequence
   :: (Applicative f, Traversable t)
-  =>                  t (f a) ->     f (t a)
-extractConfig :: Config Maybe -> Maybe (Config Identity)
+  =>                     t (f a) ->     f (t a)
+fromPartialConf' :: Config Maybe -> Maybe (Config Identity)
 ```
 
 (Ignore the extra `Identity` noise for now.)
@@ -310,7 +336,7 @@ instance Rank2Traversable Config where
 
 ## Payoff
 
-We can now generalise our `extractConfig` to any `Rank2Traversable`:
+We can now generalise our `fromPartialConf'` to any `Rank2Traversable`:
 
 ```haskell
 -- Exercise: implement this
