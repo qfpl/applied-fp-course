@@ -12,3 +12,5 @@ knowledge onto real codebases.
   instead of writing everything by hand.
 
 * [`hkd.md`](https://github.com/qfpl/applied-fp-course/blob/master/bonus/hkd.md) -
+  Learn the "higher-kinded data" pattern and parameterise your data
+  structures over a functor.
