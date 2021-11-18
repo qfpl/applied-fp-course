@@ -15,12 +15,12 @@ we do not discourage it and invite suggestions on how to make the course more
 approachable.
 
 If you do attempt this on your own and find yourself completely lost, then
-you may come find us on IRC on [Freenode](https://freenode.net/) in #qfpl or
+you may come find us on IRC on [libera.chat](https://web.libera.chat/) in #qfpl or
 #fp-course.
 
 ### You:
 
-* Have completed, or are capable of completing, the [Data61 FP Course](https://github.com/data61/fp-course).
+* Have completed, or are capable of completing, the [FP Course](https://github.com/system-f/fp-course).
 * Have a few months self-study to your name.
 * Want to know how to build larger applications with statically typed FP.
 * Are willing to accept that a web application is a sufficient choice.
