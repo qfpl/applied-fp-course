@@ -14,9 +14,9 @@ this course outside of the workshops will increase the difficulty somewhat,
 we do not discourage it and invite suggestions on how to make the course more
 approachable.
 
-If you do attempt this on your own and find yourself completely lost, then
-you may come find us on IRC on [libera.chat](https://web.libera.chat/) in #qfpl or
-#fp-course.
+If you do attempt this on your own and find yourself completely lost,
+then you may come find us on IRC on [libera.chat](https://web.libera.chat/)
+in `#qfpl` or `#fp-course`.
 
 ### You:
 
@@ -46,38 +46,20 @@ you may come find us on IRC on [libera.chat](https://web.libera.chat/) in #qfpl 
 Each level is a self-contained Haskell module, containing incomplete, or as yet
 undefined, data types and functions.
 
-We recommend using a `nix-shell`, but it is not required.
+We recommend using `nix develop` or `nix-shell` to get a shell with
+the necessary tools. You can also use `cabal` or `stack`.
 
 #### Cabal
 
-If you're using a version of Cabal that is >=2.0 (use `cabal --version` to
-find out), then you can use the `new-*` commands and you don't need a sandbox:
+If you're using version >=3.0 of `cabal-install` (use `cabal
+--version` to find out), then you don't need to previx the commands
+with `v2-`:
 
 ```bash
 $ cd path/to/applied-fp-course
-$ cabal new-configure --enable-tests
-$ cabal new-build <levelN>-exe
+$ cabal configure --enable-tests
+$ cabal build <levelN>-exe
 $ $EDITOR src/<LevelN>/README.md
-```
-
-If you don't have a version of Cabal that is >=2.0 then we recommend using
-cabal sandboxes. They provide a contained Haskell environment for a given
-project. They're also easy to clean up and any installed packages won't
-conflict with any other sandboxed project you may be working on.
-
-```bash
-$ cd path/to/applied-fp-course
-$ cabal sandbox init
-$ cabal install --only-dependencies --enable-tests
-$ cabal build
-$ $EDITOR README.md
-```
-
-To delete a sandbox:
-
-```bash
-$ cd path/to/applied-fp-course
-$ cabal sandbox delete
 ```
 
 #### Nix
@@ -86,19 +68,22 @@ If you would like to use a Nix Shell:
 
 ```bash
 $ cd path/to/applied-fp-course
-$ nix-shell
-$ cabal new-build <levelN>-exe
+$ nix-shell  # or `nix develop`, if you use flakes
+$ cabal build <levelN>-exe
 $ $EDITOR src/<LevelN>/README.md
 ```
 
-Once that completes you will be in a `nix-shell` environment with all the
-tools required to work through the course.
+#### ghcid
+
+If you have `ghcid` installed, run `ghcid -c 'cabal repl'` to get a
+terminal with up-to-date type errors, which are refreshed on every
+save.
 
 #### Stack
 
-Stack yaml configuration is provided and checked by our CI system for successful
-builds. However the authors do not use stack, so we cannot promise to be able to
-resolve stack related issues that may arise. Though we will do our best. :)
+A `stack.yaml` configuration is provided on a best-effort basis. The
+authors do not use stack and cannot promise to be able to resolve
+stack-related issues. Though we will do our best. :)
 
 #### Please note...
 
@@ -106,8 +91,7 @@ These lessons are designed to be completed with an instructor as part of the
 Data61 Applied Functional Programming Course. You are of course welcome to
 clone the repository and give it a try, but you may find the tasks more
 difficult. If you have any questions we can be contacted in the
-Freenode [#qfpl IRC channel](https://freenode.net). You can use the
-free [WebChat client](https://webchat.freenode.net).
+Freenode [#qfpl IRC channel](https://libera.chat).
 
 #### Subsequent lessons may contain spoilers, don't cheat yourself out of the experience!
 
@@ -120,7 +104,7 @@ instructions about what the goal is for that specific level.
 * Level 04 : Database layer (sqlite-simple)
 * Level 05 : Better error handling through ExceptT
 * Level 06 : Add some flexible configuration
-* Level 07 : ReaderT & refactoring
+* Level 07 : `ReaderT` & refactoring
 
 -- In Development...
 * Level 08 : Lenses & "classy mtl" monad transformers
