@@ -55,6 +55,7 @@ import Level04.Types (
   mkTopic,
   renderContentType,
  )
+import qualified Data.Aeson.Encoding as Aeson
 
 -- Our start-up is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
@@ -117,12 +118,12 @@ resp500 =
   mkResponse status500
 
 resp200Json ::
-  Encoder' a ->
+  (a -> Aeson.Encoding' Text)->
   a ->
   Response
 resp200Json e =
   mkResponse status200 JSON . encodeUtf8
-    . E.simplePureEncodeTextNoSpaces e
+    . Aeson.genericToEncoding Aeson.defaultOptions e
 
 -- |
 app ::
