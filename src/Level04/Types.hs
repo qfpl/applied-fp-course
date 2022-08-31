@@ -29,8 +29,7 @@ import           Data.Functor.Contravariant ((>$<))
 import           Data.Time                  (UTCTime)
 import qualified Data.Time.Format           as TF
 
-import           Waargonaut.Encode          (Encoder)
-import qualified Waargonaut.Encode          as E
+import qualified Data.Aeson as Aeson
 
 import           Level04.DB.Types           (DBComment)
 
@@ -44,6 +43,7 @@ import           Level04.Types.CommentText  (CommentText, getCommentText,
 import           Level04.Types.Topic        (Topic, getTopic, mkTopic)
 
 import           Level04.Types.Error        (Error (EmptyCommentText, EmptyTopic, UnknownRoute))
+import qualified Data.Aeson.Encoding as Aeson
 
 newtype CommentId = CommentId Int
   deriving (Eq, Show)
@@ -65,7 +65,7 @@ data Comment = Comment
 --
 -- 'https://hackage.haskell.org/package/waargonaut/docs/Waargonaut-Encode.html'
 --
-encodeComment :: Applicative f => Encoder f Comment
+encodeComment :: Comment -> Aeson.Encoding
 encodeComment =
   error "Comment JSON encoder not implemented"
   -- Tip: Use the 'encodeISO8601DateTime' to handle the UTCTime for us.
@@ -95,9 +95,10 @@ renderContentType
 renderContentType PlainText = "text/plain"
 renderContentType JSON      = "application/json"
 
-encodeISO8601DateTime :: Applicative f => Encoder f UTCTime
-encodeISO8601DateTime = pack . TF.formatTime loc fmt >$< E.text
+encodeISO8601DateTime :: UTCTime -> Aeson.Encoding
+encodeISO8601DateTime uctTime = Aeson.text $ pack formattedTime 
   where
+    formattedTime = TF.formatTime loc fmt uctTime
     fmt = TF.iso8601DateFormat (Just "%H:%M:%S")
     loc = TF.defaultTimeLocale { TF.knownTimeZones = [] }
 
