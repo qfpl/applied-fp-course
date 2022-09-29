@@ -33,38 +33,7 @@ library
     Level04.Types.CommentText
     Level04.Types.Error
     Level04.Types.Topic
-    Level05.AppM
-    Level05.Conf
-    Level05.Core
-    Level05.DB
-    Level05.DB.Types
-    Level05.Types
-    Level05.Types.CommentText
-    Level05.Types.Error
-    Level05.Types.Topic
-    Level06.AppM
-    Level06.Conf
-    Level06.Conf.CommandLine
-    Level06.Conf.File
-    Level06.Core
-    Level06.DB
-    Level06.DB.Types
-    Level06.Types
-    Level06.Types.CommentText
-    Level06.Types.Error
-    Level06.Types.Topic
-    Level07.AppM
-    Level07.Conf
-    Level07.Conf.CommandLine
-    Level07.Conf.File
-    Level07.Core
-    Level07.DB
-    Level07.DB.Types
-    Level07.Responses
-    Level07.Types
-    Level07.Types.CommentText
-    Level07.Types.Error
-    Level07.Types.Topic
+   
 
   ghc-options:
     -Wall -fno-warn-unused-binds -fno-warn-unused-do-bind
@@ -158,29 +127,5 @@ executable level04-exe
 
   default-language: Haskell2010
 
-executable level05-exe
-  main-is:          Level05.hs
-  hs-source-dirs:   exe
-  build-depends:
-      applied-fp-course
-    , base
-
-  default-language: Haskell2010
-
-executable level06-exe
-  main-is:          Level06.hs
-  hs-source-dirs:   exe
-  build-depends:
-      applied-fp-course
-    , base
-
-  default-language: Haskell2010
-
-executable level07-exe
-  main-is:          Level07.hs
-  hs-source-dirs:   exe
-  build-depends:
-      applied-fp-course
-    , base
 
   default-language: Haskell2010

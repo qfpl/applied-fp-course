@@ -45,7 +45,12 @@ import Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import qualified Data.Aeson as Aeson
 
-import Level04.Conf (Conf, firstAppConfig)
+import Data.Aeson (encode)
+import qualified Data.Aeson.Encoding as Aeson
+import Data.Aeson.Types (ToJSON)
+import Data.Bifunctor
+import Level04.Conf (Conf (Conf), firstAppConfig)
+import Level04.DB
 import qualified Level04.DB as DB
 import Level04.Types (
   ContentType (JSON, PlainText),
@@ -55,7 +60,7 @@ import Level04.Types (
   mkTopic,
   renderContentType,
  )
-import qualified Data.Aeson.Encoding as Aeson
+import Level04.Types.Error (Error (SqlError))
 
 -- Our start-up is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
@@ -65,7 +70,14 @@ data StartUpError
   deriving (Show)
 
 runApp :: IO ()
-runApp = error "runApp needs re-implementing"
+runApp = do
+  res <- prepareAppReqs
+  case res of
+    Left err -> do
+      print err
+      putStrLn "Failure!"
+    Right r -> do
+      app r
 
 -- We need to complete the following steps to prepare our app requirements:
 --
@@ -76,8 +88,10 @@ runApp = error "runApp needs re-implementing"
 --
 prepareAppReqs ::
   IO (Either StartUpError DB.FirstAppDB)
-prepareAppReqs =
-  error "prepareAppReqs not implemented"
+prepareAppReqs = do
+  let Conf path = firstAppConfig
+  db <- initDB path
+  pure $ first DBInitErr db
 
 -- | Some helper functions to make our lives a little more DRY.
 mkResponse ::
@@ -117,13 +131,12 @@ resp500 ::
 resp500 =
   mkResponse status500
 
-resp200Json ::
-  (a -> Aeson.Encoding' Text)->
+resp20 ::
+  ToJSON a =>
   a ->
   Response
-resp200Json e =
-  mkResponse status200 JSON . encodeUtf8
-    . Aeson.genericToEncoding Aeson.defaultOptions e
+resp20 =
+  mkResponse status200 . encode
 
 -- |
 app ::
@@ -206,3 +219,5 @@ mkErrorResponse EmptyCommentText =
   resp400 PlainText "Empty Comment"
 mkErrorResponse EmptyTopic =
   resp400 PlainText "Empty Topic"
+mkErrorResponse (SqlError x) =
+  resp400 PlainText $ LBS.pack $ show x
