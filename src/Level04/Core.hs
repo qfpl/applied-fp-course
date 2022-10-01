@@ -61,6 +61,7 @@ import Level04.Types (
   renderContentType,
  )
 import Level04.Types.Error (Error (SqlError))
+import System.Exit (ExitCode (ExitFailure), exitWith)
 
 -- Our start-up is becoming more complicated and could fail in new and
 -- interesting ways. But we also want to be able to capture these errors in a
@@ -71,13 +72,14 @@ data StartUpError
 
 runApp :: IO ()
 runApp = do
-  res <- prepareAppReqs
+  res <- prepareAppReqs firstAppConfig
   case res of
     Left err -> do
       print err
       putStrLn "Failure!"
+      exitWith $ ExitFailure 1
     Right r -> do
-      app r
+      run 3000 $ app r
 
 -- We need to complete the following steps to prepare our app requirements:
 --
@@ -87,9 +89,9 @@ runApp = do
 -- Our application configuration is defined in Conf.hs
 --
 prepareAppReqs ::
+  Conf ->
   IO (Either StartUpError DB.FirstAppDB)
-prepareAppReqs = do
-  let Conf path = firstAppConfig
+prepareAppReqs (Conf path) = do
   db <- initDB path
   pure $ first DBInitErr db
 
@@ -131,12 +133,12 @@ resp500 ::
 resp500 =
   mkResponse status500
 
-resp20 ::
+resp200Json ::
   ToJSON a =>
   a ->
   Response
-resp20 =
-  mkResponse status200 . encode
+resp200Json =
+  mkResponse status200 JSON . encode
 
 -- |
 app ::
@@ -169,12 +171,15 @@ handleRequest ::
   DB.FirstAppDB ->
   RqType ->
   IO (Either Error Response)
-handleRequest _db (AddRq _ _) =
-  (resp200 PlainText "Success" <$) <$> error "AddRq handler not implemented"
-handleRequest _db (ViewRq _) =
-  error "ViewRq handler not implemented"
-handleRequest _db ListRq =
-  error "ListRq handler not implemented"
+handleRequest db (AddRq t c) = do
+  res <- addCommentToTopic db t c
+  pure $ resp200 PlainText "Success" <$ res
+handleRequest db (ViewRq topic) = do
+  res <- getComments db topic
+  pure $ resp200Json <$> res
+handleRequest db ListRq = do
+  res <- getTopics db
+  pure $ resp200Json <$> res
 
 mkRequest ::
   Request ->

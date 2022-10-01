@@ -70,7 +70,11 @@ initDB ::
   IO (Either SQLiteResponse FirstAppDB)
 initDB fp = do
   db <- Sql.runDBAction $ Sql.open fp
-  pure $ FirstAppDB <$> db
+  case db of
+    Left e -> pure $ Left e
+    Right r -> do
+      Sql.runDBAction $ Sql.execute_ r createTableQ
+      pure $ FirstAppDB <$> db
  where
   -- Query has an `IsString` instance so string literals like this can be
   -- converted into a `Query` type when the `OverloadedStrings` language
