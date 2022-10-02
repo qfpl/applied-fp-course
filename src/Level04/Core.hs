@@ -60,7 +60,7 @@ import Level04.Types (
   mkTopic,
   renderContentType,
  )
-import Level04.Types.Error (Error (SqlError))
+
 import System.Exit (ExitCode (ExitFailure), exitWith)
 
 -- Our start-up is becoming more complicated and could fail in new and
@@ -71,15 +71,7 @@ data StartUpError
   deriving (Show)
 
 runApp :: IO ()
-runApp = do
-  res <- prepareAppReqs firstAppConfig
-  case res of
-    Left err -> do
-      print err
-      putStrLn "Failure!"
-      exitWith $ ExitFailure 1
-    Right r -> do
-      run 3000 $ app r
+runApp = error "runApp needs re-implementing"
 
 -- We need to complete the following steps to prepare our app requirements:
 --
@@ -89,11 +81,9 @@ runApp = do
 -- Our application configuration is defined in Conf.hs
 --
 prepareAppReqs ::
-  Conf ->
-  IO (Either StartUpError DB.FirstAppDB)
-prepareAppReqs (Conf path) = do
-  db <- initDB path
-  pure $ first DBInitErr db
+  Conf -> IO (Either StartUpError DB.FirstAppDB)
+prepareAppReqs =
+  error "prepareAppReqs not implemented"
 
 -- | Some helper functions to make our lives a little more DRY.
 mkResponse ::
@@ -171,15 +161,12 @@ handleRequest ::
   DB.FirstAppDB ->
   RqType ->
   IO (Either Error Response)
-handleRequest db (AddRq t c) = do
-  res <- addCommentToTopic db t c
-  pure $ resp200 PlainText "Success" <$ res
-handleRequest db (ViewRq topic) = do
-  res <- getComments db topic
-  pure $ resp200Json <$> res
-handleRequest db ListRq = do
-  res <- getTopics db
-  pure $ resp200Json <$> res
+handleRequest _db (AddRq _ _) =
+  (resp200 PlainText "Success" <$) <$> error "AddRq handler not implemented"
+handleRequest _db (ViewRq _) =
+  error "ViewRq handler not implemented"
+handleRequest _db ListRq =
+  error "ListRq handler not implemented"
 
 mkRequest ::
   Request ->
@@ -224,5 +211,3 @@ mkErrorResponse EmptyCommentText =
   resp400 PlainText "Empty Comment"
 mkErrorResponse EmptyTopic =
   resp400 PlainText "Empty Topic"
-mkErrorResponse (SqlError x) =
-  resp400 PlainText $ LBS.pack $ show x

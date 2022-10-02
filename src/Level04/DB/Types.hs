@@ -1,16 +1,10 @@
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE NamedFieldPuns #-}
 {-# OPTIONS_GHC -fno-warn-missing-methods #-}
-
 module Level04.DB.Types where
 
-import Data.Text (Text)
-import Data.Time (UTCTime)
+import           Data.Text                      (Text)
+import           Data.Time                      (UTCTime)
 
-import Database.SQLite.Simple (Only (..))
-import Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
-import Level04.Types.CommentText (CommentText)
-import Level04.Types.Topic
+import           Database.SQLite.Simple.FromRow (FromRow (fromRow), field)
 
 -- To try to avoid leaking various types and expected functionality around the
 -- application, we create a stand alone type that will represent the data we
@@ -21,25 +15,14 @@ import Level04.Types.Topic
 -- Comment type, but without the newtype wrappers for each value. To get started,
 -- just copy the new definition for the `Comment` type from Level04.Types.
 data DBComment = DBComment
-  { commentId :: Int
-  , commentTopic :: Text
-  , commentBody :: Text
-  , commentTime :: UTCTime
-  }
-
--- NB: Haskell does not allow duplicate field names for records so the field
--- names for this type will have to be slightly different
+  -- NB: Haskell does not allow duplicate field names for records so the field
+  -- names for this type will have to be slightly different
 
 -- This Typeclass comes from the `sqlite-simple` package and describes how to
 -- decode a single row from the database into a single representation of our
 -- type. This technique of translating a result row to a type will differ
 -- between different packages/databases.
 instance FromRow DBComment where
-  fromRow = do
-    Only i <- fromRow
-    Only i2 <- fromRow
-    Only i3 <- fromRow
-    Only i4 <- fromRow
-    pure $ DBComment i i2 i3 i4
+  fromRow = error "FromRow DBComment instance not implemented"
 
 -- Now move to ``src/Level04/Types.hs``

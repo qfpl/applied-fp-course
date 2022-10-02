@@ -40,7 +40,7 @@ applications that have tests that hit a database. You will want to more
 explicitly manage a separate database that does persist. In case you want to
 examine the data for debugging.
 
-#### Encoding
+#### JSON Encoding
 
 Now that we have a place to keep our `Topic`s and `Comment`s, we need to be able
 to encode this data in a way that is acceptable for other systems to consume.

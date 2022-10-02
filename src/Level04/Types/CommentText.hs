@@ -11,14 +11,11 @@ import Level04.Types.Error (
   nonEmptyText,
  )
 
-import Data.Aeson (ToJSON)
 import Data.Functor.Contravariant (contramap)
 import Data.Text (Text)
-import Database.SQLite.Simple.ToField
-import GHC.Generics (Generic)
 
 newtype CommentText = CommentText Text
-  deriving (Show, Generic)
+  deriving (Show)
 
 mkCommentText ::
   Text ->
@@ -32,8 +29,4 @@ getCommentText ::
 getCommentText (CommentText t) =
   t
 
--- Samme som topic
-instance ToJSON CommentText
-
-instance ToField CommentText where
-  toField (CommentText t) = toField t
+--implement ToJSON CommentText

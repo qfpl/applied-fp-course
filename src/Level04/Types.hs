@@ -50,13 +50,10 @@ import           Level04.Types.Error        (Error (EmptyCommentText, EmptyTopic
 import qualified Data.Aeson as Aeson
 import qualified Data.Aeson.Encoding as Aeson
 import Data.Aeson (ToJSON)
-import GHC.Base (coerce)
-import Level04.DB.Types (DBComment(commentTime))
+import Level04.DB.Types
 
 newtype CommentId = CommentId Int
-  deriving (Eq, Show,Generic)
-
-instance ToJSON CommentId
+  deriving (Eq, Show)
 
 -- | This is the `Comment` record that we will be sending to users, it's a
 -- straightforward record type, containing an `Int`, `Topic`, `CommentText`, and
@@ -67,11 +64,9 @@ data Comment = Comment
   , commentBody  :: CommentText
   , commentTime  :: UTCTime
   }
-  deriving (Show,Generic)
+  deriving Show
 
-instance ToJSON Comment
-
--- | We're going to write the encoder for our `Comment` type.
+-- Implement Aeson.ToJSON for Comment
 
 -- | For safety we take our stored `DBComment` and try to construct a `Comment`
 -- that we would be okay with showing someone. However unlikely it may be, this
@@ -80,11 +75,8 @@ instance ToJSON Comment
 fromDBComment
   :: DBComment
   -> Either Error Comment
-fromDBComment (DBComment{commentId, commentTopic, commentBody, commentTime}) =
-  do 
-    topic' <- mkTopic commentTopic
-    body' <- mkCommentText commentBody
-    pure $ Comment (CommentId commentId) topic' body' commentTime
+fromDBComment =
+  error "fromDBComment not yet implemented"
 
 data RqType
   = AddRq Topic CommentText
@@ -100,12 +92,5 @@ renderContentType
   -> ByteString
 renderContentType PlainText = "text/plain"
 renderContentType JSON      = "application/json"
-
-encodeISO8601DateTime :: UTCTime -> Aeson.Encoding
-encodeISO8601DateTime uctTime = Aeson.text $ pack formattedTime 
-  where
-    formattedTime = TF.formatTime loc fmt uctTime
-    fmt = TF.iso8601DateFormat (Just "%H:%M:%S")
-    loc = TF.defaultTimeLocale { TF.knownTimeZones = [] }
 
 -- | Move on to ``src/Level04/DB.hs`` next.
