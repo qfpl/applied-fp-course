@@ -106,7 +106,7 @@ Let's look at this closely:
    Applicative (Compose f g)` in
    [`Data.Functor.Compose`](https://hackage.haskell.org/package/base-4.12.0.0/docs/Data-Functor-Compose.html#t:Compose).
 
-3. The `Monad` instance is pattern-matching some `Either`-flavoued
+3. The `Monad` instance is pattern-matching some `Either`-flavoured
    stuff, and calling `(>>=)`. It is using no `IO`-specific features.
 
 This means that we can generalise `AppM` over any underlying monad:
