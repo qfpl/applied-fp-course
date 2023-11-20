@@ -12,10 +12,6 @@ import           Control.Exception          (try)
 
 import qualified Data.Attoparsec.ByteString as AB
 
-import           Waargonaut                 (Json)
-import qualified Waargonaut.Decode          as D
-import           Waargonaut.Decode.Error    (DecodeError (ParseFailed))
-
 import           Level06.AppM               (AppM (runAppM))
 import           Level06.Types              (ConfigError (BadConfFile),
                                              PartialConf (PartialConf))
@@ -23,7 +19,7 @@ import           Level06.Types              (ConfigError (BadConfFile),
 -- >>> :set -XOverloadedStrings
 
 -- | The configuration file is in the JSON format, so we need to write a
--- 'waargonaut' 'Decoder' to go from JSON to our 'PartialConf'.
+-- 'aeson' 'FromJSON' to go from JSON to our 'PartialConf'.
 --
 -- Update these tests when you've completed this function.
 --

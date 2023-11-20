@@ -17,11 +17,11 @@ import           Network.Wai                        (Application, Request,
                                                      strictRequestBody)
 import           Network.Wai.Handler.Warp           (run)
 
+import           Data.Aeson                         (ToJSON (..), encode)
+import qualified Data.ByteString.Lazy               as LBS
 import           Network.HTTP.Types                 (Status, hContentType,
                                                      status200, status400,
                                                      status404, status500)
-
-import qualified Data.ByteString.Lazy               as LBS
 
 import           Data.Bifunctor                     (first)
 import           Data.Either                        (either)
@@ -33,18 +33,14 @@ import           Data.Text.Lazy.Encoding            (encodeUtf8)
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
-import           Waargonaut.Encode                  (Encoder')
-import qualified Waargonaut.Encode                  as E
-
-import           Level06.AppM                       (App, AppM (..),
-                                                     liftEither, runApp)
+import           Level06.AppM                       (App, AppM (..), liftEither,
+                                                     runApp)
 import qualified Level06.Conf                       as Conf
 import qualified Level06.DB                         as DB
 import           Level06.Types                      (Conf, ConfigError,
                                                      ContentType (..),
                                                      Error (..),
                                                      RqType (AddRq, ListRq, ViewRq),
-                                                     encodeComment, encodeTopic,
                                                      mkCommentText, mkTopic,
                                                      renderContentType)
 
@@ -112,12 +108,11 @@ resp500 =
   mkResponse status500
 
 resp200Json
-  :: Encoder' a
-  -> a
+  :: ToJSON a
+  => a
   -> Response
-resp200Json e =
-  resp200 JSON . encodeUtf8 .
-  E.simplePureEncodeTextNoSpaces e
+resp200Json =
+  resp200 JSON . encode
 
 -- | Now that we have our configuration, pass it where it needs to go.
 app
@@ -137,8 +132,8 @@ handleRequest
 handleRequest db rqType =
   case rqType of
     AddRq t c -> resp200 PlainText "Success"        <$  DB.addCommentToTopic db t c
-    ViewRq t  -> resp200Json (E.list encodeComment) <$> DB.getComments db t
-    ListRq    -> resp200Json (E.list encodeTopic)   <$> DB.getTopics db
+    ViewRq t  -> resp200Json <$> DB.getComments db t
+    ListRq    -> resp200Json <$> DB.getTopics db
 
 mkRequest
   :: Request

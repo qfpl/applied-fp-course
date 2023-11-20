@@ -20,25 +20,24 @@ module Level06.Types
   , CommentText
   , mkTopic
   , getTopic
-  , encodeTopic
   , mkCommentText
   , getCommentText
-  , encodeComment
   , renderContentType
   , confPortToWai
   , fromDBComment
   ) where
 
-import           GHC.Word                           (Word16)
-
+import           Data.Aeson                         (FromJSON (..), ToJSON (..),
+                                                     object, (.=))
 import           Data.ByteString                    (ByteString)
 import           Data.Text                          (Text, pack)
+import           GHC.Word                           (Word16)
 
 import           System.IO.Error                    (IOError)
 
-import           Data.Semigroup                     (Last (..), Semigroup ((<>)))
+import           Data.Semigroup                     (Last (..),
+                                                     Semigroup ((<>)))
 
-import           Data.Functor.Contravariant         ((>$<))
 import           Data.List                          (stripPrefix)
 import           Data.Maybe                         (fromMaybe)
 import           Data.Time                          (UTCTime)
@@ -46,30 +45,21 @@ import qualified Data.Time.Format                   as TF
 
 import           System.Locale                      (defaultTimeLocale)
 
-import           Waargonaut.Decode                  (Decoder)
-import qualified Waargonaut.Decode                  as D
-import           Waargonaut.Decode.Error            (DecodeError)
-
-import           Waargonaut.Encode                  (Encoder)
-import qualified Waargonaut.Encode                  as E
-
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import           Level06.DB.Types                   (DBComment (..))
 import           Level06.Types.CommentText          (CommentText,
-                                                     encodeCommentText,
                                                      getCommentText,
                                                      mkCommentText)
 
 import           Level06.Types.Error                (Error (..))
-import           Level06.Types.Topic                (Topic, encodeTopic,
-                                                     getTopic, mkTopic)
+import           Level06.Types.Topic                (Topic, getTopic, mkTopic)
 
 newtype CommentId = CommentId Int
   deriving Show
 
-encodeCommentId :: Applicative f => Encoder f CommentId
-encodeCommentId = (\(CommentId i) -> i) >$< E.int
+instance ToJSON CommentId where
+  toJSON (CommentId i) = toJSON i
 
 data Comment = Comment
   { commentId    :: CommentId
@@ -79,18 +69,13 @@ data Comment = Comment
   }
   deriving (Show)
 
-encodeISO8601DateTime :: Applicative f => Encoder f UTCTime
-encodeISO8601DateTime = E.encodeA $ E.runEncoder E.text . pack . TF.formatTime tl fmt
-  where
-    fmt = TF.iso8601DateFormat (Just "%H:%M:%S")
-    tl = TF.defaultTimeLocale { TF.knownTimeZones = [] }
-
-encodeComment :: Applicative f => Encoder f Comment
-encodeComment = E.mapLikeObj $ \c ->
-  E.atKey' "id"    encodeCommentId       (commentId c) .
-  E.atKey' "topic" encodeTopic           (commentTopic c) .
-  E.atKey' "text"  encodeCommentText     (commentText c) .
-  E.atKey' "time"  encodeISO8601DateTime (commentTime c)
+instance ToJSON Comment where
+  toJSON c = object
+    [ "id" .= (commentId c)
+    , "topic" .= (commentTopic c)
+    , "text" .= (commentText c)
+    , "time" .= (commentTime c)
+    ]
 
 -- For safety we take our stored DBComment and try to construct a Comment that
 -- we would be okay with showing someone. However unlikely it may be, this is a
@@ -173,7 +158,7 @@ confPortToWai =
 -- Similar to when we were considering our application types. We can add to this sum type
 -- as we build our application and the compiler can help us out.
 data ConfigError
-  = BadConfFile DecodeError
+  = BadConfFile String
   deriving Show
 
 -- Our application will be able to load configuration from both a file and
@@ -217,11 +202,10 @@ instance Semigroup PartialConf where
 -- been completed for you, feel free to have a look through the 'CommandLine'
 -- module and see how it works.
 --
--- For reading the configuration from the file, we're going to use the Waargonaut
--- library to handle the parsing and decoding for us. In order to do this, we
--- have to tell waargonaut how to go about converting the JSON into our PartialConf
--- data structure.
-partialConfDecoder :: Monad f => Decoder f PartialConf
-partialConfDecoder = error "PartialConf Decoder not implemented"
+-- For reading the configuration from the file, we're going to use the Aeson library to handle the
+-- parsing and decoding for us. For this to work we'll need to complete a 'FromJSON' instance to
+-- tell Aeson how to create our 'PartialConf' type from the JSON input.
+instance FromJSON PartialConf where
+  parseJSON = error "PartialConf FromJSON instance not implemented."
 
 -- Go to 'src/Level06/Conf/File.hs' next

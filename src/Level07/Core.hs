@@ -33,8 +33,6 @@ import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
 import           System.IO                          (stderr)
 
-import qualified Waargonaut.Encode                  as E
-
 import qualified Level07.Conf                       as Conf
 import qualified Level07.DB                         as DB
 
@@ -43,7 +41,6 @@ import           Level07.Types                      (Conf, ConfigError,
                                                      ContentType (PlainText),
                                                      Error (..), RqType (..),
                                                      confPortToWai,
-                                                     encodeComment, encodeTopic,
                                                      mkCommentText, mkTopic)
 
 import           Level07.AppM                       (App, Env (..), liftEither,
@@ -102,8 +99,8 @@ handleRequest
   -> App Response
 handleRequest rqType = case rqType of
   AddRq t c -> Res.resp200 PlainText "Success" <$ DB.addCommentToTopic t c
-  ViewRq t  -> Res.resp200Json (E.list encodeComment) <$> DB.getComments t
-  ListRq    -> Res.resp200Json (E.list encodeTopic)   <$> DB.getTopics
+  ViewRq t  -> Res.resp200Json <$> DB.getComments t
+  ListRq    -> Res.resp200Json <$> DB.getTopics
 
 mkRequest
   :: Request

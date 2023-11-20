@@ -14,11 +14,11 @@ import           Network.Wai                        (Application, Request,
                                                      strictRequestBody)
 import           Network.Wai.Handler.Warp           (run)
 
+import           Data.Aeson                         (ToJSON, encode)
+import qualified Data.ByteString.Lazy.Char8         as LBS
 import           Network.HTTP.Types                 (Status, hContentType,
                                                      status200, status400,
                                                      status404, status500)
-
-import qualified Data.ByteString.Lazy.Char8         as LBS
 
 import           Data.Either                        (Either (Left, Right),
                                                      either)
@@ -29,9 +29,6 @@ import           Data.Text.Encoding                 (decodeUtf8)
 import           Data.Text.Lazy.Encoding            (encodeUtf8)
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
-
-import           Waargonaut.Encode                  (Encoder')
-import qualified Waargonaut.Encode                  as E
 
 import           Level04.Conf                       (Conf, firstAppConfig)
 import qualified Level04.DB                         as DB
@@ -102,12 +99,11 @@ resp500 =
   mkResponse status500
 
 resp200Json
-  :: Encoder' a
-  -> a
+  :: ToJSON a
+  => a
   -> Response
-resp200Json e =
-  mkResponse status200 JSON . encodeUtf8 .
-  E.simplePureEncodeTextNoSpaces e
+resp200Json =
+  mkResponse status200 JSON . encode
 
 -- |
 app
