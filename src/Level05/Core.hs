@@ -28,8 +28,7 @@ import           Data.Text                          (Text)
 import           Data.Text.Encoding                 (decodeUtf8)
 import           Data.Text.Lazy.Encoding            (encodeUtf8)
 
-import           Waargonaut.Encode                  (Encoder')
-import qualified Waargonaut.Encode                  as E
+import           Data.Aeson                         (ToJSON, encode)
 
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
 
@@ -39,7 +38,6 @@ import qualified Level05.DB                         as DB
 import           Level05.Types                      (ContentType (..),
                                                      Error (..),
                                                      RqType (AddRq, ListRq, ViewRq),
-                                                     encodeComment, encodeTopic,
                                                      mkCommentText, mkTopic,
                                                      renderContentType)
 
@@ -116,12 +114,11 @@ resp500 =
   mkResponse status500
 
 resp200Json
-  :: Encoder' a
-  -> a
+  :: ToJSON a
+  => a
   -> Response
-resp200Json e =
-  resp200 JSON . encodeUtf8 .
-  E.simplePureEncodeTextNoSpaces e
+resp200Json =
+  resp200 JSON . encode
 
 -- |
 
@@ -142,8 +139,8 @@ handleRequest db rqType = case rqType of
   -- handles all of that for us. Such is the pleasant nature of these
   -- abstractions.
   AddRq t c -> resp200 PlainText "Success" <$ DB.addCommentToTopic db t c
-  ViewRq t  -> resp200Json (E.list encodeComment) <$> DB.getComments db t
-  ListRq    -> resp200Json (E.list encodeTopic)   <$> DB.getTopics db
+  ViewRq t  -> resp200Json <$> DB.getComments db t
+  ListRq    -> resp200Json <$> DB.getTopics db
 
 mkRequest
   :: Request

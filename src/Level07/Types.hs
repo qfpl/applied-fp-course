@@ -12,7 +12,6 @@ module Level07.Types
   , Comment (..)
   , Topic
   , CommentText
-  , partialConfDecoder
   , mkTopic
   , getTopic
   , mkCommentText
@@ -20,29 +19,25 @@ module Level07.Types
   , renderContentType
   , fromDBComment
   , confPortToWai
-  , encodeComment
-  , encodeTopic
   ) where
 
 import           System.IO.Error                    (IOError)
 
+import           Data.Aeson                         (FromJSON (..), ToJSON (..),
+                                                     Value (..), object, (.:),
+                                                     (.=))
+import           Data.ByteString                    (ByteString)
+import           Data.Either                        (fromRight)
+import           Data.Scientific                    (toBoundedInteger)
+import           Data.Text                          (pack, unpack)
 import           GHC.Word                           (Word16)
 
-import           Data.ByteString                    (ByteString)
-import           Data.Text                          (pack)
-
 import           Data.Functor.Contravariant         ((>$<))
-import           Data.Semigroup                     (Last (Last), Semigroup ((<>)))
+import           Data.Semigroup                     (Last (Last),
+                                                     Semigroup ((<>)))
 
 import           Data.Time                          (UTCTime)
 import qualified Data.Time.Format                   as TF
-
-import           Waargonaut.Decode                  (CursorHistory, Decoder)
-import qualified Waargonaut.Decode                  as D
-import           Waargonaut.Decode.Error            (DecodeError)
-
-import           Waargonaut.Encode                  (Encoder)
-import qualified Waargonaut.Encode                  as E
 
 import           Database.SQLite.Simple             (Connection)
 import           Database.SQLite.SimpleErrors.Types (SQLiteResponse)
@@ -52,18 +47,16 @@ import           Level07.DB.Types                   (DBComment (dbCommentComment
 import           Level07.Types.Error                (Error (DBError, EmptyCommentText, EmptyTopic, UnknownRoute))
 
 import           Level07.Types.CommentText          (CommentText,
-                                                     encodeCommentText,
                                                      getCommentText,
                                                      mkCommentText)
 
-import           Level07.Types.Topic                (Topic, encodeTopic,
-                                                     getTopic, mkTopic)
+import           Level07.Types.Topic                (Topic, getTopic, mkTopic)
 
 newtype CommentId = CommentId Int
   deriving (Show)
 
-encodeCommentId :: Applicative f => Encoder f CommentId
-encodeCommentId = (\(CommentId i) -> i) >$< E.int
+instance ToJSON CommentId where
+  toJSON (CommentId i) = toJSON i
 
 data Comment = Comment
   { commentId    :: CommentId
@@ -73,18 +66,13 @@ data Comment = Comment
   }
   deriving Show
 
-encodeISO8601DateTime :: Applicative f => Encoder f UTCTime
-encodeISO8601DateTime = pack . TF.formatTime tl fmt >$< E.text
-  where
-    fmt = TF.iso8601DateFormat (Just "%H:%M:%S")
-    tl = TF.defaultTimeLocale { TF.knownTimeZones = [] }
-
-encodeComment :: Applicative f => Encoder f Comment
-encodeComment = E.mapLikeObj $ \c ->
-  E.atKey' "id"    encodeCommentId       (commentId c) .
-  E.atKey' "topic" encodeTopic           (commentTopic c) .
-  E.atKey' "text"  encodeCommentText     (commentText c) .
-  E.atKey' "time"  encodeISO8601DateTime (commentTime c)
+instance ToJSON Comment where
+  toJSON c = object
+    [ "id" .= (commentId c)
+    , "topic" .= (commentTopic c)
+    , "text" .= (commentText c)
+    , "time" .= (commentTime c)
+    ]
 
 -- For safety we take our stored DBComment and try to construct a Comment that
 -- we would be okay with showing someone. However unlikely it may be, this is a
@@ -128,9 +116,17 @@ newtype Port = Port
   { getPort :: Word16 }
   deriving (Eq, Show)
 
+instance FromJSON Port where
+  parseJSON (Number n) = maybe (fail "Invalid Port value in config") (pure . Port) $ toBoundedInteger n
+  parseJSON _ = fail "Invalid value for Port in config"
+
 newtype DBFilePath = DBFilePath
   { getDBFilePath :: FilePath }
   deriving (Eq, Show)
+
+instance FromJSON DBFilePath where
+  parseJSON (String s) = pure $ DBFilePath $ unpack s
+  parseJSON _ = fail "Invalid value for DBFilePath in config (expects string)"
 
 -- The ``Conf`` type will need:
 -- - A customisable port number: ``Port``
@@ -154,7 +150,8 @@ confPortToWai =
 -- Similar to when we were considering our application types, leave this empty
 -- for now and add to it as you go.
 data ConfigError
-  = BadConfFile (DecodeError, CursorHistory)
+  -- = BadConfFile (DecodeError, CursorHistory)
+  = BadConfFile String
   | MissingPort
   | MissingDBFilePath
   | JSONDecodeError String
@@ -206,12 +203,11 @@ instance Semigroup PartialConf where
 -- library to handle the parsing and decoding for us. In order to do this, we
 -- have to tell waargonaut how to go about converting the JSON into our PartialConf
 -- data structure.
-partialConfDecoder :: Monad f => Decoder f PartialConf
-partialConfDecoder = PartialConf
-  <$> lastAt "port" D.integral Port
-  <*> lastAt "dbFilePath" D.string DBFilePath
-  where
-    lastAt k d c = fmap (Last . c) <$> D.atKeyOptional k d
+instance FromJSON PartialConf where
+  parseJSON (Object o) = PartialConf
+    <$> (o .: "port")
+    <*> (o .: "dbFilePath")
+  parseJSON _ = fail "Invalid input for PartialConf in config (expects object)"
 
 -- We have a data type to simplify passing around the information we need to run
 -- our database queries. This also allows things to change over time without

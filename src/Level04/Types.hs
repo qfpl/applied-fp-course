@@ -16,6 +16,8 @@ module Level04.Types
   , fromDBComment
   ) where
 
+import           Data.Aeson                 (ToJSON (..))
+
 import           GHC.Generics               (Generic)
 
 import           Data.ByteString            (ByteString)
@@ -24,13 +26,8 @@ import           Data.Text                  (Text, pack)
 import           Data.List                  (stripPrefix)
 import           Data.Maybe                 (fromMaybe)
 
-import           Data.Functor.Contravariant ((>$<))
-
 import           Data.Time                  (UTCTime)
 import qualified Data.Time.Format           as TF
-
-import           Waargonaut.Encode          (Encoder)
-import qualified Waargonaut.Encode          as E
 
 import           Level04.DB.Types           (DBComment)
 
@@ -60,15 +57,13 @@ data Comment = Comment
   deriving Show
 
 -- | We're going to write the JSON encoder for our `Comment` type. We'll need to
--- consult the documentation in the 'Waargonaut.Encode' module to find the
+-- consult the documentation in the 'Aeson' package to find the
 -- relevant functions and instructions on how to use them:
 --
--- 'https://hackage.haskell.org/package/waargonaut/docs/Waargonaut-Encode.html'
+-- 'https://hackage.haskell.org/package/aeson/docs/Data-Aeson.html'
 --
-encodeComment :: Applicative f => Encoder f Comment
-encodeComment =
-  error "Comment JSON encoder not implemented"
-  -- Tip: Use the 'encodeISO8601DateTime' to handle the UTCTime for us.
+instance ToJSON Comment where
+  toJSON = error "Comment ToJSON instance no implemented"
 
 -- | For safety we take our stored `DBComment` and try to construct a `Comment`
 -- that we would be okay with showing someone. However unlikely it may be, this
@@ -94,11 +89,5 @@ renderContentType
   -> ByteString
 renderContentType PlainText = "text/plain"
 renderContentType JSON      = "application/json"
-
-encodeISO8601DateTime :: Applicative f => Encoder f UTCTime
-encodeISO8601DateTime = pack . TF.formatTime loc fmt >$< E.text
-  where
-    fmt = TF.iso8601DateFormat (Just "%H:%M:%S")
-    loc = TF.defaultTimeLocale { TF.knownTimeZones = [] }
 
 -- | Move on to ``src/Level04/DB.hs`` next.

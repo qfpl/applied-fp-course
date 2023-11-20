@@ -4,13 +4,11 @@ module Level04.Types.CommentText
   , getCommentText
   ) where
 
-import           Waargonaut.Encode          (Encoder)
-import qualified Waargonaut.Encode          as E
+import           Data.Aeson                 (ToJSON (..))
 
 import           Level04.Types.Error        (Error (EmptyCommentText),
                                              nonEmptyText)
 
-import           Data.Functor.Contravariant (contramap)
 import           Data.Text                  (Text)
 
 newtype CommentText = CommentText Text
@@ -52,6 +50,5 @@ getCommentText (CommentText t) =
 -- functions. There is a quick introduction to `Contravariant` in the `README`
 -- for this level.
 --
-encodeCommentText :: Applicative f => Encoder f CommentText
-encodeCommentText = -- Try using 'contramap' and 'E.text'.
-  error "CommentText JSON encoder not implemented"
+instance ToJSON CommentText where
+  toJSON = error "CommentText JSON encoder not implemented"
