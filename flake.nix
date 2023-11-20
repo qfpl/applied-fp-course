@@ -20,12 +20,8 @@
             root = ./.;
 
             overrides = final: prev: with nixpkgs.haskell.lib; {
-              # hw-json-simd = dontCheck (unmarkBroken prev.hw-json-simd);
-              # hw-json-standard-cursor = doJailbreak prev.hw-json-standard-cursor;
-              # natural = dontCheck (unmarkBroken prev.natural);
               sqlite-simple-errors =
                 unmarkBroken (doJailbreak prev.sqlite-simple-errors);
-              # waargonaut = dontCheck (doJailbreak prev.waargonaut);
             };
           };
       in
@@ -37,8 +33,6 @@
                 nixpkgs.cabal-install
                 nixpkgs.ghcid
                 nixpkgs.sqlite
-
-                nixpkgs.stylish-haskell
               ];
             });
       });
